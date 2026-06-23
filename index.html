@@ -134,11 +134,12 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
+  .on-canvas .item-placeholder.visible { display: flex; }
   .on-canvas .item-placeholder span { font-size: 2.8rem; line-height: 1; }
   .on-canvas .item-placeholder p {
     font-size: 0.45rem;
@@ -341,10 +342,11 @@
     inset: 0;
     font-size: 2rem;
     line-height: 1;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
   }
+  .grid-item .gi-placeholder.visible { display: flex; }
   .grid-item .gi-name {
     font-size: 0.44rem;
     text-transform: uppercase;
@@ -997,9 +999,12 @@ function imgPath(name) {
 }
 // Attaches a cascading onerror handler to an <img> so that if the first
 // candidate path 404s, it automatically tries the next extension before
-// giving up and falling back to the emoji placeholder.
+// giving up and revealing the emoji placeholder. The placeholder is hidden
+// by default (see CSS), so there's no flash of emoji before the image
+// loads — it only ever appears if every candidate path genuinely fails.
 function setupImgFallback(imgEl, name) {
   const candidates = imgPathCandidates(name);
+  const placeholder = imgEl.previousElementSibling;
   let i = 0;
   imgEl.src = candidates[i];
   imgEl.onerror = function() {
@@ -1008,11 +1013,13 @@ function setupImgFallback(imgEl, name) {
       imgEl.src = candidates[i];
     } else {
       imgEl.style.display = 'none';
+      if (placeholder) placeholder.classList.add('visible');
       imgEl.onerror = null;
     }
   };
   imgEl.onload = function() {
-    if (imgEl.previousElementSibling) imgEl.previousElementSibling.style.display = 'none';
+    imgEl.style.display = 'block';
+    if (placeholder) placeholder.classList.remove('visible');
   };
 }
 
