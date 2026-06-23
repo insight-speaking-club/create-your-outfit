@@ -129,27 +129,6 @@
     pointer-events: none;
     display: block;
   }
-  .on-canvas .item-placeholder {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .on-canvas .item-placeholder.visible { display: flex; }
-  .on-canvas .item-placeholder span { font-size: 2.8rem; line-height: 1; }
-  .on-canvas .item-placeholder p {
-    font-size: 0.45rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-top: 5px;
-    text-align: center;
-    padding: 0 4px;
-  }
   .on-canvas .remove-btn {
     position: absolute;
     top: -8px;
@@ -337,16 +316,6 @@
     height: 100%;
     object-fit: contain;
   }
-  .grid-item .gi-placeholder {
-    position: absolute;
-    inset: 0;
-    font-size: 2rem;
-    line-height: 1;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-  .grid-item .gi-placeholder.visible { display: flex; }
   .grid-item .gi-name {
     font-size: 0.44rem;
     text-transform: uppercase;
@@ -520,305 +489,305 @@ const categories = [
   {
     id: 'tops-basic', label: 'Basics',
     items: [
-      { name: 'White tee', emoji: '👕', color: '#f0ede8', vibe: 'classic', w: 110, h: 105 },
-      { name: 'Black tee', emoji: '👕', color: '#1a1a1a', vibe: 'classic', w: 110, h: 105 },
-      { name: 'Grey tee', emoji: '👕', color: '#888', vibe: 'quiet luxury', w: 110, h: 105 },
-      { name: 'White tank', emoji: '🤍', color: '#f0ede8', vibe: 'effortless', w: 95, h: 100 },
-      { name: 'Black tank', emoji: '🖤', color: '#1a1a1a', vibe: 'effortless', w: 95, h: 100 },
-      { name: 'Ribbed white tank', emoji: '🤍', color: '#f5f2ed', vibe: 'minimalist', w: 90, h: 105 },
-      { name: 'Ribbed black tank', emoji: '🖤', color: '#111', vibe: 'minimalist', w: 90, h: 105 },
-      { name: 'Grey sweatshirt', emoji: '👕', color: '#aaa', vibe: 'soft butch', w: 120, h: 110 },
-      { name: 'Black sweatshirt', emoji: '👕', color: '#111', vibe: 'downtown', w: 120, h: 110 },
-      { name: 'White long sleeve', emoji: '🤍', color: '#f0ede8', vibe: 'quiet', w: 110, h: 110 },
-      { name: 'Striped marinière', emoji: '⚓', color: '#fff', vibe: 'french girl', w: 110, h: 105 },
+      { name: 'White tee', color: '#f0ede8', vibe: 'classic', w: 110, h: 105 },
+      { name: 'Black tee', color: '#1a1a1a', vibe: 'classic', w: 110, h: 105 },
+      { name: 'Grey tee', color: '#888', vibe: 'quiet luxury', w: 110, h: 105 },
+      { name: 'White tank', color: '#f0ede8', vibe: 'effortless', w: 95, h: 100 },
+      { name: 'Black tank', color: '#1a1a1a', vibe: 'effortless', w: 95, h: 100 },
+      { name: 'Ribbed white tank', color: '#f5f2ed', vibe: 'minimalist', w: 90, h: 105 },
+      { name: 'Ribbed black tank', color: '#111', vibe: 'minimalist', w: 90, h: 105 },
+      { name: 'Grey sweatshirt', color: '#aaa', vibe: 'soft butch', w: 120, h: 110 },
+      { name: 'Black sweatshirt', color: '#111', vibe: 'downtown', w: 120, h: 110 },
+      { name: 'White long sleeve', color: '#f0ede8', vibe: 'quiet', w: 110, h: 110 },
+      { name: 'Striped marinière', color: '#fff', vibe: 'french girl', w: 110, h: 105 },
     ]
   },
   {
     id: 'tops-shirts', label: 'Shirts',
     items: [
-      { name: 'White button-up', emoji: '👔', color: '#f0ede8', vibe: 'androgynous', w: 105, h: 115 },
-      { name: 'Black button-up', emoji: '👔', color: '#111', vibe: 'power', w: 105, h: 115 },
-      { name: 'Blue oxford shirt', emoji: '👔', color: '#4a6fa5', vibe: 'preppy subverted', w: 105, h: 115 },
-      { name: 'Ivory linen shirt', emoji: '🌾', color: '#f2ead8', vibe: 'quiet luxury', w: 110, h: 115 },
-      { name: 'Oversized white shirt', emoji: '👔', color: '#f0ede8', vibe: 'effortless chic', w: 120, h: 120 },
-      { name: 'Sheer organza blouse', emoji: '🌸', color: '#f0e8e8', vibe: 'feminine danger', w: 105, h: 110 },
-      { name: 'Silk slip blouse cream', emoji: '✨', color: '#f5efdf', vibe: 'old money', w: 100, h: 105 },
-      { name: 'Silk slip blouse black', emoji: '✨', color: '#1a1a1a', vibe: 'nocturnal', w: 100, h: 105 },
-      { name: 'Asymmetric wrap top', emoji: '🌀', color: '#c8a07a', vibe: 'editorial', w: 100, h: 100 },
-      { name: 'Cowl neck top white', emoji: '🤍', color: '#f0ede8', vibe: 'sculptural', w: 100, h: 105 },
-      { name: 'Cowl neck top black', emoji: '🖤', color: '#111', vibe: 'sculptural', w: 100, h: 105 },
+      { name: 'White button-up', color: '#f0ede8', vibe: 'androgynous', w: 105, h: 115 },
+      { name: 'Black button-up', color: '#111', vibe: 'power', w: 105, h: 115 },
+      { name: 'Blue oxford shirt', color: '#4a6fa5', vibe: 'preppy subverted', w: 105, h: 115 },
+      { name: 'Ivory linen shirt', color: '#f2ead8', vibe: 'quiet luxury', w: 110, h: 115 },
+      { name: 'Oversized white shirt', color: '#f0ede8', vibe: 'effortless chic', w: 120, h: 120 },
+      { name: 'Sheer organza blouse', color: '#f0e8e8', vibe: 'feminine danger', w: 105, h: 110 },
+      { name: 'Silk slip blouse cream', color: '#f5efdf', vibe: 'old money', w: 100, h: 105 },
+      { name: 'Silk slip blouse black', color: '#1a1a1a', vibe: 'nocturnal', w: 100, h: 105 },
+      { name: 'Asymmetric wrap top', color: '#c8a07a', vibe: 'editorial', w: 100, h: 100 },
+      { name: 'Cowl neck top white', color: '#f0ede8', vibe: 'sculptural', w: 100, h: 105 },
+      { name: 'Cowl neck top black', color: '#111', vibe: 'sculptural', w: 100, h: 105 },
     ]
   },
   {
     id: 'tops-knitwear', label: 'Knitwear',
     items: [
-      { name: 'Black turtleneck', emoji: '🖤', color: '#111', vibe: 'intellectual', w: 110, h: 118 },
-      { name: 'Cream turtleneck', emoji: '🤍', color: '#f5efdf', vibe: 'quiet luxury', w: 110, h: 118 },
-      { name: 'Camel turtleneck', emoji: '🧡', color: '#c2903a', vibe: 'old money', w: 110, h: 118 },
-      { name: 'Blue knit sweater', emoji: '🧶', color: '#4a6fa5', vibe: 'soft', w: 115, h: 115 },
-      { name: 'Pink mohair sweater', emoji: '🌸', color: '#f0b8c0', vibe: 'weaponised femininity', w: 120, h: 115 },
-      { name: 'Chocolate brown knit', emoji: '🍫', color: '#6b4226', vibe: 'autumn rich', w: 115, h: 115 },
-      { name: 'Burgundy knit', emoji: '🍷', color: '#7a1e2e', vibe: 'romantic intellectual', w: 115, h: 115 },
-      { name: 'Oversized chunky knit', emoji: '🧶', color: '#d4c5a9', vibe: 'cosy editorial', w: 125, h: 120 },
-      { name: 'Crochet crop top', emoji: '🌀', color: '#c8a07a', vibe: 'seventies', w: 95, h: 90 },
-      { name: 'Fisherman knit cream', emoji: '⚓', color: '#f5efdf', vibe: 'literary weekend', w: 120, h: 120 },
-      { name: 'V-neck grey marl', emoji: '🩶', color: '#999', vibe: 'effortless', w: 110, h: 110 },
+      { name: 'Black turtleneck', color: '#111', vibe: 'intellectual', w: 110, h: 118 },
+      { name: 'Cream turtleneck', color: '#f5efdf', vibe: 'quiet luxury', w: 110, h: 118 },
+      { name: 'Camel turtleneck', color: '#c2903a', vibe: 'old money', w: 110, h: 118 },
+      { name: 'Blue knit sweater', color: '#4a6fa5', vibe: 'soft', w: 115, h: 115 },
+      { name: 'Pink mohair sweater', color: '#f0b8c0', vibe: 'weaponised femininity', w: 120, h: 115 },
+      { name: 'Chocolate brown knit', color: '#6b4226', vibe: 'autumn rich', w: 115, h: 115 },
+      { name: 'Burgundy knit', color: '#7a1e2e', vibe: 'romantic intellectual', w: 115, h: 115 },
+      { name: 'Oversized chunky knit', color: '#d4c5a9', vibe: 'cosy editorial', w: 125, h: 120 },
+      { name: 'Crochet crop top', color: '#c8a07a', vibe: 'seventies', w: 95, h: 90 },
+      { name: 'Fisherman knit cream', color: '#f5efdf', vibe: 'literary weekend', w: 120, h: 120 },
+      { name: 'V-neck grey marl', color: '#999', vibe: 'effortless', w: 110, h: 110 },
     ]
   },
   {
     id: 'tops-statement', label: 'Statement Tops',
     items: [
-      { name: 'Black waistcoat', emoji: '🦺', color: '#111', vibe: 'power', w: 95, h: 120 },
-      { name: 'White waistcoat', emoji: '🤍', color: '#f0ede8', vibe: 'androgynous', w: 95, h: 120 },
-      { name: 'Satin corset black', emoji: '🖤', color: '#111', vibe: 'weaponised femininity', w: 90, h: 100 },
-      { name: 'Satin corset ivory', emoji: '🤍', color: '#f5efdf', vibe: 'regency romantic', w: 90, h: 100 },
-      { name: 'Red lace bodysuit', emoji: '🌹', color: '#8b1a1a', vibe: 'bold femme', w: 90, h: 108 },
-      { name: 'Black lace bodysuit', emoji: '🖤', color: '#111', vibe: 'dark romantic', w: 90, h: 108 },
-      { name: 'Band tee vintage', emoji: '🎸', color: '#1a1a1a', vibe: 'riot grrrl', w: 120, h: 112 },
-      { name: 'Graphic tee white', emoji: '🎨', color: '#f0ede8', vibe: 'downtown art', w: 115, h: 108 },
-      { name: 'Velvet blazer crop black', emoji: '💜', color: '#1a0a2a', vibe: 'theatrical', w: 110, h: 115 },
-      { name: 'Chain detail top', emoji: '⛓️', color: '#111', vibe: 'fashion-forward', w: 95, h: 100 },
-      { name: 'Bustier black', emoji: '🖤', color: '#111', vibe: 'power femme', w: 90, h: 85 },
-      { name: 'Halterneck white', emoji: '🤍', color: '#f0ede8', vibe: 'seventies', w: 90, h: 95 },
+      { name: 'Black waistcoat', color: '#111', vibe: 'power', w: 95, h: 120 },
+      { name: 'White waistcoat', color: '#f0ede8', vibe: 'androgynous', w: 95, h: 120 },
+      { name: 'Satin corset black', color: '#111', vibe: 'weaponised femininity', w: 90, h: 100 },
+      { name: 'Satin corset ivory', color: '#f5efdf', vibe: 'regency romantic', w: 90, h: 100 },
+      { name: 'Red lace bodysuit', color: '#8b1a1a', vibe: 'bold femme', w: 90, h: 108 },
+      { name: 'Black lace bodysuit', color: '#111', vibe: 'dark romantic', w: 90, h: 108 },
+      { name: 'Band tee vintage', color: '#1a1a1a', vibe: 'riot grrrl', w: 120, h: 112 },
+      { name: 'Graphic tee white', color: '#f0ede8', vibe: 'downtown art', w: 115, h: 108 },
+      { name: 'Velvet blazer crop black', color: '#1a0a2a', vibe: 'theatrical', w: 110, h: 115 },
+      { name: 'Chain detail top', color: '#111', vibe: 'fashion-forward', w: 95, h: 100 },
+      { name: 'Bustier black', color: '#111', vibe: 'power femme', w: 90, h: 85 },
+      { name: 'Halterneck white', color: '#f0ede8', vibe: 'seventies', w: 90, h: 95 },
     ]
   },
   {
     id: 'bottoms-trousers', label: 'Trousers',
     items: [
-      { name: 'Black wide-leg trousers', emoji: '🖤', color: '#111', vibe: 'power androgyny', w: 105, h: 145 },
-      { name: 'White wide-leg trousers', emoji: '🤍', color: '#f0ede8', vibe: 'minimalist power', w: 105, h: 145 },
-      { name: 'Camel wide-leg trousers', emoji: '🧡', color: '#c2903a', vibe: 'quiet luxury', w: 105, h: 145 },
-      { name: 'Black tailored trousers', emoji: '🖤', color: '#111', vibe: 'power', w: 100, h: 145 },
-      { name: 'Beige tailored trousers', emoji: '🧡', color: '#d4c5a9', vibe: 'old money', w: 100, h: 145 },
-      { name: 'Grey flannel trousers', emoji: '🩶', color: '#888', vibe: 'intellectual', w: 100, h: 145 },
-      { name: 'Navy trousers', emoji: '💙', color: '#1a2a4a', vibe: 'classic', w: 100, h: 145 },
-      { name: 'Pinstripe trousers', emoji: '🖊️', color: '#333', vibe: 'boss', w: 100, h: 145 },
-      { name: 'Plaid trousers', emoji: '🟫', color: '#8b6914', vibe: 'academic', w: 100, h: 145 },
-      { name: 'Leather trousers', emoji: '🖤', color: '#1a1410', vibe: 'dangerous', w: 100, h: 145 },
-      { name: 'Satin trousers ivory', emoji: '✨', color: '#f5efdf', vibe: 'evening editorial', w: 100, h: 145 },
+      { name: 'Black wide-leg trousers', color: '#111', vibe: 'power androgyny', w: 105, h: 145 },
+      { name: 'White wide-leg trousers', color: '#f0ede8', vibe: 'minimalist power', w: 105, h: 145 },
+      { name: 'Camel wide-leg trousers', color: '#c2903a', vibe: 'quiet luxury', w: 105, h: 145 },
+      { name: 'Black tailored trousers', color: '#111', vibe: 'power', w: 100, h: 145 },
+      { name: 'Beige tailored trousers', color: '#d4c5a9', vibe: 'old money', w: 100, h: 145 },
+      { name: 'Grey flannel trousers', color: '#888', vibe: 'intellectual', w: 100, h: 145 },
+      { name: 'Navy trousers', color: '#1a2a4a', vibe: 'classic', w: 100, h: 145 },
+      { name: 'Pinstripe trousers', color: '#333', vibe: 'boss', w: 100, h: 145 },
+      { name: 'Plaid trousers', color: '#8b6914', vibe: 'academic', w: 100, h: 145 },
+      { name: 'Leather trousers', color: '#1a1410', vibe: 'dangerous', w: 100, h: 145 },
+      { name: 'Satin trousers ivory', color: '#f5efdf', vibe: 'evening editorial', w: 100, h: 145 },
     ]
   },
   {
     id: 'bottoms-jeans', label: 'Jeans & Casual',
     items: [
-      { name: 'Baggy jeans light', emoji: '👖', color: '#a0b8d4', vibe: 'downtown', w: 112, h: 145 },
-      { name: 'Baggy jeans dark', emoji: '👖', color: '#2a3a4a', vibe: 'cool', w: 112, h: 145 },
-      { name: 'Straight jeans blue', emoji: '👖', color: '#3a5a8a', vibe: 'classic dyke', w: 105, h: 145 },
-      { name: 'Straight jeans black', emoji: '🖤', color: '#111', vibe: 'rock', w: 105, h: 145 },
-      { name: 'Cropped jeans white', emoji: '🤍', color: '#e8e4df', vibe: 'french girl', w: 100, h: 130 },
-      { name: 'Low-rise jeans', emoji: '💫', color: '#5a7aaa', vibe: 'Y2K revival', w: 105, h: 135 },
-      { name: 'Boyfriend jeans', emoji: '👖', color: '#7a90a8', vibe: 'borrowed from the boys', w: 115, h: 145 },
-      { name: 'Straight khakis', emoji: '🫒', color: '#7a7a50', vibe: 'utilitarian chic', w: 100, h: 145 },
+      { name: 'Baggy jeans light', color: '#a0b8d4', vibe: 'downtown', w: 112, h: 145 },
+      { name: 'Baggy jeans dark', color: '#2a3a4a', vibe: 'cool', w: 112, h: 145 },
+      { name: 'Straight jeans blue', color: '#3a5a8a', vibe: 'classic dyke', w: 105, h: 145 },
+      { name: 'Straight jeans black', color: '#111', vibe: 'rock', w: 105, h: 145 },
+      { name: 'Cropped jeans white', color: '#e8e4df', vibe: 'french girl', w: 100, h: 130 },
+      { name: 'Low-rise jeans', color: '#5a7aaa', vibe: 'Y2K revival', w: 105, h: 135 },
+      { name: 'Boyfriend jeans', color: '#7a90a8', vibe: 'borrowed from the boys', w: 115, h: 145 },
+      { name: 'Straight khakis', color: '#7a7a50', vibe: 'utilitarian chic', w: 100, h: 145 },
     ]
   },
   {
     id: 'bottoms-skirts', label: 'Skirts',
     items: [
-      { name: 'Leather mini black', emoji: '🖤', color: '#111', vibe: 'dangerous', w: 95, h: 88 },
-      { name: 'Denim mini', emoji: '💙', color: '#5a7aaa', vibe: 'effortless', w: 95, h: 85 },
-      { name: 'Pleated midi ivory', emoji: '🤍', color: '#f5efdf', vibe: 'soft elegance', w: 105, h: 132 },
-      { name: 'Pleated midi black', emoji: '🖤', color: '#111', vibe: 'editorial', w: 105, h: 132 },
-      { name: 'Satin bias skirt black', emoji: '🖤', color: '#111', vibe: 'nocturnal glamour', w: 100, h: 138 },
-      { name: 'Satin bias skirt ivory', emoji: '🤍', color: '#f5efdf', vibe: 'old Hollywood', w: 100, h: 138 },
-      { name: 'Tulle skirt black', emoji: '🩰', color: '#111', vibe: 'theatrical goth', w: 120, h: 110 },
-      { name: 'Tulle skirt white', emoji: '🩰', color: '#f0ede8', vibe: 'theatrical soft', w: 120, h: 110 },
-      { name: 'Tulle skirt blush', emoji: '🌸', color: '#f0c8c0', vibe: 'princess energy', w: 120, h: 110 },
-      { name: 'Pencil skirt black', emoji: '🖤', color: '#111', vibe: 'power femme', w: 95, h: 130 },
-      { name: 'Midi wrap skirt', emoji: '🌀', color: '#c8a07a', vibe: 'effortlessly sexy', w: 105, h: 130 },
-      { name: 'Tartan mini', emoji: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', color: '#8b1a1a', vibe: 'punk adjacent', w: 95, h: 88 },
+      { name: 'Leather mini black', color: '#111', vibe: 'dangerous', w: 95, h: 88 },
+      { name: 'Denim mini', color: '#5a7aaa', vibe: 'effortless', w: 95, h: 85 },
+      { name: 'Pleated midi ivory', color: '#f5efdf', vibe: 'soft elegance', w: 105, h: 132 },
+      { name: 'Pleated midi black', color: '#111', vibe: 'editorial', w: 105, h: 132 },
+      { name: 'Satin bias skirt black', color: '#111', vibe: 'nocturnal glamour', w: 100, h: 138 },
+      { name: 'Satin bias skirt ivory', color: '#f5efdf', vibe: 'old Hollywood', w: 100, h: 138 },
+      { name: 'Tulle skirt black', color: '#111', vibe: 'theatrical goth', w: 120, h: 110 },
+      { name: 'Tulle skirt white', color: '#f0ede8', vibe: 'theatrical soft', w: 120, h: 110 },
+      { name: 'Tulle skirt blush', color: '#f0c8c0', vibe: 'princess energy', w: 120, h: 110 },
+      { name: 'Pencil skirt black', color: '#111', vibe: 'power femme', w: 95, h: 130 },
+      { name: 'Midi wrap skirt', color: '#c8a07a', vibe: 'effortlessly sexy', w: 105, h: 130 },
+      { name: 'Tartan mini', color: '#8b1a1a', vibe: 'punk adjacent', w: 95, h: 88 },
     ]
   },
   {
     id: 'dresses', label: 'Dresses',
     items: [
-      { name: 'Slip dress black', emoji: '🖤', color: '#111', vibe: 'nineties', w: 105, h: 160 },
-      { name: 'Slip dress ivory', emoji: '🤍', color: '#f5efdf', vibe: 'quiet luxury', w: 105, h: 160 },
-      { name: 'Slip dress red', emoji: '❤️', color: '#8b1a1a', vibe: 'dangerous', w: 105, h: 160 },
-      { name: 'Little black dress', emoji: '🖤', color: '#111', vibe: 'perennial chic', w: 100, h: 155 },
-      { name: 'White midi dress', emoji: '🤍', color: '#f0ede8', vibe: 'summertime', w: 105, h: 158 },
-      { name: 'Wrap dress floral', emoji: '🌺', color: '#c87878', vibe: 'femme confident', w: 108, h: 158 },
-      { name: 'Maxi dress black', emoji: '🖤', color: '#111', vibe: 'dramatic', w: 110, h: 175 },
-      { name: 'Column dress white', emoji: '🤍', color: '#f0ede8', vibe: 'sculptural minimalism', w: 95, h: 168 },
-      { name: 'Ruched mini dress', emoji: '💜', color: '#6a3a8a', vibe: 'going out', w: 100, h: 130 },
-      { name: 'Sweater dress grey', emoji: '🩶', color: '#888', vibe: 'cosy editorial', w: 108, h: 158 },
-      { name: 'Oversized shirt dress', emoji: '👔', color: '#4a6fa5', vibe: 'borrowed from the boys', w: 115, h: 162 },
+      { name: 'Slip dress black', color: '#111', vibe: 'nineties', w: 105, h: 160 },
+      { name: 'Slip dress ivory', color: '#f5efdf', vibe: 'quiet luxury', w: 105, h: 160 },
+      { name: 'Slip dress red', color: '#8b1a1a', vibe: 'dangerous', w: 105, h: 160 },
+      { name: 'Little black dress', color: '#111', vibe: 'perennial chic', w: 100, h: 155 },
+      { name: 'White midi dress', color: '#f0ede8', vibe: 'summertime', w: 105, h: 158 },
+      { name: 'Wrap dress floral', color: '#c87878', vibe: 'femme confident', w: 108, h: 158 },
+      { name: 'Maxi dress black', color: '#111', vibe: 'dramatic', w: 110, h: 175 },
+      { name: 'Column dress white', color: '#f0ede8', vibe: 'sculptural minimalism', w: 95, h: 168 },
+      { name: 'Ruched mini dress', color: '#6a3a8a', vibe: 'going out', w: 100, h: 130 },
+      { name: 'Sweater dress grey', color: '#888', vibe: 'cosy editorial', w: 108, h: 158 },
+      { name: 'Oversized shirt dress', color: '#4a6fa5', vibe: 'borrowed from the boys', w: 115, h: 162 },
     ]
   },
   {
     id: 'shoes-flat', label: 'Flat Shoes',
     items: [
-      { name: 'Black ballet flats', emoji: '🩰', color: '#111', vibe: 'soft danger', w: 100, h: 68 },
-      { name: 'White ballet flats', emoji: '🩰', color: '#f0ede8', vibe: 'french girl', w: 100, h: 68 },
-      { name: 'Square-toe loafers black', emoji: '🥿', color: '#111', vibe: 'quietly powerful', w: 108, h: 80 },
-      { name: 'Square-toe loafers tan', emoji: '🥿', color: '#b8864e', vibe: 'old money', w: 108, h: 80 },
-      { name: 'Loafers with chain', emoji: '⛓️', color: '#111', vibe: 'power dressing', w: 110, h: 82 },
-      { name: 'White trainers', emoji: '👟', color: '#f0ede8', vibe: 'effortless', w: 112, h: 78 },
-      { name: 'Chunky trainers', emoji: '👟', color: '#888', vibe: 'Y2K downtown', w: 115, h: 82 },
-      { name: 'Mary-janes black', emoji: '🩰', color: '#111', vibe: 'school-to-stage', w: 100, h: 72 },
-      { name: 'Pointed flats', emoji: '🩰', color: '#111', vibe: 'sharp', w: 105, h: 65 },
-      { name: 'Slip-on mules', emoji: '🥿', color: '#c2a882', vibe: 'off-duty', w: 105, h: 72 },
-      { name: 'Leather sandals flat', emoji: '👡', color: '#b8864e', vibe: 'summer minimalist', w: 100, h: 72 },
+      { name: 'Black ballet flats', color: '#111', vibe: 'soft danger', w: 100, h: 68 },
+      { name: 'White ballet flats', color: '#f0ede8', vibe: 'french girl', w: 100, h: 68 },
+      { name: 'Square-toe loafers black', color: '#111', vibe: 'quietly powerful', w: 108, h: 80 },
+      { name: 'Square-toe loafers tan', color: '#b8864e', vibe: 'old money', w: 108, h: 80 },
+      { name: 'Loafers with chain', color: '#111', vibe: 'power dressing', w: 110, h: 82 },
+      { name: 'White trainers', color: '#f0ede8', vibe: 'effortless', w: 112, h: 78 },
+      { name: 'Chunky trainers', color: '#888', vibe: 'Y2K downtown', w: 115, h: 82 },
+      { name: 'Mary-janes black', color: '#111', vibe: 'school-to-stage', w: 100, h: 72 },
+      { name: 'Pointed flats', color: '#111', vibe: 'sharp', w: 105, h: 65 },
+      { name: 'Slip-on mules', color: '#c2a882', vibe: 'off-duty', w: 105, h: 72 },
+      { name: 'Leather sandals flat', color: '#b8864e', vibe: 'summer minimalist', w: 100, h: 72 },
     ]
   },
   {
     id: 'shoes-heels', label: 'Heels & Boots',
     items: [
-      { name: 'Chelsea boots black', emoji: '🥾', color: '#111', vibe: 'classic dyke', w: 110, h: 105 },
-      { name: 'Chelsea boots tan', emoji: '🥾', color: '#b8864e', vibe: 'off-duty editorial', w: 110, h: 105 },
-      { name: 'Platform boots black', emoji: '🥾', color: '#111', vibe: 'riot grrrl', w: 120, h: 115 },
-      { name: 'Knee-high boots black', emoji: '🦵', color: '#111', vibe: 'powerful', w: 105, h: 135 },
-      { name: 'Over-the-knee boots', emoji: '🦵', color: '#111', vibe: 'extremely online', w: 105, h: 155 },
-      { name: 'Western boots tan', emoji: '🤠', color: '#b8864e', vibe: 'camp cowgirl', w: 110, h: 120 },
-      { name: 'Western boots black', emoji: '🤠', color: '#111', vibe: 'dark cowgirl', w: 110, h: 120 },
-      { name: 'Strappy heels black', emoji: '👠', color: '#111', vibe: 'femme', w: 105, h: 95 },
-      { name: 'Block heel mules', emoji: '👡', color: '#c2a882', vibe: 'power dressing', w: 108, h: 90 },
-      { name: 'Kitten heels', emoji: '👠', color: '#f5efdf', vibe: 'quiet subversion', w: 100, h: 88 },
-      { name: 'Platform heels', emoji: '👠', color: '#111', vibe: 'theatrical', w: 105, h: 105 },
-      { name: 'Lug-sole boots', emoji: '🥾', color: '#4a3020', vibe: 'soft butch', w: 112, h: 115 },
+      { name: 'Chelsea boots black', color: '#111', vibe: 'classic dyke', w: 110, h: 105 },
+      { name: 'Chelsea boots tan', color: '#b8864e', vibe: 'off-duty editorial', w: 110, h: 105 },
+      { name: 'Platform boots black', color: '#111', vibe: 'riot grrrl', w: 120, h: 115 },
+      { name: 'Knee-high boots black', color: '#111', vibe: 'powerful', w: 105, h: 135 },
+      { name: 'Over-the-knee boots', color: '#111', vibe: 'extremely online', w: 105, h: 155 },
+      { name: 'Western boots tan', color: '#b8864e', vibe: 'camp cowgirl', w: 110, h: 120 },
+      { name: 'Western boots black', color: '#111', vibe: 'dark cowgirl', w: 110, h: 120 },
+      { name: 'Strappy heels black', color: '#111', vibe: 'femme', w: 105, h: 95 },
+      { name: 'Block heel mules', color: '#c2a882', vibe: 'power dressing', w: 108, h: 90 },
+      { name: 'Kitten heels', color: '#f5efdf', vibe: 'quiet subversion', w: 100, h: 88 },
+      { name: 'Platform heels', color: '#111', vibe: 'theatrical', w: 105, h: 105 },
+      { name: 'Lug-sole boots', color: '#4a3020', vibe: 'soft butch', w: 112, h: 115 },
     ]
   },
   {
     id: 'jackets', label: 'Jackets',
     items: [
-      { name: 'Black leather jacket', emoji: '🧥', color: '#111', vibe: 'classic dyke', w: 120, h: 122 },
-      { name: 'Brown leather jacket', emoji: '🧥', color: '#5a3018', vibe: 'seventies', w: 120, h: 122 },
-      { name: 'Long black trench', emoji: '🕵️', color: '#111', vibe: 'mysterious', w: 112, h: 172 },
-      { name: 'Camel trench', emoji: '🕵️', color: '#c2903a', vibe: 'french intellectual', w: 112, h: 172 },
-      { name: 'Sharply tailored blazer black', emoji: '💼', color: '#111', vibe: 'power', w: 118, h: 132 },
-      { name: 'Oversize blazer grey', emoji: '🩶', color: '#888', vibe: 'borrowed genius', w: 125, h: 135 },
-      { name: 'Blazer cream', emoji: '🤍', color: '#f5efdf', vibe: 'quiet luxury', w: 118, h: 132 },
-      { name: 'Blazer plaid', emoji: '🟫', color: '#8b6914', vibe: 'literary', w: 118, h: 132 },
-      { name: 'Faux fur coat black', emoji: '🐆', color: '#1a1a1a', vibe: 'maximalist villain', w: 130, h: 162 },
-      { name: 'Faux fur coat cream', emoji: '🐻', color: '#f5efdf', vibe: 'maximalist angel', w: 130, h: 162 },
-      { name: 'Teddy coat camel', emoji: '🐻', color: '#c2903a', vibe: 'cosy rich', w: 128, h: 158 },
-      { name: 'Denim jacket', emoji: '💙', color: '#5a7aaa', vibe: 'effortless', w: 118, h: 118 },
-      { name: 'Shearling jacket', emoji: '🐑', color: '#d4c5a9', vibe: 'cool Americana', w: 122, h: 120 },
-      { name: 'Bomber jacket black', emoji: '🖤', color: '#111', vibe: 'sporty-chic', w: 118, h: 112 },
-      { name: 'Cropped leather jacket', emoji: '🧥', color: '#111', vibe: 'nineties cool', w: 112, h: 100 },
+      { name: 'Black leather jacket', color: '#111', vibe: 'classic dyke', w: 120, h: 122 },
+      { name: 'Brown leather jacket', color: '#5a3018', vibe: 'seventies', w: 120, h: 122 },
+      { name: 'Long black trench', color: '#111', vibe: 'mysterious', w: 112, h: 172 },
+      { name: 'Camel trench', color: '#c2903a', vibe: 'french intellectual', w: 112, h: 172 },
+      { name: 'Sharply tailored blazer black', color: '#111', vibe: 'power', w: 118, h: 132 },
+      { name: 'Oversize blazer grey', color: '#888', vibe: 'borrowed genius', w: 125, h: 135 },
+      { name: 'Blazer cream', color: '#f5efdf', vibe: 'quiet luxury', w: 118, h: 132 },
+      { name: 'Blazer plaid', color: '#8b6914', vibe: 'literary', w: 118, h: 132 },
+      { name: 'Faux fur coat black', color: '#1a1a1a', vibe: 'maximalist villain', w: 130, h: 162 },
+      { name: 'Faux fur coat cream', color: '#f5efdf', vibe: 'maximalist angel', w: 130, h: 162 },
+      { name: 'Teddy coat camel', color: '#c2903a', vibe: 'cosy rich', w: 128, h: 158 },
+      { name: 'Denim jacket', color: '#5a7aaa', vibe: 'effortless', w: 118, h: 118 },
+      { name: 'Shearling jacket', color: '#d4c5a9', vibe: 'cool Americana', w: 122, h: 120 },
+      { name: 'Bomber jacket black', color: '#111', vibe: 'sporty-chic', w: 118, h: 112 },
+      { name: 'Cropped leather jacket', color: '#111', vibe: 'nineties cool', w: 112, h: 100 },
     ]
   },
   {
     id: 'hats', label: 'Hats',
     items: [
-      { name: 'Black beret', emoji: '🎩', color: '#111', vibe: 'arty', w: 95, h: 70 },
-      { name: 'Camel beret', emoji: '🎩', color: '#c2903a', vibe: 'parisian', w: 95, h: 70 },
-      { name: 'Cowboy hat black', emoji: '🤠', color: '#111', vibe: 'dark cowgirl', w: 115, h: 82 },
-      { name: 'Cowboy hat tan', emoji: '🤠', color: '#c2903a', vibe: 'camp cowgirl', w: 115, h: 82 },
-      { name: 'Wide brim felt black', emoji: '🧙', color: '#111', vibe: 'witchy', w: 120, h: 82 },
-      { name: 'Wide brim felt camel', emoji: '👒', color: '#c2903a', vibe: 'autumn witchy', w: 120, h: 82 },
-      { name: 'Bucket hat black', emoji: '🧢', color: '#111', vibe: 'downtown', w: 92, h: 72 },
-      { name: 'Bucket hat cream', emoji: '🧢', color: '#f5efdf', vibe: 'off-duty cool', w: 92, h: 72 },
-      { name: 'Black beanie', emoji: '🧢', color: '#111', vibe: 'soft butch', w: 82, h: 68 },
-      { name: 'Grey beanie', emoji: '🩶', color: '#888', vibe: 'effortless', w: 82, h: 68 },
-      { name: 'Baseball cap', emoji: '🧢', color: '#1a2a4a', vibe: 'tomboy', w: 90, h: 70 },
-      { name: 'Fascinator black', emoji: '🌹', color: '#111', vibe: 'theatrical femme', w: 80, h: 55 },
+      { name: 'Black beret', color: '#111', vibe: 'arty', w: 95, h: 70 },
+      { name: 'Camel beret', color: '#c2903a', vibe: 'parisian', w: 95, h: 70 },
+      { name: 'Cowboy hat black', color: '#111', vibe: 'dark cowgirl', w: 115, h: 82 },
+      { name: 'Cowboy hat tan', color: '#c2903a', vibe: 'camp cowgirl', w: 115, h: 82 },
+      { name: 'Wide brim felt black', color: '#111', vibe: 'witchy', w: 120, h: 82 },
+      { name: 'Wide brim felt camel', color: '#c2903a', vibe: 'autumn witchy', w: 120, h: 82 },
+      { name: 'Bucket hat black', color: '#111', vibe: 'downtown', w: 92, h: 72 },
+      { name: 'Bucket hat cream', color: '#f5efdf', vibe: 'off-duty cool', w: 92, h: 72 },
+      { name: 'Black beanie', color: '#111', vibe: 'soft butch', w: 82, h: 68 },
+      { name: 'Grey beanie', color: '#888', vibe: 'effortless', w: 82, h: 68 },
+      { name: 'Baseball cap', color: '#1a2a4a', vibe: 'tomboy', w: 90, h: 70 },
+      { name: 'Fascinator black', color: '#111', vibe: 'theatrical femme', w: 80, h: 55 },
     ]
   },
   {
     id: 'neck', label: 'Neckwear',
     items: [
-      { name: 'Black ribbon', emoji: '🎀', color: '#111', vibe: 'dark romantic', w: 45, h: 130 },
-      { name: 'Red ribbon', emoji: '🔴', color: '#8b1a1a', vibe: 'dangerous romantic', w: 45, h: 130 },
-      { name: 'White ribbon', emoji: '🤍', color: '#f0ede8', vibe: 'soft romantic', w: 45, h: 130 },
-      { name: 'Pearl necklace', emoji: '📿', color: '#f0ede8', vibe: 'weaponised femininity', w: 85, h: 50 },
-      { name: 'Layered gold chains', emoji: '🌟', color: '#d4a017', vibe: 'italian summer', w: 85, h: 55 },
-      { name: 'Chunky silver chain', emoji: '⛓️', color: '#c8c8c8', vibe: 'power', w: 85, h: 50 },
-      { name: 'Chunky gold chain', emoji: '⛓️', color: '#d4a017', vibe: 'boss', w: 85, h: 50 },
-      { name: 'Choker black velvet', emoji: '🖤', color: '#111', vibe: 'nineties goth', w: 82, h: 30 },
-      { name: 'Diamond choker', emoji: '💎', color: '#c8c8c8', vibe: 'old Hollywood glam', w: 82, h: 28 },
-      { name: 'Silk scarf neck black', emoji: '🧣', color: '#111', vibe: 'parisian', w: 85, h: 95 },
-      { name: 'Silk scarf neck printed', emoji: '🌺', color: '#c87878', vibe: 'retro glam', w: 85, h: 95 },
-      { name: 'Statement necklace', emoji: '💎', color: '#c8c8c8', vibe: 'maximalist', w: 95, h: 60 },
-      { name: 'Pendant necklace gold', emoji: '🌟', color: '#d4a017', vibe: 'delicate', w: 75, h: 70 },
+      { name: 'Black ribbon', color: '#111', vibe: 'dark romantic', w: 45, h: 130 },
+      { name: 'Red ribbon', color: '#8b1a1a', vibe: 'dangerous romantic', w: 45, h: 130 },
+      { name: 'White ribbon', color: '#f0ede8', vibe: 'soft romantic', w: 45, h: 130 },
+      { name: 'Pearl necklace', color: '#f0ede8', vibe: 'weaponised femininity', w: 85, h: 50 },
+      { name: 'Layered gold chains', color: '#d4a017', vibe: 'italian summer', w: 85, h: 55 },
+      { name: 'Chunky silver chain', color: '#c8c8c8', vibe: 'power', w: 85, h: 50 },
+      { name: 'Chunky gold chain', color: '#d4a017', vibe: 'boss', w: 85, h: 50 },
+      { name: 'Choker black velvet', color: '#111', vibe: 'nineties goth', w: 82, h: 30 },
+      { name: 'Diamond choker', color: '#c8c8c8', vibe: 'old Hollywood glam', w: 82, h: 28 },
+      { name: 'Silk scarf neck black', color: '#111', vibe: 'parisian', w: 85, h: 95 },
+      { name: 'Silk scarf neck printed', color: '#c87878', vibe: 'retro glam', w: 85, h: 95 },
+      { name: 'Statement necklace', color: '#c8c8c8', vibe: 'maximalist', w: 95, h: 60 },
+      { name: 'Pendant necklace gold', color: '#d4a017', vibe: 'delicate', w: 75, h: 70 },
     ]
   },
   {
     id: 'bags', label: 'Bags',
     items: [
-      { name: 'Mini shoulder bag black', emoji: '👜', color: '#111', vibe: 'polished', w: 80, h: 80 },
-      { name: 'Mini shoulder bag tan', emoji: '👜', color: '#b8864e', vibe: 'classic', w: 80, h: 80 },
-      { name: 'Tote bag black', emoji: '🛍️', color: '#111', vibe: 'practical chic', w: 92, h: 100 },
-      { name: 'Tote bag canvas', emoji: '🛍️', color: '#d4c5a9', vibe: 'downtown intellectual', w: 92, h: 100 },
-      { name: 'Clutch black satin', emoji: '💅', color: '#111', vibe: 'evening', w: 95, h: 58 },
-      { name: 'Clutch gold', emoji: '✨', color: '#d4a017', vibe: 'maximalist evening', w: 95, h: 58 },
-      { name: 'Belt bag black', emoji: '🎒', color: '#111', vibe: 'ready for anything', w: 82, h: 68 },
-      { name: 'Structured bag black', emoji: '💼', color: '#111', vibe: 'boss', w: 100, h: 80 },
-      { name: 'Bucket bag tan', emoji: '🫙', color: '#b8864e', vibe: 'off-duty', w: 85, h: 92 },
-      { name: 'Half-moon bag', emoji: '🌙', color: '#8b1a1a', vibe: 'artsy', w: 90, h: 72 },
-      { name: 'Chain bag mini', emoji: '⛓️', color: '#111', vibe: 'rock evening', w: 78, h: 72 },
-      { name: 'Backpack mini leather', emoji: '🎒', color: '#111', vibe: 'practical cool', w: 80, h: 90 },
-      { name: 'Oversized tote leather', emoji: '🛍️', color: '#111', vibe: 'city power', w: 100, h: 105 },
+      { name: 'Mini shoulder bag black', color: '#111', vibe: 'polished', w: 80, h: 80 },
+      { name: 'Mini shoulder bag tan', color: '#b8864e', vibe: 'classic', w: 80, h: 80 },
+      { name: 'Tote bag black', color: '#111', vibe: 'practical chic', w: 92, h: 100 },
+      { name: 'Tote bag canvas', color: '#d4c5a9', vibe: 'downtown intellectual', w: 92, h: 100 },
+      { name: 'Clutch black satin', color: '#111', vibe: 'evening', w: 95, h: 58 },
+      { name: 'Clutch gold', color: '#d4a017', vibe: 'maximalist evening', w: 95, h: 58 },
+      { name: 'Belt bag black', color: '#111', vibe: 'ready for anything', w: 82, h: 68 },
+      { name: 'Structured bag black', color: '#111', vibe: 'boss', w: 100, h: 80 },
+      { name: 'Bucket bag tan', color: '#b8864e', vibe: 'off-duty', w: 85, h: 92 },
+      { name: 'Half-moon bag', color: '#8b1a1a', vibe: 'artsy', w: 90, h: 72 },
+      { name: 'Chain bag mini', color: '#111', vibe: 'rock evening', w: 78, h: 72 },
+      { name: 'Backpack mini leather', color: '#111', vibe: 'practical cool', w: 80, h: 90 },
+      { name: 'Oversized tote leather', color: '#111', vibe: 'city power', w: 100, h: 105 },
     ]
   },
   {
     id: 'glasses', label: 'Eyewear',
     items: [
-      { name: 'Cat-eye sunnies black', emoji: '🕶️', color: '#111', vibe: 'glamour', w: 95, h: 40 },
-      { name: 'Cat-eye sunnies tortoise', emoji: '🕶️', color: '#5a3018', vibe: 'retro glamour', w: 95, h: 40 },
-      { name: 'Round tinted brown', emoji: '🥽', color: '#5a3018', vibe: 'intellectual', w: 82, h: 40 },
-      { name: 'Round tinted yellow', emoji: '🥽', color: '#d4a017', vibe: 'downtown artist', w: 82, h: 40 },
-      { name: 'Oversized square sunnies', emoji: '🕶️', color: '#111', vibe: 'seventies cool', w: 100, h: 42 },
-      { name: 'Thin rimless glasses', emoji: '🔬', color: '#c8c8c8', vibe: 'cerebral', w: 82, h: 35 },
-      { name: 'Thick square frames', emoji: '🤓', color: '#111', vibe: 'director', w: 88, h: 40 },
-      { name: 'Blue-light glasses', emoji: '💻', color: '#4a6fa5', vibe: 'intellectually productive', w: 85, h: 38 },
+      { name: 'Cat-eye sunnies black', color: '#111', vibe: 'glamour', w: 95, h: 40 },
+      { name: 'Cat-eye sunnies tortoise', color: '#5a3018', vibe: 'retro glamour', w: 95, h: 40 },
+      { name: 'Round tinted brown', color: '#5a3018', vibe: 'intellectual', w: 82, h: 40 },
+      { name: 'Round tinted yellow', color: '#d4a017', vibe: 'downtown artist', w: 82, h: 40 },
+      { name: 'Oversized square sunnies', color: '#111', vibe: 'seventies cool', w: 100, h: 42 },
+      { name: 'Thin rimless glasses', color: '#c8c8c8', vibe: 'cerebral', w: 82, h: 35 },
+      { name: 'Thick square frames', color: '#111', vibe: 'director', w: 88, h: 40 },
+      { name: 'Blue-light glasses', color: '#4a6fa5', vibe: 'intellectually productive', w: 85, h: 38 },
     ]
   },
   {
     id: 'belts', label: 'Belts',
     items: [
-      { name: 'Black leather belt thin', emoji: '🖤', color: '#111', vibe: 'classic', w: 120, h: 28 },
-      { name: 'Black leather belt wide', emoji: '🖤', color: '#111', vibe: 'powerful', w: 120, h: 38 },
-      { name: 'Gold buckle belt', emoji: '✨', color: '#b8864e', vibe: 'old money', w: 120, h: 32 },
-      { name: 'Corset belt black', emoji: '🪡', color: '#111', vibe: 'victorian goth', w: 110, h: 60 },
-      { name: 'Chain belt silver', emoji: '⛓️', color: '#c8c8c8', vibe: 'nineties revival', w: 115, h: 32 },
-      { name: 'Cargo belt', emoji: '🎖️', color: '#7a7a50', vibe: 'utility', w: 115, h: 30 },
+      { name: 'Black leather belt thin', color: '#111', vibe: 'classic', w: 120, h: 28 },
+      { name: 'Black leather belt wide', color: '#111', vibe: 'powerful', w: 120, h: 38 },
+      { name: 'Gold buckle belt', color: '#b8864e', vibe: 'old money', w: 120, h: 32 },
+      { name: 'Corset belt black', color: '#111', vibe: 'victorian goth', w: 110, h: 60 },
+      { name: 'Chain belt silver', color: '#c8c8c8', vibe: 'nineties revival', w: 115, h: 32 },
+      { name: 'Cargo belt', color: '#7a7a50', vibe: 'utility', w: 115, h: 30 },
     ]
   },
   {
     id: 'jewellery', label: 'Jewellery',
     items: [
-      { name: 'Hoop earrings gold small', emoji: '🌕', color: '#d4a017', vibe: 'classic chic', w: 45, h: 45 },
-      { name: 'Hoop earrings gold large', emoji: '🌕', color: '#d4a017', vibe: 'power jewellery', w: 55, h: 55 },
-      { name: 'Hoop earrings silver', emoji: '⚪', color: '#c8c8c8', vibe: 'downtown', w: 50, h: 50 },
-      { name: 'Stud earrings pearl', emoji: '📿', color: '#f0ede8', vibe: 'quiet luxury', w: 35, h: 35 },
-      { name: 'Drop earrings crystal', emoji: '💎', color: '#c8e8f0', vibe: 'evening femme', w: 35, h: 55 },
-      { name: 'Ear cuff silver', emoji: '🌙', color: '#c8c8c8', vibe: 'edgy', w: 30, h: 38 },
-      { name: 'Statement earrings gold', emoji: '✨', color: '#d4a017', vibe: 'maximalist', w: 40, h: 60 },
-      { name: 'Gold ring stacked', emoji: '💍', color: '#d4a017', vibe: 'rich girl', w: 38, h: 38 },
-      { name: 'Signet ring gold', emoji: '💍', color: '#d4a017', vibe: 'old money', w: 35, h: 35 },
-      { name: 'Chunky silver rings', emoji: '💍', color: '#c8c8c8', vibe: 'art student', w: 38, h: 38 },
-      { name: 'Tennis bracelet', emoji: '💎', color: '#c8c8c8', vibe: 'quiet luxury', w: 60, h: 28 },
-      { name: 'Gold bangle', emoji: '🌕', color: '#d4a017', vibe: 'seventies', w: 55, h: 32 },
-      { name: 'Watch black', emoji: '⌚', color: '#111', vibe: 'sporty chic', w: 50, h: 42 },
-      { name: 'Watch gold', emoji: '⌚', color: '#d4a017', vibe: 'old money', w: 50, h: 42 },
+      { name: 'Hoop earrings gold small', color: '#d4a017', vibe: 'classic chic', w: 45, h: 45 },
+      { name: 'Hoop earrings gold large', color: '#d4a017', vibe: 'power jewellery', w: 55, h: 55 },
+      { name: 'Hoop earrings silver', color: '#c8c8c8', vibe: 'downtown', w: 50, h: 50 },
+      { name: 'Stud earrings pearl', color: '#f0ede8', vibe: 'quiet luxury', w: 35, h: 35 },
+      { name: 'Drop earrings crystal', color: '#c8e8f0', vibe: 'evening femme', w: 35, h: 55 },
+      { name: 'Ear cuff silver', color: '#c8c8c8', vibe: 'edgy', w: 30, h: 38 },
+      { name: 'Statement earrings gold', color: '#d4a017', vibe: 'maximalist', w: 40, h: 60 },
+      { name: 'Gold ring stacked', color: '#d4a017', vibe: 'rich girl', w: 38, h: 38 },
+      { name: 'Signet ring gold', color: '#d4a017', vibe: 'old money', w: 35, h: 35 },
+      { name: 'Chunky silver rings', color: '#c8c8c8', vibe: 'art student', w: 38, h: 38 },
+      { name: 'Tennis bracelet', color: '#c8c8c8', vibe: 'quiet luxury', w: 60, h: 28 },
+      { name: 'Gold bangle', color: '#d4a017', vibe: 'seventies', w: 55, h: 32 },
+      { name: 'Watch black', color: '#111', vibe: 'sporty chic', w: 50, h: 42 },
+      { name: 'Watch gold', color: '#d4a017', vibe: 'old money', w: 50, h: 42 },
     ]
   },
   {
     id: 'scarves', label: 'Scarves',
     items: [
-      { name: 'Wool scarf black', emoji: '🧣', color: '#111', vibe: 'winter intellectual', w: 120, h: 45 },
-      { name: 'Plaid wool scarf', emoji: '🟫', color: '#8b6914', vibe: 'literary', w: 120, h: 45 },
-      { name: 'Silk headscarf printed', emoji: '🌺', color: '#c87878', vibe: 'retro glam', w: 105, h: 105 },
-      { name: 'Silk headscarf black', emoji: '🖤', color: '#111', vibe: 'mysterious', w: 105, h: 105 },
-      { name: 'Oversized blanket scarf', emoji: '🧶', color: '#c2a882', vibe: 'cosy editorial', w: 130, h: 55 },
-      { name: 'Satin hair ribbon', emoji: '🎀', color: '#111', vibe: 'feminine touch', w: 80, h: 45 },
+      { name: 'Wool scarf black', color: '#111', vibe: 'winter intellectual', w: 120, h: 45 },
+      { name: 'Plaid wool scarf', color: '#8b6914', vibe: 'literary', w: 120, h: 45 },
+      { name: 'Silk headscarf printed', color: '#c87878', vibe: 'retro glam', w: 105, h: 105 },
+      { name: 'Silk headscarf black', color: '#111', vibe: 'mysterious', w: 105, h: 105 },
+      { name: 'Oversized blanket scarf', color: '#c2a882', vibe: 'cosy editorial', w: 130, h: 55 },
+      { name: 'Satin hair ribbon', color: '#111', vibe: 'feminine touch', w: 80, h: 45 },
     ]
   },
   {
     id: 'iconic', label: 'Iconic Pieces',
     items: [
-      { name: 'Birkin-style bag tan', emoji: '💼', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
-      { name: 'Opera gloves black', emoji: '🖤', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
-      { name: 'Feather trim top', emoji: '🪶', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
-      { name: 'Sequin mini dress', emoji: '✨', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
-      { name: 'Cape black', emoji: '🦸', color: '#111', vibe: 'dramatic entrance', w: 140, h: 155 },
-      { name: 'Jumpsuit all-black', emoji: '🖤', color: '#111', vibe: 'effortlessly powerful', w: 105, h: 165 },
-      { name: 'Monogram scarf', emoji: '🌟', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
-      { name: 'Logo belt', emoji: '🔄', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
-      { name: 'Tartan blazer', emoji: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
-      { name: 'All-white look trousers', emoji: '🤍', color: '#f0ede8', vibe: 'summer icon', w: 100, h: 145 },
-      { name: 'Power shoulders blazer', emoji: '💪', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
-      { name: 'Trench mac cropped', emoji: '🕵️', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
+      { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
+      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
+      { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
+      { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
+      { name: 'Cape black', color: '#111', vibe: 'dramatic entrance', w: 140, h: 155 },
+      { name: 'Jumpsuit all-black', color: '#111', vibe: 'effortlessly powerful', w: 105, h: 165 },
+      { name: 'Monogram scarf', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
+      { name: 'Logo belt', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
+      { name: 'Tartan blazer', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
+      { name: 'All-white look trousers', color: '#f0ede8', vibe: 'summer icon', w: 100, h: 145 },
+      { name: 'Power shoulders blazer', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
+      { name: 'Trench mac cropped', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
     ]
   },
 ];
@@ -976,50 +945,45 @@ let searchMode = false;
 let searchResults = [];
 
 // ── IMAGE LOOKUP ──
-// Converts an item name into the filename Claude expects, e.g.
-// "White button-up" -> "white-button-up.png"
-const IMG_DIR = 'images/';
+const IMG_DIR = '';
 const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
+
 function slugify(name) {
   return name
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents (é -> e)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
-// Returns a list of candidate paths to try in order, covering the most
-// common upload mismatches: wrong extension, or unexpected capitalization
-// in the filename itself (some hosts/zips preserve original casing).
+
 function imgPathCandidates(name) {
   const slug = slugify(name);
   const candidates = [];
   IMG_EXTENSIONS.forEach(ext => candidates.push(IMG_DIR + slug + '.' + ext));
   return candidates;
 }
+
 function imgPath(name) {
   return imgPathCandidates(name)[0];
 }
-// Attaches a cascading onerror handler to an <img> so that if the first
-// candidate path 404s, it automatically tries the next extension before
-// giving up and revealing the emoji placeholder. The placeholder is hidden
-// by default (see CSS), so there's no flash of emoji before the image
-// loads — it only ever appears if every candidate path genuinely fails.
+
 function setupImgFallback(imgEl, name) {
   const candidates = imgPathCandidates(name);
-  const placeholder = imgEl.previousElementSibling;
   let i = 0;
   imgEl.src = candidates[i];
+  
   imgEl.onerror = function() {
     i++;
     if (i < candidates.length) {
       imgEl.src = candidates[i];
     } else {
-      imgEl.style.display = 'none';
-      if (placeholder) placeholder.classList.add('visible');
-      imgEl.onerror = null;
+      const placeholderText = encodeURIComponent(name);
+      imgEl.src = `https://placehold.co/200x200/e8e4df/9a9390.png?text=${placeholderText}`;
+      imgEl.style.display = 'block';
+      imgEl.onerror = null; 
     }
   };
+  
   imgEl.onload = function() {
     imgEl.style.display = 'block';
-    if (placeholder) placeholder.classList.remove('visible');
   };
 }
 
@@ -1065,7 +1029,6 @@ function renderGrid(catId, items) {
     card.id = 'gi-' + uid;
     card.innerHTML = `
       <div class="gi-visual">
-        <div class="gi-placeholder">${item.emoji}</div>
         <img alt="${item.name}">
       </div>
       <div class="gi-name">${item.name}</div>`;
@@ -1127,7 +1090,6 @@ function addToCanvas(uid, item, catId) {
   el.style.left = Math.max(0, cx) + 'px';
   el.style.top = Math.max(0, cy) + 'px';
 
-  // per-item transform state: rotation in degrees, scale as a multiplier
   const state = { rotation: 0, scale: 1 };
 
   const spin = document.createElement('div');
@@ -1136,8 +1098,7 @@ function addToCanvas(uid, item, catId) {
   const inner = document.createElement('div');
   inner.className = 'oc-visual';
   inner.innerHTML = `
-    <div class="item-placeholder"><span>${item.emoji}</span><p>${item.name}</p></div>
-    <img alt="${item.name}">`;
+    <img alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain;">`;
   setupImgFallback(inner.querySelector('img'), item.name);
   spin.appendChild(inner);
   el.appendChild(spin);
@@ -1199,7 +1160,7 @@ function applySpinTransform(spin, state) {
 }
 
 function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
-  let mode = null; // 'drag' | 'rotate' | 'resize'
+  let mode = null; 
   let startX, startY, origLeft, origTop;
   let centerX, centerY, startAngle, startRotation;
   let startDist, startScale;
@@ -1251,7 +1212,6 @@ function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
     mode = null;
   }
 
-  // drag (the piece itself)
   el.addEventListener('touchstart', e => {
     if (e.target === rotateHandle || e.target === resizeHandle || e.target.classList.contains('remove-btn')) return;
     const t = e.touches[0];
@@ -1262,7 +1222,6 @@ function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
     onDragStart(e.clientX, e.clientY);
   });
 
-  // rotate handle
   rotateHandle.addEventListener('touchstart', e => {
     e.stopPropagation();
     const t = e.touches[0];
@@ -1273,7 +1232,6 @@ function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
     onRotateStart(e.clientX, e.clientY);
   });
 
-  // resize handle
   resizeHandle.addEventListener('touchstart', e => {
     e.stopPropagation();
     const t = e.touches[0];
@@ -1284,7 +1242,6 @@ function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
     onResizeStart(e.clientX, e.clientY);
   });
 
-  // shared move/end listeners, active for the whole element's lifetime
   el.addEventListener('touchmove', e => {
     if (!mode) return;
     e.preventDefault();
@@ -1316,14 +1273,19 @@ function showVerdict() {
 
   const freq = {};
   vibes.forEach(v => freq[v] = (freq[v] || 0) + 1);
-  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-  const top = sorted[0][0];
+  
+  let maxFreq = 0;
+  for (let v in freq) {
+    if (freq[v] > maxFreq) maxFreq = freq[v];
+  }
+  
+  const topVibes = Object.keys(freq).filter(v => freq[v] === maxFreq);
+  const top = topVibes[Math.floor(Math.random() * topVibes.length)];
   const v = verdicts[top] || verdicts['default'];
 
   document.getElementById('verdict-text').textContent = v.line;
   document.getElementById('verdict-sub').textContent = v.sub;
 
-  // piece tags
   const tagsEl = document.getElementById('verdict-pieces');
   tagsEl.innerHTML = '';
   Object.keys(onCanvas).forEach(uid => {
