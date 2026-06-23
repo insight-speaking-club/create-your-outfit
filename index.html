@@ -113,6 +113,12 @@
     touch-action: none;
   }
   .on-canvas:active { cursor: grabbing; }
+  .on-canvas .oc-spin {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 50%;
+  }
   .on-canvas .oc-visual { position: relative; width: 100%; height: 100%; }
   .on-canvas .oc-visual img {
     position: absolute;
@@ -132,10 +138,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.7);
-    border: 1.5px dashed #d0ccc7;
-    border-radius: 6px;
-    backdrop-filter: blur(2px);
   }
   .on-canvas .item-placeholder span { font-size: 2.8rem; line-height: 1; }
   .on-canvas .item-placeholder p {
@@ -164,7 +166,65 @@
     justify-content: center;
     z-index: 5;
   }
-  #canvas.capturing .remove-btn { display: none !important; }
+  #canvas.capturing .remove-btn,
+  #canvas.capturing .resize-handle,
+  #canvas.capturing .rotate-handle,
+  #canvas.capturing .rotate-stem {
+    display: none !important;
+  }
+
+  .on-canvas .resize-handle {
+    position: absolute;
+    bottom: -9px;
+    right: -9px;
+    width: 20px;
+    height: 20px;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    cursor: nwse-resize;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+  }
+  .on-canvas .resize-handle::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--ink);
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .on-canvas .rotate-stem {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    width: 1.5px;
+    height: 20px;
+    background: var(--muted);
+    transform: translateX(-50%);
+    z-index: 5;
+  }
+  .on-canvas .rotate-handle {
+    position: absolute;
+    top: -42px;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    transform: translateX(-50%);
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    cursor: grab;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.62rem;
+    touch-action: none;
+  }
+  .on-canvas .rotate-handle:active { cursor: grabbing; }
 
   /* ── DRAWER ── */
   #drawer {
@@ -917,13 +977,43 @@ let searchResults = [];
 // Converts an item name into the filename Claude expects, e.g.
 // "White button-up" -> "white-button-up.png"
 const IMG_DIR = 'images/';
+const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
 function slugify(name) {
   return name
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents (é -> e)
     .toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
+// Returns a list of candidate paths to try in order, covering the most
+// common upload mismatches: wrong extension, or unexpected capitalization
+// in the filename itself (some hosts/zips preserve original casing).
+function imgPathCandidates(name) {
+  const slug = slugify(name);
+  const candidates = [];
+  IMG_EXTENSIONS.forEach(ext => candidates.push(IMG_DIR + slug + '.' + ext));
+  return candidates;
+}
 function imgPath(name) {
-  return IMG_DIR + slugify(name) + '.png';
+  return imgPathCandidates(name)[0];
+}
+// Attaches a cascading onerror handler to an <img> so that if the first
+// candidate path 404s, it automatically tries the next extension before
+// giving up and falling back to the emoji placeholder.
+function setupImgFallback(imgEl, name) {
+  const candidates = imgPathCandidates(name);
+  let i = 0;
+  imgEl.src = candidates[i];
+  imgEl.onerror = function() {
+    i++;
+    if (i < candidates.length) {
+      imgEl.src = candidates[i];
+    } else {
+      imgEl.style.display = 'none';
+      imgEl.onerror = null;
+    }
+  };
+  imgEl.onload = function() {
+    if (imgEl.previousElementSibling) imgEl.previousElementSibling.style.display = 'none';
+  };
 }
 
 // ── VERDICT MAP ──
@@ -969,11 +1059,10 @@ function renderGrid(catId, items) {
     card.innerHTML = `
       <div class="gi-visual">
         <div class="gi-placeholder">${item.emoji}</div>
-        <img src="${imgPath(item.name)}" alt="${item.name}"
-             onload="this.previousElementSibling.style.display='none'"
-             onerror="this.style.display='none'">
+        <img alt="${item.name}">
       </div>
       <div class="gi-name">${item.name}</div>`;
+    setupImgFallback(card.querySelector('img'), item.name);
     if (item.color) {
       const dot = document.createElement('div');
       dot.className = 'gi-color-dot';
@@ -1031,15 +1120,20 @@ function addToCanvas(uid, item, catId) {
   el.style.left = Math.max(0, cx) + 'px';
   el.style.top = Math.max(0, cy) + 'px';
 
+  // per-item transform state: rotation in degrees, scale as a multiplier
+  const state = { rotation: 0, scale: 1 };
+
+  const spin = document.createElement('div');
+  spin.className = 'oc-spin';
+
   const inner = document.createElement('div');
   inner.className = 'oc-visual';
-  inner.style.cssText = 'width:100%;height:100%;';
   inner.innerHTML = `
     <div class="item-placeholder"><span>${item.emoji}</span><p>${item.name}</p></div>
-    <img src="${imgPath(item.name)}" alt="${item.name}"
-         onload="this.previousElementSibling.style.display='none'"
-         onerror="this.style.display='none'">`;
-  el.appendChild(inner);
+    <img alt="${item.name}">`;
+  setupImgFallback(inner.querySelector('img'), item.name);
+  spin.appendChild(inner);
+  el.appendChild(spin);
 
   const rm = document.createElement('button');
   rm.className = 'remove-btn';
@@ -1047,10 +1141,23 @@ function addToCanvas(uid, item, catId) {
   rm.onclick = (e) => { e.stopPropagation(); removeFromCanvas(uid); };
   el.appendChild(rm);
 
-  canvas.appendChild(el);
-  makeDraggable(el);
+  const stem = document.createElement('div');
+  stem.className = 'rotate-stem';
+  el.appendChild(stem);
 
-  onCanvas[uid] = { el, item };
+  const rotateHandle = document.createElement('div');
+  rotateHandle.className = 'rotate-handle';
+  rotateHandle.textContent = '↻';
+  el.appendChild(rotateHandle);
+
+  const resizeHandle = document.createElement('div');
+  resizeHandle.className = 'resize-handle';
+  el.appendChild(resizeHandle);
+
+  canvas.appendChild(el);
+  setupTransforms(el, spin, rotateHandle, resizeHandle, state);
+
+  onCanvas[uid] = { el, item, state };
   updateGridCard(uid, true);
   updateCount();
 }
@@ -1076,38 +1183,110 @@ function updateCount() {
   document.getElementById('canvas-count').textContent = n === 0 ? '' : n + (n === 1 ? ' piece' : ' pieces');
 }
 
-// ── DRAG ──
-function makeDraggable(el) {
-  let startX, startY, origLeft, origTop;
+// ── DRAG / ROTATE / RESIZE ──
+const MIN_SCALE = 0.4;
+const MAX_SCALE = 2.5;
 
-  function onStart(x, y) {
+function applySpinTransform(spin, state) {
+  spin.style.transform = `rotate(${state.rotation}deg) scale(${state.scale})`;
+}
+
+function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
+  let mode = null; // 'drag' | 'rotate' | 'resize'
+  let startX, startY, origLeft, origTop;
+  let centerX, centerY, startAngle, startRotation;
+  let startDist, startScale;
+
+  function getCenter() {
+    const rect = el.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }
+
+  function onDragStart(x, y) {
+    mode = 'drag';
     startX = x; startY = y;
     origLeft = parseInt(el.style.left) || 0;
     origTop = parseInt(el.style.top) || 0;
     el.style.zIndex = zCounter++;
   }
-  function onMove(x, y) {
-    el.style.left = (origLeft + x - startX) + 'px';
-    el.style.top = (origTop + y - startY) + 'px';
+  function onRotateStart(x, y) {
+    mode = 'rotate';
+    el.style.zIndex = zCounter++;
+    const c = getCenter();
+    centerX = c.x; centerY = c.y;
+    startAngle = Math.atan2(y - centerY, x - centerX) * 180 / Math.PI;
+    startRotation = state.rotation;
   }
+  function onResizeStart(x, y) {
+    mode = 'resize';
+    el.style.zIndex = zCounter++;
+    const c = getCenter();
+    centerX = c.x; centerY = c.y;
+    startDist = Math.hypot(x - centerX, y - centerY);
+    startScale = state.scale;
+  }
+  function onMove(x, y) {
+    if (mode === 'drag') {
+      el.style.left = (origLeft + x - startX) + 'px';
+      el.style.top = (origTop + y - startY) + 'px';
+    } else if (mode === 'rotate') {
+      const angle = Math.atan2(y - centerY, x - centerX) * 180 / Math.PI;
+      state.rotation = startRotation + (angle - startAngle);
+      applySpinTransform(spin, state);
+    } else if (mode === 'resize') {
+      const dist = Math.hypot(x - centerX, y - centerY);
+      const ratio = dist / (startDist || 1);
+      state.scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, startScale * ratio));
+      applySpinTransform(spin, state);
+    }
+  }
+  function onEnd() {
+    mode = null;
+  }
+
+  // drag (the piece itself)
   el.addEventListener('touchstart', e => {
-    if (e.target.classList.contains('remove-btn')) return;
+    if (e.target === rotateHandle || e.target === resizeHandle || e.target.classList.contains('remove-btn')) return;
     const t = e.touches[0];
-    onStart(t.clientX, t.clientY);
+    onDragStart(t.clientX, t.clientY);
   }, { passive: true });
+  el.addEventListener('mousedown', e => {
+    if (e.target === rotateHandle || e.target === resizeHandle || e.target.classList.contains('remove-btn')) return;
+    onDragStart(e.clientX, e.clientY);
+  });
+
+  // rotate handle
+  rotateHandle.addEventListener('touchstart', e => {
+    e.stopPropagation();
+    const t = e.touches[0];
+    onRotateStart(t.clientX, t.clientY);
+  }, { passive: true });
+  rotateHandle.addEventListener('mousedown', e => {
+    e.stopPropagation();
+    onRotateStart(e.clientX, e.clientY);
+  });
+
+  // resize handle
+  resizeHandle.addEventListener('touchstart', e => {
+    e.stopPropagation();
+    const t = e.touches[0];
+    onResizeStart(t.clientX, t.clientY);
+  }, { passive: true });
+  resizeHandle.addEventListener('mousedown', e => {
+    e.stopPropagation();
+    onResizeStart(e.clientX, e.clientY);
+  });
+
+  // shared move/end listeners, active for the whole element's lifetime
   el.addEventListener('touchmove', e => {
+    if (!mode) return;
     e.preventDefault();
     const t = e.touches[0];
     onMove(t.clientX, t.clientY);
   }, { passive: false });
-  el.addEventListener('mousedown', e => {
-    if (e.target.classList.contains('remove-btn')) return;
-    onStart(e.clientX, e.clientY);
-    const onMM = ev => onMove(ev.clientX, ev.clientY);
-    const onMU = () => { window.removeEventListener('mousemove', onMM); window.removeEventListener('mouseup', onMU); };
-    window.addEventListener('mousemove', onMM);
-    window.addEventListener('mouseup', onMU);
-  });
+  el.addEventListener('touchend', onEnd);
+  window.addEventListener('mousemove', e => { if (mode) onMove(e.clientX, e.clientY); });
+  window.addEventListener('mouseup', () => { if (mode) onEnd(); });
 }
 
 // ── DRAWER ──
