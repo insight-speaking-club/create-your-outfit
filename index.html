@@ -51,6 +51,18 @@
     color: var(--ink);
     letter-spacing: 0.02em;
   }
+  #topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 60px;
+  }
+  #canvas-count {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
   #verdict-btn {
     font-family: 'DM Sans', sans-serif;
     font-weight: 500;
@@ -66,12 +78,156 @@
     transition: opacity 0.15s;
   }
   #verdict-btn:hover { opacity: 0.75; }
-  #canvas-count {
-    font-size: 0.65rem;
+
+  /* ── HEADPHONE BUTTON ── */
+  #headphone-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--rail);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    flex-shrink: 0;
+  }
+  #headphone-btn:hover {
+    border-color: var(--ink);
+    background: var(--rail);
+  }
+  #headphone-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--muted);
+    transition: fill 0.2s;
+  }
+  #headphone-btn:hover svg { fill: var(--ink); }
+
+  /* ── SPOTIFY MODAL ── */
+  #spotify-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  #spotify-modal.show { display: flex; }
+  #spotify-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,8,6,0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  #spotify-sheet {
+    position: relative;
+    z-index: 1;
+    background: #1a1612;
+    border-top: 1px solid #2e2a26;
+    border-radius: 16px 16px 0 0;
+    padding: 2rem 1.5rem 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  #spotify-modal.show #spotify-sheet {
+    transform: translateY(0);
+  }
+  #spotify-pill {
+    width: 36px;
+    height: 3px;
+    background: #3a3630;
+    border-radius: 2px;
+    margin: 0 auto 1.8rem;
+  }
+  #spotify-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.6rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    min-width: 60px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  #spotify-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.8rem;
+    color: #f0ede8;
+    line-height: 1.15;
+    margin-bottom: 0.9rem;
+  }
+  #spotify-body {
+    font-size: 0.82rem;
+    color: #6a6460;
+    line-height: 1.65;
+    margin-bottom: 1.8rem;
+  }
+  #spotify-body strong {
+    color: #9a9390;
+    font-weight: 500;
+  }
+  #spotify-tracks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1.8rem;
+  }
+  .spotify-track-tag {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.22rem 0.5rem;
+    background: rgba(194,168,130,0.1);
+    border: 1px solid rgba(194,168,130,0.2);
+    border-radius: 20px;
+    color: var(--accent);
+  }
+  #spotify-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: #1DB954;
+    border: none;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 0.6rem;
+    transition: opacity 0.15s;
+  }
+  #spotify-cta:hover { opacity: 0.88; }
+  #spotify-cta svg {
+    width: 16px;
+    height: 16px;
+    fill: #000;
+    flex-shrink: 0;
+  }
+  #spotify-dismiss {
+    width: 100%;
+    padding: 0.6rem;
+    background: none;
+    border: 1px solid #2e2a26;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #4a4540;
+    cursor: pointer;
   }
 
   /* ── CANVAS ── */
@@ -105,7 +261,6 @@
     color: var(--muted);
   }
 
-  /* draggable items on canvas */
   .on-canvas {
     position: absolute;
     cursor: grab;
@@ -149,9 +304,7 @@
   #canvas.capturing .remove-btn,
   #canvas.capturing .resize-handle,
   #canvas.capturing .rotate-handle,
-  #canvas.capturing .rotate-stem {
-    display: none !important;
-  }
+  #canvas.capturing .rotate-stem { display: none !important; }
 
   .on-canvas .resize-handle {
     position: absolute;
@@ -216,7 +369,6 @@
     max-height: 48dvh;
   }
   #drawer.collapsed { max-height: 42px; }
-
   #drawer-handle {
     display: flex;
     align-items: center;
@@ -234,11 +386,7 @@
   #drawer-toggle { color: var(--drawer-muted); font-size: 0.75rem; transition: transform 0.2s; }
   #drawer.collapsed #drawer-toggle { transform: rotate(180deg); }
 
-  /* search */
-  #search-row {
-    padding: 0 1rem 0.5rem;
-    flex-shrink: 0;
-  }
+  #search-row { padding: 0 1rem 0.5rem; flex-shrink: 0; }
   #search-input {
     width: 100%;
     background: rgba(255,255,255,0.05);
@@ -253,7 +401,6 @@
   #search-input::placeholder { color: var(--drawer-muted); }
   #search-input:focus { border-color: var(--accent); }
 
-  /* category tabs */
   #cat-tabs {
     display: flex;
     overflow-x: auto;
@@ -278,7 +425,6 @@
   }
   .cat-tab.active { border-color: var(--accent); color: var(--accent); }
 
-  /* item grid */
   #item-grid {
     display: flex;
     overflow-x: auto;
@@ -446,9 +592,47 @@
 <body>
 
 <div id="topbar">
-  <span id="canvas-count">0 pieces</span>
+  <div id="topbar-left">
+    <span id="canvas-count"></span>
+  </div>
   <h1>Dream Closet</h1>
-  <button id="verdict-btn" onclick="showVerdict()">Reveal My Vibe</button>
+  <div style="display:flex;align-items:center;gap:0.5rem;">
+    <button id="headphone-btn" onclick="openSpotify()" aria-label="Fashion playlist">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3C7.03 3 3 7.03 3 12v5c0 1.1.9 2 2 2h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H5v-1c0-3.87 3.13-7 7-7s7 3.13 7 7v1h-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1c1.1 0 2-.9 2-2v-5c0-4.97-4.03-9-9-9z"/>
+      </svg>
+    </button>
+    <button id="verdict-btn" onclick="showVerdict()">Reveal My Vibe</button>
+  </div>
+</div>
+
+<!-- Spotify Modal -->
+<div id="spotify-modal" onclick="handleBackdropClick(event)">
+  <div id="spotify-backdrop"></div>
+  <div id="spotify-sheet">
+    <div id="spotify-pill"></div>
+    <div id="spotify-eyebrow">A playlist for this</div>
+    <div id="spotify-title">Fashion Runway</div>
+    <div id="spotify-body">
+      A playlist curated for this session — <strong>Britney Manson, Lady Gaga, RuPaul, Madonna, Beyoncé, David Bowie</strong> and more. Put it on while you build your look.<br><br>
+      Open it in Spotify to listen, follow the playlist, or add your own tracks to the collection.
+    </div>
+    <div id="spotify-tracks">
+      <span class="spotify-track-tag">FASHION — Britney Manson</span>
+      <span class="spotify-track-tag">Vogue — Madonna</span>
+      <span class="spotify-track-tag">Supermodel — RuPaul</span>
+      <span class="spotify-track-tag">Freakum Dress — Beyoncé</span>
+      <span class="spotify-track-tag">Fashion — David Bowie</span>
+      <span class="spotify-track-tag">Category Is… — RuPaul</span>
+      <span class="spotify-track-tag">Fashion Killa — A$AP Rocky</span>
+      <span class="spotify-track-tag">+ more</span>
+    </div>
+    <a id="spotify-cta" href="https://open.spotify.com/playlist/0YBMWmwqM5DrQMIzCj0qRm" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      Open in Spotify
+    </a>
+    <button id="spotify-dismiss" onclick="closeSpotify()">Back to styling</button>
+  </div>
 </div>
 
 <div id="canvas">
@@ -484,6 +668,17 @@
 </div>
 
 <script>
+// ── SPOTIFY MODAL ──
+function openSpotify() {
+  document.getElementById('spotify-modal').classList.add('show');
+}
+function closeSpotify() {
+  document.getElementById('spotify-modal').classList.remove('show');
+}
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('spotify-backdrop')) closeSpotify();
+}
+
 // ── FULL WARDROBE DATA ──
 const categories = [
   {
@@ -792,7 +987,6 @@ const categories = [
   },
 ];
 
-// ── VERDICTS ──
 const verdicts = {
   'Y2K downtown': { line: "Low-rise and unbothered.", sub: "You skipped the revival and went straight to the source." },
   'Y2K revival': { line: "You time-traveled and packed light.", sub: "Butterfly clips optional, attitude mandatory." },
@@ -937,67 +1131,43 @@ const verdicts = {
   'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
 };
 
-// ── STATE ──
 let activeCategory = categories[0].id;
 const onCanvas = {};
 let zCounter = 10;
 let searchMode = false;
-let searchResults = [];
 
-// ── IMAGE LOOKUP ──
 const IMG_DIR = '';
 const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
 
 function slugify(name) {
-  return name
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 function imgPathCandidates(name) {
   const slug = slugify(name);
-  const candidates = [];
-  IMG_EXTENSIONS.forEach(ext => candidates.push(IMG_DIR + slug + '.' + ext));
-  return candidates;
-}
-
-function imgPath(name) {
-  return imgPathCandidates(name)[0];
+  return IMG_EXTENSIONS.map(ext => IMG_DIR + slug + '.' + ext);
 }
 
 function setupImgFallback(imgEl, name) {
   const candidates = imgPathCandidates(name);
   let i = 0;
   imgEl.src = candidates[i];
-  
   imgEl.onerror = function() {
     i++;
-    if (i < candidates.length) {
-      imgEl.src = candidates[i];
-    } else {
-      const placeholderText = encodeURIComponent(name);
-      imgEl.src = `https://placehold.co/200x200/e8e4df/9a9390.png?text=${placeholderText}`;
-      imgEl.style.display = 'block';
-      imgEl.onerror = null; 
+    if (i < candidates.length) { imgEl.src = candidates[i]; }
+    else {
+      imgEl.src = `https://placehold.co/200x200/e8e4df/9a9390.png?text=${encodeURIComponent(name)}`;
+      imgEl.onerror = null;
     }
-  };
-  
-  imgEl.onload = function() {
-    imgEl.style.display = 'block';
   };
 }
 
-// ── VERDICT MAP ──
 const verdictMap = {};
 categories.forEach(cat => cat.items.forEach(item => {
   verdictMap[cat.id + '_' + item.name.replace(/\s+/g, '_')] = item.vibe;
 }));
 
-// ── INIT ──
-function init() {
-  renderTabs();
-  renderGrid(activeCategory);
-}
+function init() { renderTabs(); renderGrid(activeCategory); }
 
 function renderTabs() {
   const el = document.getElementById('cat-tabs');
@@ -1027,11 +1197,7 @@ function renderGrid(catId, items) {
     const card = document.createElement('div');
     card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : '');
     card.id = 'gi-' + uid;
-    card.innerHTML = `
-      <div class="gi-visual">
-        <img alt="${item.name}">
-      </div>
-      <div class="gi-name">${item.name}</div>`;
+    card.innerHTML = `<div class="gi-visual"><img alt="${item.name}"></div><div class="gi-name">${item.name}</div>`;
     setupImgFallback(card.querySelector('img'), item.name);
     if (item.color) {
       const dot = document.createElement('div');
@@ -1056,7 +1222,6 @@ function handleSearch(query) {
       }
     });
   });
-  searchResults = results;
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
   renderGrid(null, results);
 }
@@ -1077,54 +1242,42 @@ function toggleItem(uid, item, catId) {
 function addToCanvas(uid, item, catId) {
   const canvas = document.getElementById('canvas');
   document.getElementById('canvas-empty').style.display = 'none';
-
   const el = document.createElement('div');
   el.className = 'on-canvas';
   el.id = 'oc-' + uid;
   el.style.width = item.w + 'px';
   el.style.height = item.h + 'px';
   el.style.zIndex = zCounter++;
-
   const cx = canvas.offsetWidth / 2 - item.w / 2 + (Math.random() - 0.5) * 80;
   const cy = canvas.offsetHeight / 2 - item.h / 2 + (Math.random() - 0.5) * 60;
   el.style.left = Math.max(0, cx) + 'px';
   el.style.top = Math.max(0, cy) + 'px';
-
   const state = { rotation: 0, scale: 1 };
-
   const spin = document.createElement('div');
   spin.className = 'oc-spin';
-
   const inner = document.createElement('div');
   inner.className = 'oc-visual';
-  inner.innerHTML = `
-    <img alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain;">`;
+  inner.innerHTML = `<img alt="${item.name}" style="width:100%;height:100%;object-fit:contain;">`;
   setupImgFallback(inner.querySelector('img'), item.name);
   spin.appendChild(inner);
   el.appendChild(spin);
-
   const rm = document.createElement('button');
   rm.className = 'remove-btn';
   rm.textContent = '✕';
   rm.onclick = (e) => { e.stopPropagation(); removeFromCanvas(uid); };
   el.appendChild(rm);
-
   const stem = document.createElement('div');
   stem.className = 'rotate-stem';
   el.appendChild(stem);
-
   const rotateHandle = document.createElement('div');
   rotateHandle.className = 'rotate-handle';
   rotateHandle.textContent = '↻';
   el.appendChild(rotateHandle);
-
   const resizeHandle = document.createElement('div');
   resizeHandle.className = 'resize-handle';
   el.appendChild(resizeHandle);
-
   canvas.appendChild(el);
   setupTransforms(el, spin, rotateHandle, resizeHandle, state);
-
   onCanvas[uid] = { el, item, state };
   updateGridCard(uid, true);
   updateCount();
@@ -1136,9 +1289,7 @@ function removeFromCanvas(uid) {
   delete onCanvas[uid];
   updateGridCard(uid, false);
   updateCount();
-  if (Object.keys(onCanvas).length === 0) {
-    document.getElementById('canvas-empty').style.display = 'block';
-  }
+  if (Object.keys(onCanvas).length === 0) document.getElementById('canvas-empty').style.display = 'block';
 }
 
 function updateGridCard(uid, active) {
@@ -1151,141 +1302,62 @@ function updateCount() {
   document.getElementById('canvas-count').textContent = n === 0 ? '' : n + (n === 1 ? ' piece' : ' pieces');
 }
 
-// ── DRAG / ROTATE / RESIZE ──
-const MIN_SCALE = 0.4;
-const MAX_SCALE = 2.5;
-
+const MIN_SCALE = 0.4, MAX_SCALE = 2.5;
 function applySpinTransform(spin, state) {
   spin.style.transform = `rotate(${state.rotation}deg) scale(${state.scale})`;
 }
 
 function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
-  let mode = null; 
-  let startX, startY, origLeft, origTop;
-  let centerX, centerY, startAngle, startRotation;
-  let startDist, startScale;
+  let mode = null, startX, startY, origLeft, origTop;
+  let centerX, centerY, startAngle, startRotation, startDist, startScale;
 
   function getCenter() {
     const rect = el.getBoundingClientRect();
     return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
-
-  function onDragStart(x, y) {
-    mode = 'drag';
-    startX = x; startY = y;
-    origLeft = parseInt(el.style.left) || 0;
-    origTop = parseInt(el.style.top) || 0;
-    el.style.zIndex = zCounter++;
-  }
-  function onRotateStart(x, y) {
-    mode = 'rotate';
-    el.style.zIndex = zCounter++;
-    const c = getCenter();
-    centerX = c.x; centerY = c.y;
-    startAngle = Math.atan2(y - centerY, x - centerX) * 180 / Math.PI;
-    startRotation = state.rotation;
-  }
-  function onResizeStart(x, y) {
-    mode = 'resize';
-    el.style.zIndex = zCounter++;
-    const c = getCenter();
-    centerX = c.x; centerY = c.y;
-    startDist = Math.hypot(x - centerX, y - centerY);
-    startScale = state.scale;
-  }
+  function onDragStart(x, y) { mode = 'drag'; startX = x; startY = y; origLeft = parseInt(el.style.left)||0; origTop = parseInt(el.style.top)||0; el.style.zIndex = zCounter++; }
+  function onRotateStart(x, y) { mode = 'rotate'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startAngle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; startRotation = state.rotation; }
+  function onResizeStart(x, y) { mode = 'resize'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startDist = Math.hypot(x-centerX, y-centerY); startScale = state.scale; }
   function onMove(x, y) {
-    if (mode === 'drag') {
-      el.style.left = (origLeft + x - startX) + 'px';
-      el.style.top = (origTop + y - startY) + 'px';
-    } else if (mode === 'rotate') {
-      const angle = Math.atan2(y - centerY, x - centerX) * 180 / Math.PI;
-      state.rotation = startRotation + (angle - startAngle);
-      applySpinTransform(spin, state);
-    } else if (mode === 'resize') {
-      const dist = Math.hypot(x - centerX, y - centerY);
-      const ratio = dist / (startDist || 1);
-      state.scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, startScale * ratio));
-      applySpinTransform(spin, state);
-    }
+    if (mode === 'drag') { el.style.left = (origLeft+x-startX)+'px'; el.style.top = (origTop+y-startY)+'px'; }
+    else if (mode === 'rotate') { const angle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; state.rotation = startRotation+(angle-startAngle); applySpinTransform(spin, state); }
+    else if (mode === 'resize') { const dist = Math.hypot(x-centerX, y-centerY); state.scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, startScale*dist/(startDist||1))); applySpinTransform(spin, state); }
   }
-  function onEnd() {
-    mode = null;
-  }
+  function onEnd() { mode = null; }
 
-  el.addEventListener('touchstart', e => {
-    if (e.target === rotateHandle || e.target === resizeHandle || e.target.classList.contains('remove-btn')) return;
-    const t = e.touches[0];
-    onDragStart(t.clientX, t.clientY);
-  }, { passive: true });
-  el.addEventListener('mousedown', e => {
-    if (e.target === rotateHandle || e.target === resizeHandle || e.target.classList.contains('remove-btn')) return;
-    onDragStart(e.clientX, e.clientY);
-  });
-
-  rotateHandle.addEventListener('touchstart', e => {
-    e.stopPropagation();
-    const t = e.touches[0];
-    onRotateStart(t.clientX, t.clientY);
-  }, { passive: true });
-  rotateHandle.addEventListener('mousedown', e => {
-    e.stopPropagation();
-    onRotateStart(e.clientX, e.clientY);
-  });
-
-  resizeHandle.addEventListener('touchstart', e => {
-    e.stopPropagation();
-    const t = e.touches[0];
-    onResizeStart(t.clientX, t.clientY);
-  }, { passive: true });
-  resizeHandle.addEventListener('mousedown', e => {
-    e.stopPropagation();
-    onResizeStart(e.clientX, e.clientY);
-  });
-
-  el.addEventListener('touchmove', e => {
-    if (!mode) return;
-    e.preventDefault();
-    const t = e.touches[0];
-    onMove(t.clientX, t.clientY);
-  }, { passive: false });
+  el.addEventListener('touchstart', e => { if (e.target===rotateHandle||e.target===resizeHandle||e.target.classList.contains('remove-btn')) return; const t=e.touches[0]; onDragStart(t.clientX,t.clientY); }, {passive:true});
+  el.addEventListener('mousedown', e => { if (e.target===rotateHandle||e.target===resizeHandle||e.target.classList.contains('remove-btn')) return; onDragStart(e.clientX,e.clientY); });
+  rotateHandle.addEventListener('touchstart', e => { e.stopPropagation(); const t=e.touches[0]; onRotateStart(t.clientX,t.clientY); }, {passive:true});
+  rotateHandle.addEventListener('mousedown', e => { e.stopPropagation(); onRotateStart(e.clientX,e.clientY); });
+  resizeHandle.addEventListener('touchstart', e => { e.stopPropagation(); const t=e.touches[0]; onResizeStart(t.clientX,t.clientY); }, {passive:true});
+  resizeHandle.addEventListener('mousedown', e => { e.stopPropagation(); onResizeStart(e.clientX,e.clientY); });
+  el.addEventListener('touchmove', e => { if (!mode) return; e.preventDefault(); const t=e.touches[0]; onMove(t.clientX,t.clientY); }, {passive:false});
   el.addEventListener('touchend', onEnd);
-  window.addEventListener('mousemove', e => { if (mode) onMove(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', e => { if (mode) onMove(e.clientX,e.clientY); });
   window.addEventListener('mouseup', () => { if (mode) onEnd(); });
 }
 
-// ── DRAWER ──
 let drawerOpen = true;
 function toggleDrawer() {
   drawerOpen = !drawerOpen;
   const drawer = document.getElementById('drawer');
   drawer.classList.toggle('collapsed', !drawerOpen);
-  const tabs = document.getElementById('cat-tabs');
-  const grid = document.getElementById('item-grid');
-  const search = document.getElementById('search-row');
-  [tabs, grid, search].forEach(el => el.style.display = drawerOpen ? '' : 'none');
+  ['cat-tabs','item-grid','search-row'].forEach(id => document.getElementById(id).style.display = drawerOpen ? '' : 'none');
   document.getElementById('drawer-toggle').textContent = drawerOpen ? '▲' : '▼';
 }
 
-// ── VERDICT ──
 function showVerdict() {
   const vibes = Object.keys(onCanvas).map(uid => verdictMap[uid]).filter(Boolean);
   if (vibes.length === 0) { alert("Add some pieces first!"); return; }
-
   const freq = {};
-  vibes.forEach(v => freq[v] = (freq[v] || 0) + 1);
-  
+  vibes.forEach(v => freq[v] = (freq[v]||0)+1);
   let maxFreq = 0;
-  for (let v in freq) {
-    if (freq[v] > maxFreq) maxFreq = freq[v];
-  }
-  
+  for (let v in freq) if (freq[v] > maxFreq) maxFreq = freq[v];
   const topVibes = Object.keys(freq).filter(v => freq[v] === maxFreq);
-  const top = topVibes[Math.floor(Math.random() * topVibes.length)];
+  const top = topVibes[Math.floor(Math.random()*topVibes.length)];
   const v = verdicts[top] || verdicts['default'];
-
   document.getElementById('verdict-text').textContent = v.line;
   document.getElementById('verdict-sub').textContent = v.sub;
-
   const tagsEl = document.getElementById('verdict-pieces');
   tagsEl.innerHTML = '';
   Object.keys(onCanvas).forEach(uid => {
@@ -1295,23 +1367,15 @@ function showVerdict() {
     tag.textContent = item.name;
     tagsEl.appendChild(tag);
   });
-
   document.getElementById('verdict-overlay').classList.add('show');
 }
 
-function closeVerdict() {
-  document.getElementById('verdict-overlay').classList.remove('show');
-}
+function closeVerdict() { document.getElementById('verdict-overlay').classList.remove('show'); }
 
-function shareToTelegram() {
-  window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank');
-}
+function shareToTelegram() { window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank'); }
 
 function downloadLook() {
-  if (typeof html2canvas === 'undefined') {
-    alert("Couldn't load the screenshot tool — try taking a regular screenshot instead.");
-    return;
-  }
+  if (typeof html2canvas === 'undefined') { alert("Couldn't load the screenshot tool — try taking a regular screenshot instead."); return; }
   const canvasEl = document.getElementById('canvas');
   const btn = document.getElementById('verdict-download');
   const original = btn.textContent;
@@ -1324,18 +1388,13 @@ function downloadLook() {
     link.download = 'my-dream-look.png';
     link.href = rendered.toDataURL('image/png');
     link.click();
-  }).catch(() => {
-    canvasEl.classList.remove('capturing');
-    btn.textContent = original;
-    alert("Couldn't save the image — try taking a regular screenshot instead.");
-  });
+  }).catch(() => { canvasEl.classList.remove('capturing'); btn.textContent = original; alert("Couldn't save — try a regular screenshot."); });
 }
 
 function copyLookList() {
   const pieces = Object.keys(onCanvas).map(uid => onCanvas[uid].item.name);
-  if (pieces.length === 0) return;
-  const text = 'My dream look: ' + pieces.join(', ');
-  navigator.clipboard?.writeText(text).then(() => {
+  if (!pieces.length) return;
+  navigator.clipboard?.writeText('My dream look: ' + pieces.join(', ')).then(() => {
     const btn = document.getElementById('verdict-copy');
     const original = btn.textContent;
     btn.textContent = 'Copied ✓';
