@@ -439,7 +439,7 @@
 
   .grid-item {
     flex: 0 0 auto;
-    width: 72px;
+    width: 76px; /* slightly widened to fit vibe text */
     background: #252118;
     border: 1px solid var(--drawer-border);
     border-radius: 5px;
@@ -449,7 +449,7 @@
     justify-content: flex-start;
     cursor: pointer;
     transition: border-color 0.15s;
-    padding: 6px 4px 5px;
+    padding: 6px 4px 6px;
     position: relative;
   }
   .grid-item:active { transform: scale(0.96); }
@@ -466,13 +466,24 @@
     font-size: 0.44rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #555;
-    margin-top: 4px;
+    color: #ccc;
+    margin-top: 6px;
     text-align: center;
     line-height: 1.3;
     width: 100%;
   }
-  .grid-item.on-board .gi-name { color: var(--accent); }
+  .grid-item .gi-vibe {
+    font-size: 0.38rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6a6460;
+    margin-top: 2px;
+    text-align: center;
+    line-height: 1.2;
+    width: 100%;
+  }
+  .grid-item.on-board .gi-name,
+  .grid-item.on-board .gi-vibe { color: var(--accent); }
   .grid-item .gi-color-dot {
     width: 6px;
     height: 6px;
@@ -606,7 +617,6 @@
   </div>
 </div>
 
-<!-- Spotify Modal -->
 <div id="spotify-modal" onclick="handleBackdropClick(event)">
   <div id="spotify-backdrop"></div>
   <div id="spotify-sheet">
@@ -972,6 +982,7 @@ const categories = [
     id: 'iconic', label: 'Iconic Pieces',
     items: [
       { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
+      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 }, /* Added iconic Dangerous Woman ears! */
       { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
       { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
       { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
@@ -1014,6 +1025,7 @@ const verdicts = {
   'cosy rich': { line: "Expensive blankets, quietly bigger feelings.", sub: "Warm color, warmer bank balance." },
   'dangerous': { line: "Looks like trouble. Reads like intention.", sub: "Nothing about this outfit is an accident." },
   'dangerous romantic': { line: "Love letters written in something sharper than ink.", sub: "Beautiful, and a little bit of a warning." },
+  'dangerous woman': { line: "You came, you saw, you left with the album.", sub: "Soft on the surface. A whole era underneath." },
   'dark cowgirl': { line: "The frontier, after dark.", sub: "Boots that have clearly seen things." },
   'dark romantic': { line: "Beautiful and faintly ominous.", sub: "This is journal-entry dressing, and the entry is very good." },
   'delicate': { line: "Small details doing enormous work.", sub: "Subtlety as a flex." },
@@ -1197,7 +1209,10 @@ function renderGrid(catId, items) {
     const card = document.createElement('div');
     card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : '');
     card.id = 'gi-' + uid;
-    card.innerHTML = `<div class="gi-visual"><img alt="${item.name}"></div><div class="gi-name">${item.name}</div>`;
+    
+    /* Vibe titles added on hover & visually below the name */
+    card.innerHTML = `<div class="gi-visual"><img alt="${item.name}" title="Vibe: ${item.vibe}"></div><div class="gi-name">${item.name}</div><div class="gi-vibe">${item.vibe}</div>`;
+    
     setupImgFallback(card.querySelector('img'), item.name);
     if (item.color) {
       const dot = document.createElement('div');
@@ -1257,7 +1272,7 @@ function addToCanvas(uid, item, catId) {
   spin.className = 'oc-spin';
   const inner = document.createElement('div');
   inner.className = 'oc-visual';
-  inner.innerHTML = `<img alt="${item.name}" style="width:100%;height:100%;object-fit:contain;">`;
+  inner.innerHTML = `<img alt="${item.name}" title="Vibe: ${item.vibe}" style="width:100%;height:100%;object-fit:contain;">`;
   setupImgFallback(inner.querySelector('img'), item.name);
   spin.appendChild(inner);
   el.appendChild(spin);
