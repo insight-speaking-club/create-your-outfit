@@ -261,6 +261,44 @@
     color: var(--muted);
   }
 
+  /* ── CAPTURE WATERMARK (Only shows when downloading) ── */
+  #capture-verdict {
+    display: none;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 1.5rem 2rem;
+    border-radius: 6px;
+    border: 1px solid rgba(194, 168, 130, 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    z-index: 1000;
+    width: 85%;
+    max-width: 450px;
+  }
+  #canvas.capturing #capture-verdict {
+    display: block;
+  }
+  #capture-verdict-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  #capture-verdict-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
   .on-canvas {
     position: absolute;
     cursor: grab;
@@ -439,7 +477,7 @@
 
   .grid-item {
     flex: 0 0 auto;
-    width: 76px; /* slightly widened to fit vibe text */
+    width: 76px;
     background: #252118;
     border: 1px solid var(--drawer-border);
     border-radius: 5px;
@@ -617,6 +655,7 @@
   </div>
 </div>
 
+<!-- Spotify Modal -->
 <div id="spotify-modal" onclick="handleBackdropClick(event)">
   <div id="spotify-backdrop"></div>
   <div id="spotify-sheet">
@@ -649,6 +688,12 @@
   <div id="canvas-empty">
     <div class="big-label">Your look, your rules.</div>
     <p>Tap pieces below to style</p>
+  </div>
+  
+  <!-- This only shows up in the downloaded screenshot -->
+  <div id="capture-verdict">
+    <div id="capture-verdict-title"></div>
+    <div id="capture-verdict-sub"></div>
   </div>
 </div>
 
@@ -982,7 +1027,7 @@ const categories = [
     id: 'iconic', label: 'Iconic Pieces',
     items: [
       { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
-      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 }, /* Added iconic Dangerous Woman ears! */
+      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
       { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
       { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
       { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
@@ -1147,6 +1192,7 @@ let activeCategory = categories[0].id;
 const onCanvas = {};
 let zCounter = 10;
 let searchMode = false;
+let currentVerdict = null;
 
 const IMG_DIR = '';
 const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
@@ -1210,7 +1256,6 @@ function renderGrid(catId, items) {
     card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : '');
     card.id = 'gi-' + uid;
     
-    /* Vibe titles added on hover & visually below the name */
     card.innerHTML = `<div class="gi-visual"><img alt="${item.name}" title="Vibe: ${item.vibe}"></div><div class="gi-name">${item.name}</div><div class="gi-vibe">${item.vibe}</div>`;
     
     setupImgFallback(card.querySelector('img'), item.name);
@@ -1361,18 +1406,25 @@ function toggleDrawer() {
   document.getElementById('drawer-toggle').textContent = drawerOpen ? '▲' : '▼';
 }
 
-function showVerdict() {
+function calculateVerdict() {
   const vibes = Object.keys(onCanvas).map(uid => verdictMap[uid]).filter(Boolean);
-  if (vibes.length === 0) { alert("Add some pieces first!"); return; }
+  if (vibes.length === 0) return null;
   const freq = {};
   vibes.forEach(v => freq[v] = (freq[v]||0)+1);
   let maxFreq = 0;
   for (let v in freq) if (freq[v] > maxFreq) maxFreq = freq[v];
   const topVibes = Object.keys(freq).filter(v => freq[v] === maxFreq);
   const top = topVibes[Math.floor(Math.random()*topVibes.length)];
-  const v = verdicts[top] || verdicts['default'];
-  document.getElementById('verdict-text').textContent = v.line;
-  document.getElementById('verdict-sub').textContent = v.sub;
+  return verdicts[top] || verdicts['default'];
+}
+
+function showVerdict() {
+  if (Object.keys(onCanvas).length === 0) { alert("Add some pieces first!"); return; }
+  currentVerdict = calculateVerdict();
+  
+  document.getElementById('verdict-text').textContent = currentVerdict.line;
+  document.getElementById('verdict-sub').textContent = currentVerdict.sub;
+  
   const tagsEl = document.getElementById('verdict-pieces');
   tagsEl.innerHTML = '';
   Object.keys(onCanvas).forEach(uid => {
@@ -1391,19 +1443,41 @@ function shareToTelegram() { window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_bla
 
 function downloadLook() {
   if (typeof html2canvas === 'undefined') { alert("Couldn't load the screenshot tool — try taking a regular screenshot instead."); return; }
+  
   const canvasEl = document.getElementById('canvas');
   const btn = document.getElementById('verdict-download');
   const original = btn.textContent;
   btn.textContent = 'Saving…';
+  
+  // Prep the watermark text
+  if (!currentVerdict) currentVerdict = calculateVerdict();
+  if (currentVerdict) {
+    document.getElementById('capture-verdict-title').textContent = currentVerdict.line;
+    document.getElementById('capture-verdict-sub').textContent = currentVerdict.sub;
+  }
+
+  // Turn on the capturing mode (hides UI handles and shows the watermark)
   canvasEl.classList.add('capturing');
-  html2canvas(canvasEl, { backgroundColor: '#ffffff', useCORS: true }).then(rendered => {
-    canvasEl.classList.remove('capturing');
-    btn.textContent = original;
-    const link = document.createElement('a');
-    link.download = 'my-dream-look.png';
-    link.href = rendered.toDataURL('image/png');
-    link.click();
-  }).catch(() => { canvasEl.classList.remove('capturing'); btn.textContent = original; alert("Couldn't save — try a regular screenshot."); });
+  
+  // Wait a tiny bit to make sure the font has rendered and the CSS is applied before snapping the photo
+  setTimeout(() => {
+    html2canvas(canvasEl, { 
+      backgroundColor: '#ffffff', 
+      useCORS: true,
+      scale: 2 // High resolution to stop images from stretching
+    }).then(rendered => {
+      canvasEl.classList.remove('capturing');
+      btn.textContent = original;
+      const link = document.createElement('a');
+      link.download = 'my-dream-look.png';
+      link.href = rendered.toDataURL('image/png');
+      link.click();
+    }).catch(() => { 
+      canvasEl.classList.remove('capturing'); 
+      btn.textContent = original; 
+      alert("Couldn't save — try a regular screenshot."); 
+    });
+  }, 100);
 }
 
 function copyLookList() {
