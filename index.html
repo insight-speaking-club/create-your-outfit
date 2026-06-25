@@ -47,22 +47,11 @@
     font-family: 'Playfair Display', serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: var(--ink);
     letter-spacing: 0.02em;
   }
-  #topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    min-width: 60px;
-  }
-  #canvas-count {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-  }
+  
   #verdict-btn {
     font-family: 'DM Sans', sans-serif;
     font-weight: 500;
@@ -81,29 +70,30 @@
 
   /* ── HEADPHONE BUTTON ── */
   #headphone-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 1.5px solid var(--rail);
-    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    background: rgba(194,168,130,0.15);
+    color: var(--ink);
+    border: 1px solid rgba(194,168,130,0.4);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    flex-shrink: 0;
+    gap: 0.4rem;
+    transition: background 0.2s;
   }
   #headphone-btn:hover {
-    border-color: var(--ink);
-    background: var(--rail);
+    background: rgba(194,168,130,0.3);
   }
   #headphone-btn svg {
     width: 14px;
     height: 14px;
-    fill: var(--muted);
-    transition: fill 0.2s;
+    fill: var(--ink);
   }
-  #headphone-btn:hover svg { fill: var(--ink); }
 
   /* ── SPOTIFY MODAL ── */
   #spotify-modal {
@@ -261,44 +251,6 @@
     color: var(--muted);
   }
 
-  /* ── CAPTURE WATERMARK (Only shows when downloading) ── */
-  #capture-verdict {
-    display: none;
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 1.5rem 2rem;
-    border-radius: 6px;
-    border: 1px solid rgba(194, 168, 130, 0.3);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    z-index: 1000;
-    width: 85%;
-    max-width: 450px;
-  }
-  #canvas.capturing #capture-verdict {
-    display: block;
-  }
-  #capture-verdict-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-  #capture-verdict-sub {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-  }
-
   .on-canvas {
     position: absolute;
     cursor: grab;
@@ -322,7 +274,17 @@
     pointer-events: none;
     display: block;
   }
-  .on-canvas .remove-btn {
+  
+  /* HIDE ALL UI CONTROLS BY DEFAULT */
+  .on-canvas .remove-btn,
+  .on-canvas .resize-handle,
+  .on-canvas .rotate-handle,
+  .on-canvas .rotate-stem { 
+    display: none; 
+  }
+
+  /* ONLY SHOW CONTROLS WHEN ITEM IS ACTIVE */
+  .on-canvas.active-item .remove-btn {
     position: absolute;
     top: -8px;
     right: -8px;
@@ -339,12 +301,7 @@
     justify-content: center;
     z-index: 5;
   }
-  #canvas.capturing .remove-btn,
-  #canvas.capturing .resize-handle,
-  #canvas.capturing .rotate-handle,
-  #canvas.capturing .rotate-stem { display: none !important; }
-
-  .on-canvas .resize-handle {
+  .on-canvas.active-item .resize-handle {
     position: absolute;
     bottom: -9px;
     right: -9px;
@@ -360,14 +317,14 @@
     justify-content: center;
     touch-action: none;
   }
-  .on-canvas .resize-handle::before {
+  .on-canvas.active-item .resize-handle::before {
     content: '';
     width: 7px;
     height: 7px;
     border-right: 1.5px solid var(--ink);
     border-bottom: 1.5px solid var(--ink);
   }
-  .on-canvas .rotate-stem {
+  .on-canvas.active-item .rotate-stem {
     position: absolute;
     top: -28px;
     left: 50%;
@@ -376,8 +333,9 @@
     background: var(--muted);
     transform: translateX(-50%);
     z-index: 5;
+    display: block;
   }
-  .on-canvas .rotate-handle {
+  .on-canvas.active-item .rotate-handle {
     position: absolute;
     top: -42px;
     left: 50%;
@@ -395,7 +353,13 @@
     font-size: 0.62rem;
     touch-action: none;
   }
-  .on-canvas .rotate-handle:active { cursor: grabbing; }
+  .on-canvas.active-item .rotate-handle:active { cursor: grabbing; }
+
+  /* Ensure they are totally hidden during capture just in case */
+  #canvas.capturing .remove-btn,
+  #canvas.capturing .resize-handle,
+  #canvas.capturing .rotate-handle,
+  #canvas.capturing .rotate-stem { display: none !important; }
 
   /* ── DRAWER ── */
   #drawer {
@@ -622,8 +586,8 @@
     padding: 0.7rem 1.4rem;
     border-radius: 2px;
     cursor: pointer;
-    max-width: 260px;
-    line-height: 1.4;
+    max-width: 320px; /* Widened for longer text */
+    line-height: 1.5;
   }
   #verdict-close {
     background: none;
@@ -641,15 +605,13 @@
 <body>
 
 <div id="topbar">
-  <div id="topbar-left">
-    <span id="canvas-count"></span>
-  </div>
   <h1>Dream Closet</h1>
   <div style="display:flex;align-items:center;gap:0.5rem;">
     <button id="headphone-btn" onclick="openSpotify()" aria-label="Fashion playlist">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 3C7.03 3 3 7.03 3 12v5c0 1.1.9 2 2 2h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H5v-1c0-3.87 3.13-7 7-7s7 3.13 7 7v1h-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1c1.1 0 2-.9 2-2v-5c0-4.97-4.03-9-9-9z"/>
       </svg>
+      Playlist
     </button>
     <button id="verdict-btn" onclick="showVerdict()">Reveal My Vibe</button>
   </div>
@@ -689,17 +651,11 @@
     <div class="big-label">Your look, your rules.</div>
     <p>Tap pieces below to style</p>
   </div>
-  
-  <!-- This only shows up in the downloaded screenshot -->
-  <div id="capture-verdict">
-    <div id="capture-verdict-title"></div>
-    <div id="capture-verdict-sub"></div>
-  </div>
 </div>
 
 <div id="drawer">
   <div id="drawer-handle" onclick="toggleDrawer()">
-    <span>Wardrobe</span>
+    <span>Closet</span>
     <span id="drawer-toggle">▲</span>
   </div>
   <div id="search-row">
@@ -717,7 +673,7 @@
   <div id="verdict-actions">
     <button class="verdict-secondary" id="verdict-download" onclick="downloadLook()">Save a photo of this look 'cuz u got taste, girl </button>
     <button class="verdict-secondary" id="verdict-copy" onclick="copyLookList()">Copy items to clipboard </button>
-    <button id="verdict-share" onclick="shareToTelegram()">Please send to the Vogue Committee on Telegram (cuz I wanna see it)  </button>
+    <button id="verdict-share" onclick="shareToTelegram()">Finally! Come out of the closet and share your outfit with the Vogue Committee (plz, i wanna see it).</button>
   </div>
   <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended) </button>
 </div>
@@ -1225,6 +1181,14 @@ categories.forEach(cat => cat.items.forEach(item => {
   verdictMap[cat.id + '_' + item.name.replace(/\s+/g, '_')] = item.vibe;
 }));
 
+// Deselects pieces when clicking empty canvas
+document.getElementById('canvas').addEventListener('mousedown', function(e) {
+  if (e.target === this || e.target.id === 'canvas-empty') setActive(null);
+});
+document.getElementById('canvas').addEventListener('touchstart', function(e) {
+  if (e.target === this || e.target.id === 'canvas-empty') setActive(null);
+}, {passive: true});
+
 function init() { renderTabs(); renderGrid(activeCategory); }
 
 function renderTabs() {
@@ -1294,6 +1258,14 @@ function clearSearch() {
   renderGrid(activeCategory);
 }
 
+function setActive(uid) {
+  document.querySelectorAll('.on-canvas').forEach(el => el.classList.remove('active-item'));
+  if (uid && onCanvas[uid]) {
+    onCanvas[uid].el.classList.add('active-item');
+    onCanvas[uid].el.style.zIndex = zCounter++;
+  }
+}
+
 function toggleItem(uid, item, catId) {
   if (onCanvas[uid]) removeFromCanvas(uid);
   else addToCanvas(uid, item, catId);
@@ -1337,10 +1309,10 @@ function addToCanvas(uid, item, catId) {
   resizeHandle.className = 'resize-handle';
   el.appendChild(resizeHandle);
   canvas.appendChild(el);
-  setupTransforms(el, spin, rotateHandle, resizeHandle, state);
+  setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid);
   onCanvas[uid] = { el, item, state };
   updateGridCard(uid, true);
-  updateCount();
+  setActive(uid); // Make active when added
 }
 
 function removeFromCanvas(uid) {
@@ -1348,7 +1320,6 @@ function removeFromCanvas(uid) {
   onCanvas[uid].el.remove();
   delete onCanvas[uid];
   updateGridCard(uid, false);
-  updateCount();
   if (Object.keys(onCanvas).length === 0) document.getElementById('canvas-empty').style.display = 'block';
 }
 
@@ -1357,17 +1328,12 @@ function updateGridCard(uid, active) {
   if (card) card.classList.toggle('on-board', active);
 }
 
-function updateCount() {
-  const n = Object.keys(onCanvas).length;
-  document.getElementById('canvas-count').textContent = n === 0 ? '' : n + (n === 1 ? ' piece' : ' pieces');
-}
-
 const MIN_SCALE = 0.4, MAX_SCALE = 2.5;
 function applySpinTransform(spin, state) {
   spin.style.transform = `rotate(${state.rotation}deg) scale(${state.scale})`;
 }
 
-function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
+function setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid) {
   let mode = null, startX, startY, origLeft, origTop;
   let centerX, centerY, startAngle, startRotation, startDist, startScale;
 
@@ -1375,9 +1341,18 @@ function setupTransforms(el, spin, rotateHandle, resizeHandle, state) {
     const rect = el.getBoundingClientRect();
     return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
-  function onDragStart(x, y) { mode = 'drag'; startX = x; startY = y; origLeft = parseInt(el.style.left)||0; origTop = parseInt(el.style.top)||0; el.style.zIndex = zCounter++; }
-  function onRotateStart(x, y) { mode = 'rotate'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startAngle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; startRotation = state.rotation; }
-  function onResizeStart(x, y) { mode = 'resize'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startDist = Math.hypot(x-centerX, y-centerY); startScale = state.scale; }
+  function onDragStart(x, y) { 
+    setActive(uid);
+    mode = 'drag'; startX = x; startY = y; origLeft = parseInt(el.style.left)||0; origTop = parseInt(el.style.top)||0; el.style.zIndex = zCounter++; 
+  }
+  function onRotateStart(x, y) { 
+    setActive(uid);
+    mode = 'rotate'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startAngle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; startRotation = state.rotation; 
+  }
+  function onResizeStart(x, y) { 
+    setActive(uid);
+    mode = 'resize'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startDist = Math.hypot(x-centerX, y-centerY); startScale = state.scale; 
+  }
   function onMove(x, y) {
     if (mode === 'drag') { el.style.left = (origLeft+x-startX)+'px'; el.style.top = (origTop+y-startY)+'px'; }
     else if (mode === 'rotate') { const angle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; state.rotation = startRotation+(angle-startAngle); applySpinTransform(spin, state); }
@@ -1449,17 +1424,11 @@ function downloadLook() {
   const original = btn.textContent;
   btn.textContent = 'Saving…';
   
-  // Prep the watermark text
-  if (!currentVerdict) currentVerdict = calculateVerdict();
-  if (currentVerdict) {
-    document.getElementById('capture-verdict-title').textContent = currentVerdict.line;
-    document.getElementById('capture-verdict-sub').textContent = currentVerdict.sub;
-  }
-
-  // Turn on the capturing mode (hides UI handles and shows the watermark)
+  // Deselect all items so no icons show in the final shot
+  setActive(null);
+  
   canvasEl.classList.add('capturing');
   
-  // Wait a tiny bit to make sure the font has rendered and the CSS is applied before snapping the photo
   setTimeout(() => {
     html2canvas(canvasEl, { 
       backgroundColor: '#ffffff', 
