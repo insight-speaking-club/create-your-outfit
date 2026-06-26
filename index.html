@@ -403,15 +403,36 @@
   #search-input::placeholder { color: var(--drawer-muted); }
   #search-input:focus { border-color: var(--accent); }
 
+  /* ── UPDATED SUPERCATEGORY TABS ── */
   #cat-tabs {
     display: flex;
     overflow-x: auto;
     padding: 0 1rem 0.5rem;
-    gap: 0.4rem;
+    gap: 1.5rem;
     scrollbar-width: none;
     flex-shrink: 0;
   }
   #cat-tabs::-webkit-scrollbar { display: none; }
+  
+  .super-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .super-header {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 1.05rem;
+    padding-left: 0.2rem;
+  }
+
+  .sub-tabs-row {
+    display: flex;
+    gap: 0.4rem;
+  }
+
   .cat-tab {
     flex: 0 0 auto;
     padding: 0.3rem 0.75rem;
@@ -617,7 +638,6 @@
   </div>
 </div>
 
-<!-- Spotify Modal -->
 <div id="spotify-modal" onclick="handleBackdropClick(event)">
   <div id="spotify-backdrop"></div>
   <div id="spotify-sheet">
@@ -690,8 +710,27 @@ function handleBackdropClick(e) {
   if (e.target === document.getElementById('spotify-backdrop')) closeSpotify();
 }
 
-// ── FULL WARDROBE DATA ──
+// ── FULL WARDROBE DATA (REORDERED WITH ICONIC PIECES FIRST) ──
 const categories = [
+  {
+    id: 'iconic', label: 'Iconic Pieces',
+    items: [
+      { name: "Sasha's bow", color: '#111', vibe: "sasha's bow", w: 80, h: 70 }, // First item!
+      { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
+      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
+      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
+      { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
+      { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
+      { name: 'Cape black', color: '#111', vibe: 'dramatic entrance', w: 140, h: 155 },
+      { name: 'Jumpsuit all-black', color: '#111', vibe: 'effortlessly powerful', w: 105, h: 165 },
+      { name: 'Monogram scarf', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
+      { name: 'Logo belt', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
+      { name: 'Tartan blazer', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
+      { name: 'All-white look trousers', color: '#f0ede8', vibe: 'summer icon', w: 100, h: 145 },
+      { name: 'Power shoulders blazer', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
+      { name: 'Trench mac cropped', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
+    ]
+  },
   {
     id: 'tops-basic', label: 'Basics',
     items: [
@@ -978,28 +1017,11 @@ const categories = [
       { name: 'Oversized blanket scarf', color: '#c2a882', vibe: 'cosy editorial', w: 130, h: 55 },
       { name: 'Satin hair ribbon', color: '#111', vibe: 'feminine touch', w: 80, h: 45 },
     ]
-  },
-  {
-    id: 'iconic', label: 'Iconic Pieces',
-    items: [
-      { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
-      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
-      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
-      { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
-      { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
-      { name: 'Cape black', color: '#111', vibe: 'dramatic entrance', w: 140, h: 155 },
-      { name: 'Jumpsuit all-black', color: '#111', vibe: 'effortlessly powerful', w: 105, h: 165 },
-      { name: 'Monogram scarf', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
-      { name: 'Logo belt', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
-      { name: 'Tartan blazer', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
-      { name: 'All-white look trousers', color: '#f0ede8', vibe: 'summer icon', w: 100, h: 145 },
-      { name: 'Power shoulders blazer', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
-      { name: 'Trench mac cropped', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
-    ]
-  },
+  }
 ];
 
 const verdicts = {
+  "sasha's bow": { line: "You already know what you're doing.", sub: "The bow was never just an accessory." },
   'Y2K downtown': { line: "Low-rise and unbothered.", sub: "You skipped the revival and went straight to the source." },
   'Y2K revival': { line: "You time-traveled and packed light.", sub: "Butterfly clips optional, attitude mandatory." },
   'academic': { line: "Tenure-track, never tenured.", sub: "You dress like the footnotes are more interesting than the essay." },
@@ -1053,7 +1075,7 @@ const verdicts = {
   'fashion-forward': { line: "Six months ahead and not waiting for company.", sub: "Everyone else will catch up eventually." },
   'feminine danger': { line: "Pretty is doing a lot of the threatening here.", sub: "Sheer, soft, and not to be underestimated." },
   'feminine touch': { line: "One small detail, doing all the talking.", sub: "Restraint as its own kind of statement." },
-  'femme': { line: "Femme as a weapon, a language, a stance.", sub: "You know exactly what you're doing with it." },
+  'femme': { line: "Femme as a weapon, a language, a stance.", sub: "You know exactly what youre doing with it." },
   'femme confident': { line: "No performance. Just presence.", sub: "This look doesn't need an audience to work." },
   'french girl': { line: "Classically, maddeningly cool.", sub: "The stripes were always going to be the right call." },
   'french intellectual': { line: "Reads philosophy on the metro, looks incredible doing it.", sub: "Effortless, and charmingly a little condescending." },
@@ -1144,7 +1166,18 @@ const verdicts = {
   'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
 };
 
-let activeCategory = categories[0].id;
+// ── SUPERCATEGORY DEFINITIONS ──
+const supercategories = [
+  { name: "Iconic Pieces", cats: ["iconic"] },
+  { name: "Tops", cats: ["tops-basic", "tops-shirts", "tops-knitwear", "tops-statement"] },
+  { name: "Bottoms", cats: ["bottoms-trousers", "bottoms-jeans", "bottoms-skirts"] },
+  { name: "Dresses & Jumpsuits", cats: ["dresses"] },
+  { name: "Outerwear", cats: ["jackets"] },
+  { name: "Shoes", cats: ["shoes-flat", "shoes-heels"] },
+  { name: "Accessories", cats: ["bags", "belts", "neck", "scarves", "jewellery", "glasses", "hats"] }
+];
+
+let activeCategory = 'iconic'; // Changed default open tab to Iconic
 const onCanvas = {};
 let zCounter = 10;
 let searchMode = false;
@@ -1154,7 +1187,8 @@ const IMG_DIR = '';
 const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
 
 function slugify(name) {
-  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  // Tweaked slugify to strip out apostrophes completely instead of replacing them with hyphens
+  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 function imgPathCandidates(name) {
@@ -1193,19 +1227,43 @@ function init() { renderTabs(); renderGrid(activeCategory); }
 
 function renderTabs() {
   const el = document.getElementById('cat-tabs');
-  categories.forEach(cat => {
-    const tab = document.createElement('div');
-    tab.className = 'cat-tab' + (cat.id === activeCategory ? ' active' : '');
-    tab.textContent = cat.label;
-    tab.id = 'tab-' + cat.id;
-    tab.onclick = () => {
-      if (searchMode) clearSearch();
-      activeCategory = cat.id;
-      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      renderGrid(cat.id);
-    };
-    el.appendChild(tab);
+  el.innerHTML = '';
+  
+  supercategories.forEach(group => {
+    // Super Group Container
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'super-group';
+
+    // Group Header
+    const header = document.createElement('div');
+    header.className = 'super-header';
+    header.textContent = group.name;
+    groupDiv.appendChild(header);
+
+    // Sub Tabs Container
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'sub-tabs-row';
+
+    group.cats.forEach(catId => {
+      const cat = categories.find(c => c.id === catId);
+      if (!cat) return;
+      
+      const tab = document.createElement('div');
+      tab.className = 'cat-tab' + (cat.id === activeCategory ? ' active' : '');
+      tab.textContent = cat.label;
+      tab.id = 'tab-' + cat.id;
+      tab.onclick = () => {
+        if (searchMode) clearSearch();
+        activeCategory = cat.id;
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderGrid(cat.id);
+      };
+      rowDiv.appendChild(tab);
+    });
+
+    groupDiv.appendChild(rowDiv);
+    el.appendChild(groupDiv);
   });
 }
 
@@ -1382,6 +1440,12 @@ function toggleDrawer() {
 }
 
 function calculateVerdict() {
+  // SASHA'S BOW OVERRIDE: If the bow is in the outfit, it instantly commands the verdict
+  if (Object.keys(onCanvas).some(uid => onCanvas[uid].item.name === "Sasha's bow")) {
+    return verdicts["sasha's bow"];
+  }
+
+  // Standard vibe calculation fallback
   const vibes = Object.keys(onCanvas).map(uid => verdictMap[uid]).filter(Boolean);
   if (vibes.length === 0) return null;
   const freq = {};
