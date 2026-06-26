@@ -6,7 +6,7 @@
 <title>Dream Closet</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -41,7 +41,7 @@
     background: var(--bg);
     border-bottom: 1px solid var(--rail);
     flex-shrink: 0;
-    z-index: 10;
+    z-index: 10000;
   }
   #topbar h1 {
     font-family: 'Playfair Display', serif;
@@ -86,21 +86,15 @@
     gap: 0.4rem;
     transition: background 0.2s;
   }
-  #headphone-btn:hover {
-    background: rgba(194,168,130,0.3);
-  }
-  #headphone-btn svg {
-    width: 14px;
-    height: 14px;
-    fill: var(--ink);
-  }
+  #headphone-btn:hover { background: rgba(194,168,130,0.3); }
+  #headphone-btn svg { width: 14px; height: 14px; fill: var(--ink); }
 
   /* ── SPOTIFY MODAL ── */
   #spotify-modal {
     display: none;
     position: fixed;
     inset: 0;
-    z-index: 300;
+    z-index: 2147483647 !important; /* Max integer z-index */
     align-items: flex-end;
     justify-content: center;
     padding-bottom: env(safe-area-inset-bottom);
@@ -125,501 +119,252 @@
     transform: translateY(100%);
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
   }
-  #spotify-modal.show #spotify-sheet {
-    transform: translateY(0);
-  }
+  #spotify-modal.show #spotify-sheet { transform: translateY(0); }
   #spotify-pill {
-    width: 36px;
-    height: 3px;
-    background: #3a3630;
-    border-radius: 2px;
-    margin: 0 auto 1.8rem;
+    width: 36px; height: 3px; background: #3a3630;
+    border-radius: 2px; margin: 0 auto 1.8rem;
   }
   #spotify-eyebrow {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.6rem;
+    text-transform: uppercase; letter-spacing: 0.2em;
+    color: var(--accent); margin-bottom: 0.6rem;
   }
   #spotify-title {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 1.8rem;
-    color: #f0ede8;
-    line-height: 1.15;
-    margin-bottom: 0.9rem;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-weight: 400; font-size: 1.8rem; color: #f0ede8;
+    line-height: 1.15; margin-bottom: 0.9rem;
   }
   #spotify-body {
-    font-size: 0.82rem;
-    color: #6a6460;
-    line-height: 1.65;
-    margin-bottom: 1.8rem;
+    font-size: 0.82rem; color: #6a6460; line-height: 1.65; margin-bottom: 1.8rem;
   }
-  #spotify-body strong {
-    color: #9a9390;
-    font-weight: 500;
-  }
-  #spotify-tracks {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-bottom: 1.8rem;
-  }
+  #spotify-body strong { color: #9a9390; font-weight: 500; }
+  #spotify-tracks { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.8rem; }
   .spotify-track-tag {
-    font-size: 0.55rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0.22rem 0.5rem;
-    background: rgba(194,168,130,0.1);
-    border: 1px solid rgba(194,168,130,0.2);
-    border-radius: 20px;
-    color: var(--accent);
+    font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.22rem 0.5rem; background: rgba(194,168,130,0.1);
+    border: 1px solid rgba(194,168,130,0.2); border-radius: 20px; color: var(--accent);
   }
   #spotify-cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.85rem;
-    background: #1DB954;
-    border: none;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    margin-bottom: 0.6rem;
-    transition: opacity 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; padding: 0.85rem; background: #1DB954; border: none; border-radius: 4px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.12em; color: #000;
+    cursor: pointer; text-decoration: none; margin-bottom: 0.6rem; transition: opacity 0.15s;
   }
   #spotify-cta:hover { opacity: 0.88; }
-  #spotify-cta svg {
-    width: 16px;
-    height: 16px;
-    fill: #000;
-    flex-shrink: 0;
-  }
+  #spotify-cta svg { width: 16px; height: 16px; fill: #000; flex-shrink: 0; }
   #spotify-dismiss {
-    width: 100%;
-    padding: 0.6rem;
-    background: none;
-    border: 1px solid #2e2a26;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #4a4540;
-    cursor: pointer;
+    width: 100%; padding: 0.6rem; background: none; border: 1px solid #2e2a26;
+    border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.62rem;
+    text-transform: uppercase; letter-spacing: 0.12em; color: #4a4540; cursor: pointer;
   }
 
   /* ── CANVAS ── */
   #canvas {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background: #ffffff;
-    touch-action: none;
+    flex: 1; position: relative; overflow: hidden;
+    background: #ffffff; touch-action: none;
   }
   #canvas-empty {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -60%);
-    text-align: center;
-    pointer-events: none;
-    opacity: 0.4;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -60%); text-align: center;
+    pointer-events: none; opacity: 0.4;
   }
   #canvas-empty .big-label {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.4rem;
-    color: var(--ink);
-    margin-bottom: 0.4rem;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.4rem; color: var(--ink); margin-bottom: 0.4rem;
   }
   #canvas-empty p {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--muted);
+    font-size: 0.65rem; text-transform: uppercase;
+    letter-spacing: 0.18em; color: var(--muted);
   }
 
-  .on-canvas {
-    position: absolute;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-  }
+  .on-canvas { position: absolute; cursor: grab; user-select: none; touch-action: none; }
   .on-canvas:active { cursor: grabbing; }
-  .on-canvas .oc-spin {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-origin: 50% 50%;
-  }
+  .on-canvas .oc-spin { position: relative; width: 100%; height: 100%; transform-origin: 50% 50%; }
   .on-canvas .oc-visual { position: relative; width: 100%; height: 100%; }
   .on-canvas .oc-visual img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    display: block;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; pointer-events: none; display: block;
   }
   
-  /* HIDE ALL UI CONTROLS BY DEFAULT */
-  .on-canvas .remove-btn,
-  .on-canvas .resize-handle,
-  .on-canvas .rotate-handle,
-  .on-canvas .rotate-stem { 
-    display: none; 
-  }
+  .on-canvas .remove-btn, .on-canvas .resize-handle,
+  .on-canvas .rotate-handle, .on-canvas .rotate-stem { display: none; }
 
-  /* ONLY SHOW CONTROLS WHEN ITEM IS ACTIVE */
   .on-canvas.active-item .remove-btn {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 20px;
-    height: 20px;
-    background: var(--ink);
-    color: var(--bg);
-    border: none;
-    border-radius: 50%;
-    font-size: 0.6rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
+    position: absolute; top: -8px; right: -8px; width: 20px; height: 20px;
+    background: var(--ink); color: var(--bg); border: none; border-radius: 50%;
+    font-size: 0.6rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; z-index: 5;
   }
   .on-canvas.active-item .resize-handle {
-    position: absolute;
-    bottom: -9px;
-    right: -9px;
-    width: 20px;
-    height: 20px;
-    background: var(--bg);
-    border: 1.5px solid var(--ink);
-    border-radius: 50%;
-    cursor: nwse-resize;
-    z-index: 6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: none;
+    position: absolute; bottom: -9px; right: -9px; width: 20px; height: 20px;
+    background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%;
+    cursor: nwse-resize; z-index: 6; display: flex; align-items: center;
+    justify-content: center; touch-action: none;
   }
   .on-canvas.active-item .resize-handle::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-right: 1.5px solid var(--ink);
-    border-bottom: 1.5px solid var(--ink);
+    content: ''; width: 7px; height: 7px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink);
   }
   .on-canvas.active-item .rotate-stem {
-    position: absolute;
-    top: -28px;
-    left: 50%;
-    width: 1.5px;
-    height: 20px;
-    background: var(--muted);
-    transform: translateX(-50%);
-    z-index: 5;
-    display: block;
+    position: absolute; top: -28px; left: 50%; width: 1.5px; height: 20px;
+    background: var(--muted); transform: translateX(-50%); z-index: 5; display: block;
   }
   .on-canvas.active-item .rotate-handle {
-    position: absolute;
-    top: -42px;
-    left: 50%;
-    width: 22px;
-    height: 22px;
-    transform: translateX(-50%);
-    background: var(--bg);
-    border: 1.5px solid var(--ink);
-    border-radius: 50%;
-    cursor: grab;
-    z-index: 6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.62rem;
-    touch-action: none;
+    position: absolute; top: -42px; left: 50%; width: 22px; height: 22px;
+    transform: translateX(-50%); background: var(--bg); border: 1.5px solid var(--ink);
+    border-radius: 50%; cursor: grab; z-index: 6; display: flex; align-items: center;
+    justify-content: center; font-size: 0.62rem; touch-action: none;
   }
   .on-canvas.active-item .rotate-handle:active { cursor: grabbing; }
 
-  /* Ensure they are totally hidden during capture just in case */
-  #canvas.capturing .remove-btn,
-  #canvas.capturing .resize-handle,
-  #canvas.capturing .rotate-handle,
-  #canvas.capturing .rotate-stem { display: none !important; }
+  #canvas.capturing .remove-btn, #canvas.capturing .resize-handle,
+  #canvas.capturing .rotate-handle, #canvas.capturing .rotate-stem { display: none !important; }
 
   /* ── DRAWER ── */
   #drawer {
-    flex-shrink: 0;
-    background: var(--drawer-bg);
-    border-top: 1px solid var(--drawer-border);
-    display: flex;
-    flex-direction: column;
-    max-height: 48dvh;
+    flex-shrink: 0; background: var(--drawer-bg); border-top: 1px solid var(--drawer-border);
+    display: flex; flex-direction: column; max-height: 48dvh;
   }
   #drawer.collapsed { max-height: 42px; }
   #drawer-handle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.65rem 1.2rem;
-    cursor: pointer;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.65rem 1.2rem; cursor: pointer; flex-shrink: 0;
   }
-  #drawer-handle span {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--drawer-muted);
-  }
+  #drawer-handle span { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--drawer-muted); }
   #drawer-toggle { color: var(--drawer-muted); font-size: 0.75rem; transition: transform 0.2s; }
   #drawer.collapsed #drawer-toggle { transform: rotate(180deg); }
 
   #search-row { padding: 0 1rem 0.5rem; flex-shrink: 0; }
   #search-input {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--drawer-border);
-    border-radius: 3px;
-    padding: 0.4rem 0.8rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.7rem;
-    color: #ccc;
-    outline: none;
+    width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--drawer-border);
+    border-radius: 3px; padding: 0.4rem 0.8rem; font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem; color: #ccc; outline: none;
   }
   #search-input::placeholder { color: var(--drawer-muted); }
   #search-input:focus { border-color: var(--accent); }
 
-  /* ── UPDATED SUPERCATEGORY TABS ── */
   #cat-tabs {
-    display: flex;
-    overflow-x: auto;
-    padding: 0 1rem 0.5rem;
-    gap: 1.5rem;
-    scrollbar-width: none;
-    flex-shrink: 0;
+    display: flex; overflow-x: auto; padding: 0 1rem 0.5rem;
+    gap: 1.5rem; scrollbar-width: none; flex-shrink: 0;
   }
   #cat-tabs::-webkit-scrollbar { display: none; }
   
-  .super-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-  
-  .super-header {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    color: var(--accent);
-    font-size: 1.05rem;
-    padding-left: 0.2rem;
-  }
-
-  .sub-tabs-row {
-    display: flex;
-    gap: 0.4rem;
-  }
+  .super-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .super-header { font-family: 'Playfair Display', serif; font-style: italic; color: var(--accent); font-size: 1.05rem; padding-left: 0.2rem; }
+  .sub-tabs-row { display: flex; gap: 0.4rem; }
 
   .cat-tab {
-    flex: 0 0 auto;
-    padding: 0.3rem 0.75rem;
-    border: 1px solid var(--drawer-border);
-    border-radius: 20px;
-    font-size: 0.58rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--drawer-muted);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
+    flex: 0 0 auto; padding: 0.3rem 0.75rem; border: 1px solid var(--drawer-border);
+    border-radius: 20px; font-size: 0.58rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--drawer-muted); cursor: pointer;
+    white-space: nowrap; transition: all 0.15s;
   }
   .cat-tab.active { border-color: var(--accent); color: var(--accent); }
 
   #item-grid {
-    display: flex;
-    overflow-x: auto;
-    padding: 0.4rem 1rem 1rem;
-    gap: 0.6rem;
-    scrollbar-width: none;
-    align-items: flex-start;
-    flex-shrink: 0;
-    flex-wrap: nowrap;
+    display: flex; overflow-x: auto; padding: 0.4rem 1rem 1rem;
+    gap: 0.6rem; scrollbar-width: none; align-items: flex-start;
+    flex-shrink: 0; flex-wrap: nowrap;
   }
   #item-grid::-webkit-scrollbar { display: none; }
 
   .grid-item {
-    flex: 0 0 auto;
-    width: 76px;
-    background: #252118;
-    border: 1px solid var(--drawer-border);
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-    transition: border-color 0.15s;
-    padding: 6px 4px 6px;
-    position: relative;
+    flex: 0 0 auto; width: 76px; background: #252118; border: 1px solid var(--drawer-border);
+    border-radius: 5px; display: flex; flex-direction: column; align-items: center;
+    justify-content: flex-start; cursor: pointer; transition: border-color 0.15s;
+    padding: 6px 4px 6px; position: relative;
   }
   .grid-item:active { transform: scale(0.96); }
   .grid-item.on-board { border-color: var(--accent); background: #2a2418; }
   .grid-item .gi-visual { position: relative; width: 100%; height: 54px; }
-  .grid-item .gi-visual img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+  .grid-item .gi-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   .grid-item .gi-name {
-    font-size: 0.44rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #ccc;
-    margin-top: 6px;
-    text-align: center;
-    line-height: 1.3;
-    width: 100%;
+    font-size: 0.44rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #ccc; margin-top: 6px; text-align: center; line-height: 1.3; width: 100%;
   }
   .grid-item .gi-vibe {
-    font-size: 0.38rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6a6460;
-    margin-top: 2px;
-    text-align: center;
-    line-height: 1.2;
-    width: 100%;
+    font-size: 0.38rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #6a6460; margin-top: 2px; text-align: center; line-height: 1.2; width: 100%;
   }
-  .grid-item.on-board .gi-name,
-  .grid-item.on-board .gi-vibe { color: var(--accent); }
+  .grid-item.on-board .gi-name, .grid-item.on-board .gi-vibe { color: var(--accent); }
   .grid-item .gi-color-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    opacity: 0.7;
+    width: 6px; height: 6px; border-radius: 50%; position: absolute; top: 4px; right: 4px; opacity: 0.7;
   }
 
-  /* ── VERDICT OVERLAY ── */
+  /* ── NEW VERDICT OVERLAY DESIGN ── */
   #verdict-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(20,17,14,0.92);
-    z-index: 200;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    text-align: center;
-    overflow-y: auto;
+    display: none; position: fixed; inset: 0;
+    background: rgba(18, 15, 12, 0.96);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 2147483647 !important; /* Force to absolute top */
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 2rem; text-align: center; overflow-y: auto;
   }
   #verdict-overlay.show { display: flex; }
+  
+  #translate-btn {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: #d8d4cf; padding: 0.4rem 0.8rem; border-radius: 20px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.55rem;
+    text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
+    transition: background 0.2s; z-index: 2;
+  }
+  #translate-btn:hover { background: rgba(255,255,255,0.15); }
+
   #verdict-eyebrow {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: var(--accent);
-    margin-bottom: 1.2rem;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em;
+    color: #9a9390; margin-bottom: 0.5rem;
+  }
+  #verdict-aesthetic {
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent);
+    margin-bottom: 1.5rem;
   }
   #verdict-text {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: clamp(1.8rem, 8vw, 2.6rem);
-    line-height: 1.15;
-    color: var(--bg);
-    margin-bottom: 1.2rem;
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1;
+    color: #f7f4f0; margin-bottom: 0.8rem;
   }
   #verdict-sub {
-    font-size: 0.82rem;
-    color: #666;
-    line-height: 1.65;
-    margin-bottom: 1.5rem;
-    font-style: italic;
-    max-width: 280px;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.1rem; color: #a8a09b; line-height: 1.5;
+    margin-bottom: 2rem; max-width: 320px;
   }
+  
   #verdict-pieces {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-    max-width: 320px;
+    display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center;
+    margin-bottom: 2.5rem; max-width: 340px;
   }
   .verdict-tag {
-    font-size: 0.55rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0.25rem 0.55rem;
-    background: var(--tag-bg);
-    border: 1px solid rgba(194,168,130,0.25);
-    border-radius: 20px;
-    color: var(--accent);
+    font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.3rem 0.6rem; background: var(--tag-bg);
+    border: 1px solid rgba(194,168,130,0.25); border-radius: 20px; color: var(--accent);
   }
+  
   #verdict-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.55rem;
-    margin-bottom: 0.8rem;
-  }
-  .verdict-secondary {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    background: rgba(255,255,255,0.06);
-    color: #d8d4cf;
-    border: 1px solid var(--drawer-border);
-    padding: 0.6rem 1.2rem;
-    border-radius: 2px;
-    cursor: pointer;
-    max-width: 260px;
-    line-height: 1.4;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.8rem; margin-bottom: 0.8rem; width: 100%; max-width: 400px;
   }
   #verdict-share {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    background: var(--accent);
-    color: var(--ink);
-    border: none;
-    padding: 0.7rem 1.4rem;
-    border-radius: 2px;
-    cursor: pointer;
-    max-width: 320px; /* Widened for longer text */
-    line-height: 1.5;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem;
+    text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent);
+    color: var(--ink); border: none; padding: 0.8rem 1.4rem;
+    border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5;
+  }
+  .verdict-secondary-group {
+    display: flex; gap: 0.5rem; width: 100%;
+  }
+  .verdict-secondary {
+    flex: 1; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.62rem;
+    text-transform: uppercase; letter-spacing: 0.1em; background: rgba(255,255,255,0.06);
+    color: #d8d4cf; border: 1px solid var(--drawer-border); padding: 0.7rem 0.5rem;
+    border-radius: 2px; cursor: pointer; line-height: 1.4;
   }
   #verdict-close {
-    background: none;
-    border: 1px solid #2e2a26;
-    color: #555;
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    padding: 0.5rem 1.2rem;
-    cursor: pointer;
-    border-radius: 2px;
+    background: none; border: none; color: #666; font-size: 0.6rem;
+    text-transform: uppercase; letter-spacing: 0.12em; padding: 0.5rem;
+    cursor: pointer; margin-top: 0.5rem;
   }
 </style>
 </head>
@@ -643,7 +388,7 @@
   <div id="spotify-sheet">
     <div id="spotify-pill"></div>
     <div id="spotify-eyebrow">A playlist for this</div>
-    <div id="spotify-title">Fashion Runway</div>
+    <div id="spotify-title">in Vogue, in FΛSHION</div>
     <div id="spotify-body">
       A playlist curated for this session — <strong>Britney Manson, Lady Gaga, RuPaul, Madonna, Beyoncé, David Bowie, and y'know, how could I leave out my Ariana Grande? </strong>. You can put it on while you build your look.<br><br>
       Open it in Spotify to listen, follow the playlist, or add your own tracks to the collection.
@@ -655,7 +400,7 @@
       <span class="spotify-track-tag">Freakum Dress — Beyoncé</span>
       <span class="spotify-track-tag">Fashion — David Bowie</span>
       <span class="spotify-track-tag">Category Is… — RuPaul</span>
-      <span class="spotify-track-tag">Dangerous Woman — Ariana Grande (this song is a banger, well, the whole album is, tbh. sorry, i am just a little obsessed.  it's not a phase.) </span>
+      <span class="spotify-track-tag">Dangerous Woman — Ariana Grande (this song is a banger, well, the whole album is, tbh. sorry, i am just a little obsessed. it's not a phase.)</span>
       <span class="spotify-track-tag">+ more</span>
     </div>
     <a id="spotify-cta" href="https://open.spotify.com/playlist/0YBMWmwqM5DrQMIzCj0qRm" target="_blank" rel="noopener">
@@ -686,36 +431,34 @@
 </div>
 
 <div id="verdict-overlay">
+  <button id="translate-btn" onclick="toggleLanguage()">🇺🇦 Translate</button>
   <div id="verdict-eyebrow">Your style, decoded</div>
+  <div id="verdict-aesthetic"></div>
   <div id="verdict-text"></div>
   <div id="verdict-sub"></div>
   <div id="verdict-pieces"></div>
   <div id="verdict-actions">
-    <button class="verdict-secondary" id="verdict-download" onclick="downloadLook()">Save a photo of this look 'cuz u got taste, girl </button>
-    <button class="verdict-secondary" id="verdict-copy" onclick="copyLookList()">Copy items to clipboard </button>
     <button id="verdict-share" onclick="shareToTelegram()">Finally! Come out of the closet and share your outfit with the Vogue Committee (plz, i wanna see it).</button>
+    <div class="verdict-secondary-group">
+      <button class="verdict-secondary" id="verdict-download" onclick="downloadLook()">Save a photo of this look</button>
+      <button class="verdict-secondary" id="verdict-copy" onclick="copyLookList()">Copy to clipboard</button>
+    </div>
   </div>
-  <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended) </button>
+  <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended)</button>
 </div>
 
 <script>
 // ── SPOTIFY MODAL ──
-function openSpotify() {
-  document.getElementById('spotify-modal').classList.add('show');
-}
-function closeSpotify() {
-  document.getElementById('spotify-modal').classList.remove('show');
-}
-function handleBackdropClick(e) {
-  if (e.target === document.getElementById('spotify-backdrop')) closeSpotify();
-}
+function openSpotify() { document.getElementById('spotify-modal').classList.add('show'); }
+function closeSpotify() { document.getElementById('spotify-modal').classList.remove('show'); }
+function handleBackdropClick(e) { if (e.target === document.getElementById('spotify-backdrop')) closeSpotify(); }
 
-// ── FULL WARDROBE DATA (REORDERED WITH ICONIC PIECES FIRST) ──
+// ── FULL WARDROBE DATA ──
 const categories = [
   {
     id: 'iconic', label: 'Iconic Pieces',
     items: [
-      { name: "Sasha's bow", color: '#111', vibe: 'small war', w: 80, h: 70 }, // UPDATED VIBE HERE
+      { name: "Sasha's bow", color: '#111', vibe: 'what about it?', w: 80, h: 70 }, // OVERRIDE KEY UPDATED
       { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
       { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
       { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
@@ -1021,7 +764,7 @@ const categories = [
 ];
 
 const verdicts = {
-  'small war': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." }, // UPDATED VERDICT KEY HERE
+  'what about it?': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." }, // OVERRIDE VERDICT UPDATED
   'Y2K downtown': { line: "Low-rise and unbothered.", sub: "You skipped the revival and went straight to the source." },
   'Y2K revival': { line: "You time-traveled and packed light.", sub: "Butterfly clips optional, attitude mandatory." },
   'academic': { line: "Tenure-track, never tenured.", sub: "You dress like the footnotes are more interesting than the essay." },
@@ -1177,17 +920,51 @@ const supercategories = [
   { name: "Accessories", cats: ["bags", "belts", "neck", "scarves", "jewellery", "glasses", "hats"] }
 ];
 
-let activeCategory = 'iconic'; // Changed default open tab to Iconic
+let activeCategory = 'iconic';
 const onCanvas = {};
 let zCounter = 10;
 let searchMode = false;
 let currentVerdict = null;
+let currentVerdictKey = '';
+
+// Translation Configuration
+let currentLang = 'en';
+const translations = {
+  en: {
+    eyebrow: "Your style, decoded",
+    share: "Finally! Come out of the closet and share your outfit with the Vogue Committee (plz, i wanna see it).",
+    save: "Save a photo of this look",
+    copy: "Copy to clipboard",
+    back: "Go back to the closet (no pun intended)",
+    translate: "🇺🇦 Translate",
+    aestheticPrefix: "The ",
+    aestheticSuffix: " Aesthetic"
+  },
+  uk: {
+    eyebrow: "Ваш стиль, розшифровано",
+    share: "Нарешті! Виходь із шафи та поділися своїм луком з комітетом Vogue (пліз, я хочу це побачити).",
+    save: "Збережи фото образу",
+    copy: "Скопіювати речі",
+    back: "Повернутися до шафи (без каламбурів)",
+    translate: "🇬🇧 Translate",
+    aestheticPrefix: "Естетика ",
+    aestheticSuffix: ""
+  }
+};
+
+const specificVerdictTranslations = {
+  'what about it?': {
+    uk: {
+      line: "Ти вже знаєш, що робиш.",
+      sub: "Бант ніколи не був просто аксесуаром."
+    }
+  }
+};
 
 const IMG_DIR = '';
 const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
 
 function slugify(name) {
-  // Tweaked slugify to strip out apostrophes completely instead of replacing them with hyphens
   return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
@@ -1215,77 +992,47 @@ categories.forEach(cat => cat.items.forEach(item => {
   verdictMap[cat.id + '_' + item.name.replace(/\s+/g, '_')] = item.vibe;
 }));
 
-// Deselects pieces when clicking empty canvas
-document.getElementById('canvas').addEventListener('mousedown', function(e) {
-  if (e.target === this || e.target.id === 'canvas-empty') setActive(null);
-});
-document.getElementById('canvas').addEventListener('touchstart', function(e) {
-  if (e.target === this || e.target.id === 'canvas-empty') setActive(null);
-}, {passive: true});
+document.getElementById('canvas').addEventListener('mousedown', function(e) { if (e.target === this || e.target.id === 'canvas-empty') setActive(null); });
+document.getElementById('canvas').addEventListener('touchstart', function(e) { if (e.target === this || e.target.id === 'canvas-empty') setActive(null); }, {passive: true});
 
 function init() { renderTabs(); renderGrid(activeCategory); }
 
 function renderTabs() {
   const el = document.getElementById('cat-tabs');
   el.innerHTML = '';
-  
   supercategories.forEach(group => {
-    // Super Group Container
-    const groupDiv = document.createElement('div');
-    groupDiv.className = 'super-group';
-
-    // Group Header
-    const header = document.createElement('div');
-    header.className = 'super-header';
-    header.textContent = group.name;
-    groupDiv.appendChild(header);
-
-    // Sub Tabs Container
-    const rowDiv = document.createElement('div');
-    rowDiv.className = 'sub-tabs-row';
-
+    const groupDiv = document.createElement('div'); groupDiv.className = 'super-group';
+    const header = document.createElement('div'); header.className = 'super-header'; header.textContent = group.name; groupDiv.appendChild(header);
+    const rowDiv = document.createElement('div'); rowDiv.className = 'sub-tabs-row';
     group.cats.forEach(catId => {
       const cat = categories.find(c => c.id === catId);
       if (!cat) return;
-      
       const tab = document.createElement('div');
       tab.className = 'cat-tab' + (cat.id === activeCategory ? ' active' : '');
-      tab.textContent = cat.label;
-      tab.id = 'tab-' + cat.id;
+      tab.textContent = cat.label; tab.id = 'tab-' + cat.id;
       tab.onclick = () => {
         if (searchMode) clearSearch();
-        activeCategory = cat.id;
-        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        renderGrid(cat.id);
+        activeCategory = cat.id; document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active'); renderGrid(cat.id);
       };
       rowDiv.appendChild(tab);
     });
-
-    groupDiv.appendChild(rowDiv);
-    el.appendChild(groupDiv);
+    groupDiv.appendChild(rowDiv); el.appendChild(groupDiv);
   });
 }
 
 function renderGrid(catId, items) {
   const cat = categories.find(c => c.id === catId);
   const src = items || (cat ? cat.items : []);
-  const grid = document.getElementById('item-grid');
-  grid.innerHTML = '';
+  const grid = document.getElementById('item-grid'); grid.innerHTML = '';
   src.forEach(item => {
     const uid = (item._catId || catId) + '_' + item.name.replace(/\s+/g, '_');
     const card = document.createElement('div');
-    card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : '');
-    card.id = 'gi-' + uid;
-    
+    card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : ''); card.id = 'gi-' + uid;
     card.innerHTML = `<div class="gi-visual"><img alt="${item.name}" title="Vibe: ${item.vibe}"></div><div class="gi-name">${item.name}</div><div class="gi-vibe">${item.vibe}</div>`;
-    
     setupImgFallback(card.querySelector('img'), item.name);
     if (item.color) {
-      const dot = document.createElement('div');
-      dot.className = 'gi-color-dot';
-      dot.style.background = item.color;
-      card.appendChild(dot);
+      const dot = document.createElement('div'); dot.className = 'gi-color-dot'; dot.style.background = item.color; card.appendChild(dot);
     }
     card.onclick = () => toggleItem(uid, item, item._catId || catId);
     grid.appendChild(card);
@@ -1294,23 +1041,16 @@ function renderGrid(catId, items) {
 
 function handleSearch(query) {
   if (!query.trim()) { clearSearch(); return; }
-  searchMode = true;
-  const q = query.toLowerCase();
-  const results = [];
-  categories.forEach(cat => {
-    cat.items.forEach(item => {
-      if (item.name.toLowerCase().includes(q) || item.vibe.toLowerCase().includes(q)) {
-        results.push({ ...item, _catId: cat.id });
-      }
-    });
-  });
+  searchMode = true; const q = query.toLowerCase(); const results = [];
+  categories.forEach(cat => { cat.items.forEach(item => {
+    if (item.name.toLowerCase().includes(q) || item.vibe.toLowerCase().includes(q)) results.push({ ...item, _catId: cat.id });
+  });});
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
   renderGrid(null, results);
 }
 
 function clearSearch() {
-  searchMode = false;
-  document.getElementById('search-input').value = '';
+  searchMode = false; document.getElementById('search-input').value = '';
   const activeTab = document.getElementById('tab-' + activeCategory);
   if (activeTab) activeTab.classList.add('active');
   renderGrid(activeCategory);
@@ -1318,10 +1058,7 @@ function clearSearch() {
 
 function setActive(uid) {
   document.querySelectorAll('.on-canvas').forEach(el => el.classList.remove('active-item'));
-  if (uid && onCanvas[uid]) {
-    onCanvas[uid].el.classList.add('active-item');
-    onCanvas[uid].el.style.zIndex = zCounter++;
-  }
+  if (uid && onCanvas[uid]) { onCanvas[uid].el.classList.add('active-item'); onCanvas[uid].el.style.zIndex = zCounter++; }
 }
 
 function toggleItem(uid, item, catId) {
@@ -1332,52 +1069,29 @@ function toggleItem(uid, item, catId) {
 function addToCanvas(uid, item, catId) {
   const canvas = document.getElementById('canvas');
   document.getElementById('canvas-empty').style.display = 'none';
-  const el = document.createElement('div');
-  el.className = 'on-canvas';
-  el.id = 'oc-' + uid;
-  el.style.width = item.w + 'px';
-  el.style.height = item.h + 'px';
-  el.style.zIndex = zCounter++;
+  const el = document.createElement('div'); el.className = 'on-canvas'; el.id = 'oc-' + uid;
+  el.style.width = item.w + 'px'; el.style.height = item.h + 'px'; el.style.zIndex = zCounter++;
   const cx = canvas.offsetWidth / 2 - item.w / 2 + (Math.random() - 0.5) * 80;
   const cy = canvas.offsetHeight / 2 - item.h / 2 + (Math.random() - 0.5) * 60;
-  el.style.left = Math.max(0, cx) + 'px';
-  el.style.top = Math.max(0, cy) + 'px';
+  el.style.left = Math.max(0, cx) + 'px'; el.style.top = Math.max(0, cy) + 'px';
   const state = { rotation: 0, scale: 1 };
-  const spin = document.createElement('div');
-  spin.className = 'oc-spin';
-  const inner = document.createElement('div');
-  inner.className = 'oc-visual';
+  const spin = document.createElement('div'); spin.className = 'oc-spin';
+  const inner = document.createElement('div'); inner.className = 'oc-visual';
   inner.innerHTML = `<img alt="${item.name}" title="Vibe: ${item.vibe}" style="width:100%;height:100%;object-fit:contain;">`;
   setupImgFallback(inner.querySelector('img'), item.name);
-  spin.appendChild(inner);
-  el.appendChild(spin);
-  const rm = document.createElement('button');
-  rm.className = 'remove-btn';
-  rm.textContent = '✕';
-  rm.onclick = (e) => { e.stopPropagation(); removeFromCanvas(uid); };
-  el.appendChild(rm);
-  const stem = document.createElement('div');
-  stem.className = 'rotate-stem';
-  el.appendChild(stem);
-  const rotateHandle = document.createElement('div');
-  rotateHandle.className = 'rotate-handle';
-  rotateHandle.textContent = '↻';
-  el.appendChild(rotateHandle);
-  const resizeHandle = document.createElement('div');
-  resizeHandle.className = 'resize-handle';
-  el.appendChild(resizeHandle);
-  canvas.appendChild(el);
-  setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid);
-  onCanvas[uid] = { el, item, state };
-  updateGridCard(uid, true);
-  setActive(uid); // Make active when added
+  spin.appendChild(inner); el.appendChild(spin);
+  const rm = document.createElement('button'); rm.className = 'remove-btn'; rm.textContent = '✕';
+  rm.onclick = (e) => { e.stopPropagation(); removeFromCanvas(uid); }; el.appendChild(rm);
+  const stem = document.createElement('div'); stem.className = 'rotate-stem'; el.appendChild(stem);
+  const rotateHandle = document.createElement('div'); rotateHandle.className = 'rotate-handle'; rotateHandle.textContent = '↻'; el.appendChild(rotateHandle);
+  const resizeHandle = document.createElement('div'); resizeHandle.className = 'resize-handle'; el.appendChild(resizeHandle);
+  canvas.appendChild(el); setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid);
+  onCanvas[uid] = { el, item, state }; updateGridCard(uid, true); setActive(uid);
 }
 
 function removeFromCanvas(uid) {
   if (!onCanvas[uid]) return;
-  onCanvas[uid].el.remove();
-  delete onCanvas[uid];
-  updateGridCard(uid, false);
+  onCanvas[uid].el.remove(); delete onCanvas[uid]; updateGridCard(uid, false);
   if (Object.keys(onCanvas).length === 0) document.getElementById('canvas-empty').style.display = 'block';
 }
 
@@ -1387,30 +1101,16 @@ function updateGridCard(uid, active) {
 }
 
 const MIN_SCALE = 0.4, MAX_SCALE = 2.5;
-function applySpinTransform(spin, state) {
-  spin.style.transform = `rotate(${state.rotation}deg) scale(${state.scale})`;
-}
+function applySpinTransform(spin, state) { spin.style.transform = `rotate(${state.rotation}deg) scale(${state.scale})`; }
 
 function setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid) {
   let mode = null, startX, startY, origLeft, origTop;
   let centerX, centerY, startAngle, startRotation, startDist, startScale;
 
-  function getCenter() {
-    const rect = el.getBoundingClientRect();
-    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-  }
-  function onDragStart(x, y) { 
-    setActive(uid);
-    mode = 'drag'; startX = x; startY = y; origLeft = parseInt(el.style.left)||0; origTop = parseInt(el.style.top)||0; el.style.zIndex = zCounter++; 
-  }
-  function onRotateStart(x, y) { 
-    setActive(uid);
-    mode = 'rotate'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startAngle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; startRotation = state.rotation; 
-  }
-  function onResizeStart(x, y) { 
-    setActive(uid);
-    mode = 'resize'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startDist = Math.hypot(x-centerX, y-centerY); startScale = state.scale; 
-  }
+  function getCenter() { const rect = el.getBoundingClientRect(); return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }; }
+  function onDragStart(x, y) { setActive(uid); mode = 'drag'; startX = x; startY = y; origLeft = parseInt(el.style.left)||0; origTop = parseInt(el.style.top)||0; el.style.zIndex = zCounter++; }
+  function onRotateStart(x, y) { setActive(uid); mode = 'rotate'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startAngle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; startRotation = state.rotation; }
+  function onResizeStart(x, y) { setActive(uid); mode = 'resize'; el.style.zIndex = zCounter++; const c = getCenter(); centerX = c.x; centerY = c.y; startDist = Math.hypot(x-centerX, y-centerY); startScale = state.scale; }
   function onMove(x, y) {
     if (mode === 'drag') { el.style.left = (origLeft+x-startX)+'px'; el.style.top = (origTop+y-startY)+'px'; }
     else if (mode === 'rotate') { const angle = Math.atan2(y-centerY, x-centerX)*180/Math.PI; state.rotation = startRotation+(angle-startAngle); applySpinTransform(spin, state); }
@@ -1425,79 +1125,110 @@ function setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid) {
   resizeHandle.addEventListener('touchstart', e => { e.stopPropagation(); const t=e.touches[0]; onResizeStart(t.clientX,t.clientY); }, {passive:true});
   resizeHandle.addEventListener('mousedown', e => { e.stopPropagation(); onResizeStart(e.clientX,e.clientY); });
   el.addEventListener('touchmove', e => { if (!mode) return; e.preventDefault(); const t=e.touches[0]; onMove(t.clientX,t.clientY); }, {passive:false});
-  el.addEventListener('touchend', onEnd);
-  window.addEventListener('mousemove', e => { if (mode) onMove(e.clientX,e.clientY); });
+  el.addEventListener('touchend', onEnd); window.addEventListener('mousemove', e => { if (mode) onMove(e.clientX,e.clientY); });
   window.addEventListener('mouseup', () => { if (mode) onEnd(); });
 }
 
-let drawerOpen = true;
 function toggleDrawer() {
-  drawerOpen = !drawerOpen;
   const drawer = document.getElementById('drawer');
-  drawer.classList.toggle('collapsed', !drawerOpen);
-  ['cat-tabs','item-grid','search-row'].forEach(id => document.getElementById(id).style.display = drawerOpen ? '' : 'none');
-  document.getElementById('drawer-toggle').textContent = drawerOpen ? '▲' : '▼';
+  const isCol = drawer.classList.toggle('collapsed');
+  ['cat-tabs','item-grid','search-row'].forEach(id => document.getElementById(id).style.display = isCol ? 'none' : '');
+  document.getElementById('drawer-toggle').textContent = isCol ? '▼' : '▲';
 }
 
 function calculateVerdict() {
-  // SASHA'S BOW OVERRIDE: If the bow is in the outfit, it instantly commands the verdict
   if (Object.keys(onCanvas).some(uid => onCanvas[uid].item.name === "Sasha's bow")) {
-    return verdicts["small war"]; // UPDATED OVERRIDE VERDICT KEY HERE
+    return { key: "what about it?", ...verdicts["what about it?"] };
   }
-
-  // Standard vibe calculation fallback
   const vibes = Object.keys(onCanvas).map(uid => verdictMap[uid]).filter(Boolean);
   if (vibes.length === 0) return null;
-  const freq = {};
-  vibes.forEach(v => freq[v] = (freq[v]||0)+1);
-  let maxFreq = 0;
-  for (let v in freq) if (freq[v] > maxFreq) maxFreq = freq[v];
+  const freq = {}; vibes.forEach(v => freq[v] = (freq[v]||0)+1);
+  let maxFreq = 0; for (let v in freq) if (freq[v] > maxFreq) maxFreq = freq[v];
   const topVibes = Object.keys(freq).filter(v => freq[v] === maxFreq);
   const top = topVibes[Math.floor(Math.random()*topVibes.length)];
-  return verdicts[top] || verdicts['default'];
+  return { key: top, ...(verdicts[top] || verdicts['default']) };
 }
 
 function showVerdict() {
   if (Object.keys(onCanvas).length === 0) { alert("Add some pieces first!"); return; }
   currentVerdict = calculateVerdict();
+  currentVerdictKey = currentVerdict.key;
   
-  document.getElementById('verdict-text').textContent = currentVerdict.line;
-  document.getElementById('verdict-sub').textContent = currentVerdict.sub;
+  applyTranslations(); // Applies text dynamically based on currentLang
   
   const tagsEl = document.getElementById('verdict-pieces');
   tagsEl.innerHTML = '';
   Object.keys(onCanvas).forEach(uid => {
     const item = onCanvas[uid].item;
-    const tag = document.createElement('span');
-    tag.className = 'verdict-tag';
-    tag.textContent = item.name;
-    tagsEl.appendChild(tag);
+    const tag = document.createElement('span'); tag.className = 'verdict-tag'; tag.textContent = item.name; tagsEl.appendChild(tag);
   });
   document.getElementById('verdict-overlay').classList.add('show');
 }
 
-function closeVerdict() { document.getElementById('verdict-overlay').classList.remove('show'); }
+function toggleLanguage() {
+  currentLang = currentLang === 'en' ? 'uk' : 'en';
+  applyTranslations();
+}
 
+function applyTranslations() {
+  const t = translations[currentLang];
+  document.getElementById('verdict-eyebrow').textContent = t.eyebrow;
+  document.getElementById('verdict-share').textContent = t.share;
+  document.getElementById('verdict-download').textContent = t.save;
+  document.getElementById('verdict-copy').textContent = t.copy;
+  document.getElementById('verdict-close').textContent = t.back;
+  document.getElementById('translate-btn').innerHTML = t.translate;
+  
+  if (currentVerdict) {
+    let vLine = currentVerdict.line;
+    let vSub = currentVerdict.sub;
+    let vAesthetic = currentVerdictKey.toUpperCase();
+    
+    if (currentLang === 'uk' && specificVerdictTranslations[currentVerdictKey]) {
+        vLine = specificVerdictTranslations[currentVerdictKey].uk.line;
+        vSub = specificVerdictTranslations[currentVerdictKey].uk.sub;
+    }
+    
+    document.getElementById('verdict-aesthetic').textContent = `${t.aestheticPrefix}"${vAesthetic}"${t.aestheticSuffix}`;
+    document.getElementById('verdict-text').textContent = vLine;
+    document.getElementById('verdict-sub').textContent = vSub;
+  }
+}
+
+function closeVerdict() { document.getElementById('verdict-overlay').classList.remove('show'); }
 function shareToTelegram() { window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank'); }
 
 function downloadLook() {
-  if (typeof html2canvas === 'undefined') { alert("Couldn't load the screenshot tool — try taking a regular screenshot instead."); return; }
+  if (typeof html2canvas === 'undefined') { alert("Couldn't load the screenshot tool."); return; }
   
   const canvasEl = document.getElementById('canvas');
   const btn = document.getElementById('verdict-download');
   const original = btn.textContent;
   btn.textContent = 'Saving…';
-  
-  // Deselect all items so no icons show in the final shot
   setActive(null);
-  
   canvasEl.classList.add('capturing');
   
+  // Calculate Exact Bounding Box
+  let minLeft = Infinity, minTop = Infinity, maxRight = -Infinity, maxBottom = -Infinity;
+  const items = document.querySelectorAll('.on-canvas');
+  items.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.left < minLeft) minLeft = rect.left;
+      if (rect.top < minTop) minTop = rect.top;
+      if (rect.right > maxRight) maxRight = rect.right;
+      if (rect.bottom > maxBottom) maxBottom = rect.bottom;
+  });
+
+  const pad = 60;
+  const cropX = minLeft - pad + window.scrollX;
+  const cropY = minTop - pad + window.scrollY;
+  const cropW = (maxRight - minLeft) + pad * 2;
+  const cropH = (maxBottom - minTop) + pad * 2;
+  
   setTimeout(() => {
-    html2canvas(canvasEl, { 
-      backgroundColor: '#ffffff', 
-      useCORS: true,
-      scale: 2 // High resolution to stop images from stretching
+    html2canvas(document.body, { 
+      x: cropX, y: cropY, width: cropW, height: cropH,
+      backgroundColor: '#f7f4f0', useCORS: true, scale: 3
     }).then(rendered => {
       canvasEl.classList.remove('capturing');
       btn.textContent = original;
@@ -1506,9 +1237,7 @@ function downloadLook() {
       link.href = rendered.toDataURL('image/png');
       link.click();
     }).catch(() => { 
-      canvasEl.classList.remove('capturing'); 
-      btn.textContent = original; 
-      alert("Couldn't save — try a regular screenshot."); 
+      canvasEl.classList.remove('capturing'); btn.textContent = original; alert("Couldn't save image."); 
     });
   }, 100);
 }
@@ -1518,8 +1247,7 @@ function copyLookList() {
   if (!pieces.length) return;
   navigator.clipboard?.writeText('My dream look: ' + pieces.join(', ')).then(() => {
     const btn = document.getElementById('verdict-copy');
-    const original = btn.textContent;
-    btn.textContent = 'Copied ✓';
+    const original = btn.textContent; btn.textContent = 'Copied ✓';
     setTimeout(() => btn.textContent = original, 2000);
   });
 }
