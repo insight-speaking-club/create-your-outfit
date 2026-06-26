@@ -715,7 +715,7 @@ const categories = [
   {
     id: 'iconic', label: 'Iconic Pieces',
     items: [
-      { name: "Sasha's bow", color: '#111', vibe: "sasha's bow", w: 80, h: 70 }, // First item!
+      { name: "Sasha's bow", color: '#111', vibe: 'small war', w: 80, h: 70 }, // UPDATED VIBE HERE
       { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
       { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
       { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
@@ -1021,7 +1021,7 @@ const categories = [
 ];
 
 const verdicts = {
-  "sasha's bow": { line: "You already know what you're doing.", sub: "The bow was never just an accessory." },
+  'small war': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." }, // UPDATED VERDICT KEY HERE
   'Y2K downtown': { line: "Low-rise and unbothered.", sub: "You skipped the revival and went straight to the source." },
   'Y2K revival': { line: "You time-traveled and packed light.", sub: "Butterfly clips optional, attitude mandatory." },
   'academic': { line: "Tenure-track, never tenured.", sub: "You dress like the footnotes are more interesting than the essay." },
@@ -1442,7 +1442,7 @@ function toggleDrawer() {
 function calculateVerdict() {
   // SASHA'S BOW OVERRIDE: If the bow is in the outfit, it instantly commands the verdict
   if (Object.keys(onCanvas).some(uid => onCanvas[uid].item.name === "Sasha's bow")) {
-    return verdicts["sasha's bow"];
+    return verdicts["small war"]; // UPDATED OVERRIDE VERDICT KEY HERE
   }
 
   // Standard vibe calculation fallback
