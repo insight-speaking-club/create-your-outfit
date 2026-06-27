@@ -32,57 +32,10 @@
   }
 
   /* ── MIRROR SHATTER OVERLAY ── */
-  #mirror-overlay {
+  #mirror-canvas {
     position: fixed; inset: 0; z-index: 99999;
-    background: #030303;
-    opacity: 0; transition: opacity 0.5s ease;
-    pointer-events: none; overflow: hidden;
-  }
-  #mirror-overlay.visible {
-    opacity: 1; pointer-events: auto;
-  }
-  #mirror-overlay.mirror-mode {
-    background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 30%, #ffffff 50%, #e0e0e0 70%, #d0d0d0 100%);
-  }
-  #mirror-overlay.shattering {
-    transform: scale(1.05);
-    opacity: 0;
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-  }
-
-  /* Shimmer effect */
-  .shimmer {
-    position: absolute; inset: -100%;
-    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.7) 50%, transparent 60%);
-    animation: shimmer 2s infinite linear;
-    opacity: 0; transition: opacity 0.3s;
-  }
-  #mirror-overlay.mirror-mode .shimmer { opacity: 1; }
-  @keyframes shimmer {
-    from { transform: translateX(-50%) translateY(-50%) rotate(45deg); }
-    to { transform: translateX(50%) translateY(50%) rotate(45deg); }
-  }
-
-  /* SVG Crack lines */
-  #crack-svg {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    stroke: rgba(0,0,0,0.4); stroke-width: 1.5; fill: none;
-    opacity: 0;
-  }
-  #crack-svg.active { opacity: 1; }
-  .crack-path { stroke-dasharray: 200; stroke-dashoffset: 200; }
-  .crack-path.animate { animation: draw-crack 0.3s forwards; }
-  @keyframes draw-crack { to { stroke-dashoffset: 0; } }
-
-  /* Shards for shatter effect */
-  .shard {
-    position: absolute; background: #c8c8c8;
-    width: 60px; height: 60px; opacity: 0;
-    clip-path: polygon(50% 0%, 100% 100%, 0% 100%); /* Make them look like broken glass */
-    transition: transform 0.4s ease-out;
-  }
-  #mirror-overlay.shattering .shard {
-    opacity: 1;
+    width: 100%; height: 100%;
+    pointer-events: auto;
   }
 
   /* ── TOP BAR ── */
@@ -258,18 +211,7 @@
 </head>
 <body>
 
-<div id="mirror-overlay">
-  <div class="shimmer"></div>
-  <svg id="crack-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-    <path class="crack-path" d="M50,50 L10,10 M50,50 L90,15 M50,50 L95,85 M50,50 L5,90 M50,50 L80,50 M50,50 L20,40" />
-  </svg>
-  <div class="shard" style="top:20%; left:20%"></div>
-  <div class="shard" style="top:20%; left:60%"></div>
-  <div class="shard" style="top:50%; left:10%"></div>
-  <div class="shard" style="top:50%; left:80%"></div>
-  <div class="shard" style="top:80%; left:30%"></div>
-  <div class="shard" style="top:80%; left:70%"></div>
-</div>
+<canvas id="mirror-canvas"></canvas>
 
 <div id="topbar">
   <h1>Dream Closet</h1>
@@ -353,46 +295,159 @@
 <script>
 // ── MIRROR SHATTER SEQUENCE ──
 window.addEventListener('DOMContentLoaded', () => {
-  const overlay = document.getElementById('mirror-overlay');
-  const svg = document.getElementById('crack-svg');
-  const path = document.querySelector('.crack-path');
-  const shards = document.querySelectorAll('.shard');
-  const crackAudio = new Audio('crack.mp3');
-  crackAudio.volume = 0.4;
+  const canvas = document.getElementById('mirror-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const W = canvas.width, H = canvas.height;
 
-  // 0ms: Fade in the black overlay
-  setTimeout(() => {
-    overlay.classList.add('visible');
-  }, 0);
+  // Draw mirror surface
+  function drawMirror() {
+    const grad = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, Math.max(W,H)*0.8);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.3, '#e8e8e8');
+    grad.addColorStop(0.7, '#c0c0c0');
+    grad.addColorStop(1, '#909090');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    // shimmer streak
+    const streak = ctx.createLinearGradient(0, 0, W, H);
+    streak.addColorStop(0, 'rgba(255,255,255,0)');
+    streak.addColorStop(0.45, 'rgba(255,255,255,0)');
+    streak.addColorStop(0.5, 'rgba(255,255,255,0.55)');
+    streak.addColorStop(0.55, 'rgba(255,255,255,0)');
+    streak.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = streak;
+    ctx.fillRect(0, 0, W, H);
+  }
 
-  // 500ms: Show mirror surface
-  setTimeout(() => {
-    overlay.classList.add('mirror-mode');
-  }, 500);
+  drawMirror();
 
-  // 1500ms: Trigger crack SVG animation & sound
-  setTimeout(() => {
-    svg.classList.add('active');
-    path.classList.add('animate');
-    crackAudio.play().catch(() => {});
-  }, 1500);
+  // Impact point
+  const IX = W * 0.48 + (Math.random()-0.5)*80;
+  const IY = H * 0.42 + (Math.random()-0.5)*60;
 
-  // 1800ms: Trigger shatter animation
-  setTimeout(() => {
-    overlay.classList.add('shattering');
-    shards.forEach((s) => {
-      // Randomly disperse the shards
-      const tx = (Math.random() - 0.5) * 600;
-      const ty = (Math.random() - 0.5) * 600;
-      const rot = Math.random() * 360;
-      s.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg)`;
+  // Draw cracks
+  function drawCracks() {
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 1.2;
+    const numMain = 10 + Math.floor(Math.random()*5);
+    for (let i = 0; i < numMain; i++) {
+      const angle = (i / numMain) * Math.PI * 2 + (Math.random()-0.5)*0.4;
+      const len = (0.4 + Math.random()*0.6) * Math.max(W,H);
+      let x = IX, y = IY;
+      ctx.beginPath(); ctx.moveTo(x, y);
+      let remainingLen = len;
+      while (remainingLen > 0) {
+        const segLen = 30 + Math.random()*80;
+        const jitter = (Math.random()-0.5)*0.35;
+        x += Math.cos(angle+jitter)*Math.min(segLen, remainingLen);
+        y += Math.sin(angle+jitter)*Math.min(segLen, remainingLen);
+        ctx.lineTo(x, y);
+        // branch
+        if (Math.random() < 0.4 && remainingLen > 80) {
+          const bAngle = angle + (Math.random()-0.5)*1.2;
+          const bLen = remainingLen * (0.2 + Math.random()*0.3);
+          let bx = x, by = y;
+          ctx.moveTo(bx, by);
+          for (let b = 0; b < bLen; b += 40+Math.random()*40) {
+            bx += Math.cos(bAngle+(Math.random()-0.5)*0.3)*40;
+            by += Math.sin(bAngle+(Math.random()-0.5)*0.3)*40;
+            ctx.lineTo(bx, by);
+          }
+          ctx.moveTo(x, y);
+        }
+        remainingLen -= segLen;
+      }
+      ctx.stroke();
+    }
+  }
+
+  // Build shards as polygons tiling the canvas
+  function buildShards(numShards) {
+    // Use random points + convex-ish regions around them (Voronoi-lite)
+    const points = [[IX, IY]];
+    for (let i = 1; i < numShards; i++) {
+      points.push([Math.random()*W, Math.random()*H]);
+    }
+    // For each shard, define a rough polygon by picking nearby vertices
+    return points.map((pt, idx) => {
+      const cx = pt[0], cy = pt[1];
+      const angles = Array.from({length: 6+Math.floor(Math.random()*4)}, (_,i,a) => (i/a.length)*Math.PI*2 + (Math.random()-0.5)*0.5);
+      const verts = angles.map(a => {
+        const r = 60 + Math.random()*Math.max(W,H)*0.18;
+        return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
+      });
+      return { cx, cy, verts };
     });
-  }, 1800);
+  }
 
-  // 2500ms: Completely remove overlay to unblock UI
-  setTimeout(() => {
-    overlay.style.display = 'none';
-  }, 2500);
+  // Snapshot mirror pixels to use on shards
+  const snapshot = ctx.getImageData(0, 0, W, H);
+
+  let shards = null;
+  let animating = false;
+  let shardStates = [];
+
+  function startShatter() {
+    shards = buildShards(22);
+    shardStates = shards.map(s => {
+      const dx = s.cx - IX, dy = s.cy - IY;
+      const dist = Math.hypot(dx, dy) || 1;
+      const speed = 4 + Math.random()*8 + (1/(dist/300+0.1))*2;
+      return {
+        vx: (dx/dist)*speed + (Math.random()-0.5)*3,
+        vy: (dy/dist)*speed + (Math.random()-0.5)*3,
+        vr: (Math.random()-0.5)*6,
+        rotation: 0,
+        opacity: 1,
+        tx: 0, ty: 0
+      };
+    });
+    animating = true;
+    requestAnimationFrame(animateShatter);
+  }
+
+  function animateShatter() {
+    ctx.clearRect(0, 0, W, H);
+    // redraw snapshot as base so shards look like mirror pieces
+    ctx.putImageData(snapshot, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    let allGone = true;
+    shards.forEach((shard, i) => {
+      const st = shardStates[i];
+      st.tx += st.vx; st.ty += st.vy; st.vy += 0.4;
+      st.rotation += st.vr; st.opacity -= 0.018;
+      if (st.opacity <= 0) return;
+      allGone = false;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, st.opacity);
+      ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
+      ctx.rotate(st.rotation * Math.PI/180);
+      ctx.translate(-shard.cx, -shard.cy);
+      ctx.beginPath();
+      ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
+      shard.verts.forEach(v => ctx.lineTo(v[0], v[1]));
+      ctx.closePath();
+      ctx.clip();
+      ctx.putImageData(snapshot, 0, 0);
+      // glass tint
+      ctx.fillStyle = 'rgba(200,220,255,0.15)';
+      ctx.fill();
+      // edge highlight
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    if (allGone) { canvas.style.display = 'none'; return; }
+    requestAnimationFrame(animateShatter);
+  }
+
+  setTimeout(drawCracks, 1500);
+  setTimeout(startShatter, 1900);
 });
 
 // ── SPOTIFY MODAL ──
@@ -1252,6 +1307,168 @@ function copyLookList() {
 }
 
 init();
+
+// ── MIRROR SHATTER SEQUENCE ──
+window.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('mirror-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const W = canvas.width, H = canvas.height;
+
+  // Draw mirror surface
+  function drawMirror() {
+    const grad = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, Math.max(W,H)*0.8);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.3, '#e8e8e8');
+    grad.addColorStop(0.7, '#c0c0c0');
+    grad.addColorStop(1, '#909090');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    // shimmer streak
+    const streak = ctx.createLinearGradient(0, 0, W, H);
+    streak.addColorStop(0, 'rgba(255,255,255,0)');
+    streak.addColorStop(0.45, 'rgba(255,255,255,0)');
+    streak.addColorStop(0.5, 'rgba(255,255,255,0.55)');
+    streak.addColorStop(0.55, 'rgba(255,255,255,0)');
+    streak.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = streak;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  drawMirror();
+
+  // Impact point
+  const IX = W * 0.48 + (Math.random()-0.5)*80;
+  const IY = H * 0.42 + (Math.random()-0.5)*60;
+
+  // Draw cracks
+  function drawCracks() {
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 1.2;
+    const numMain = 10 + Math.floor(Math.random()*5);
+    for (let i = 0; i < numMain; i++) {
+      const angle = (i / numMain) * Math.PI * 2 + (Math.random()-0.5)*0.4;
+      const len = (0.4 + Math.random()*0.6) * Math.max(W,H);
+      let x = IX, y = IY;
+      ctx.beginPath(); ctx.moveTo(x, y);
+      let remainingLen = len;
+      while (remainingLen > 0) {
+        const segLen = 30 + Math.random()*80;
+        const jitter = (Math.random()-0.5)*0.35;
+        x += Math.cos(angle+jitter)*Math.min(segLen, remainingLen);
+        y += Math.sin(angle+jitter)*Math.min(segLen, remainingLen);
+        ctx.lineTo(x, y);
+        // branch
+        if (Math.random() < 0.4 && remainingLen > 80) {
+          const bAngle = angle + (Math.random()-0.5)*1.2;
+          const bLen = remainingLen * (0.2 + Math.random()*0.3);
+          let bx = x, by = y;
+          ctx.moveTo(bx, by);
+          for (let b = 0; b < bLen; b += 40+Math.random()*40) {
+            bx += Math.cos(bAngle+(Math.random()-0.5)*0.3)*40;
+            by += Math.sin(bAngle+(Math.random()-0.5)*0.3)*40;
+            ctx.lineTo(bx, by);
+          }
+          ctx.moveTo(x, y);
+        }
+        remainingLen -= segLen;
+      }
+      ctx.stroke();
+    }
+    
+    // Play sound if available
+    const crackAudio = new Audio('crack.mp3');
+    crackAudio.volume = 0.4;
+    crackAudio.play().catch(() => {});
+  }
+
+  // Build shards as polygons tiling the canvas
+  function buildShards(numShards) {
+    // Use random points + convex-ish regions around them (Voronoi-lite)
+    const points = [[IX, IY]];
+    for (let i = 1; i < numShards; i++) {
+      points.push([Math.random()*W, Math.random()*H]);
+    }
+    // For each shard, define a rough polygon by picking nearby vertices
+    return points.map((pt, idx) => {
+      const cx = pt[0], cy = pt[1];
+      const angles = Array.from({length: 6+Math.floor(Math.random()*4)}, (_,i,a) => (i/a.length)*Math.PI*2 + (Math.random()-0.5)*0.5);
+      const verts = angles.map(a => {
+        const r = 60 + Math.random()*Math.max(W,H)*0.18;
+        return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
+      });
+      return { cx, cy, verts };
+    });
+  }
+
+  // Snapshot mirror pixels to use on shards
+  const snapshot = ctx.getImageData(0, 0, W, H);
+
+  let shards = null;
+  let animating = false;
+  let shardStates = [];
+
+  function startShatter() {
+    shards = buildShards(22);
+    shardStates = shards.map(s => {
+      const dx = s.cx - IX, dy = s.cy - IY;
+      const dist = Math.hypot(dx, dy) || 1;
+      const speed = 4 + Math.random()*8 + (1/(dist/300+0.1))*2;
+      return {
+        vx: (dx/dist)*speed + (Math.random()-0.5)*3,
+        vy: (dy/dist)*speed + (Math.random()-0.5)*3,
+        vr: (Math.random()-0.5)*6,
+        rotation: 0,
+        opacity: 1,
+        tx: 0, ty: 0
+      };
+    });
+    animating = true;
+    requestAnimationFrame(animateShatter);
+  }
+
+  function animateShatter() {
+    ctx.clearRect(0, 0, W, H);
+    // redraw snapshot as base so shards look like mirror pieces
+    ctx.putImageData(snapshot, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    let allGone = true;
+    shards.forEach((shard, i) => {
+      const st = shardStates[i];
+      st.tx += st.vx; st.ty += st.vy; st.vy += 0.4;
+      st.rotation += st.vr; st.opacity -= 0.018;
+      if (st.opacity <= 0) return;
+      allGone = false;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, st.opacity);
+      ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
+      ctx.rotate(st.rotation * Math.PI/180);
+      ctx.translate(-shard.cx, -shard.cy);
+      ctx.beginPath();
+      ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
+      shard.verts.forEach(v => ctx.lineTo(v[0], v[1]));
+      ctx.closePath();
+      ctx.clip();
+      ctx.putImageData(snapshot, 0, 0);
+      // glass tint
+      ctx.fillStyle = 'rgba(200,220,255,0.15)';
+      ctx.fill();
+      // edge highlight
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    if (allGone) { canvas.style.display = 'none'; return; }
+    requestAnimationFrame(animateShatter);
+  }
+
+  setTimeout(drawCracks, 1500);
+  setTimeout(startShatter, 1900);
+});
 </script>
 </body>
 </html>
