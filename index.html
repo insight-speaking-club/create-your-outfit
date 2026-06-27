@@ -293,6 +293,287 @@
 </div>
 
 <script>
+// ── MIRROR SHATTER SEQUENCE ──
+const MIRROR_IMAGE_URL = '1000034236.jpg';
+
+window.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('mirror-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let W = canvas.width, H = canvas.height;
+  
+  // Impact point slightly left and above center
+  const IX = W * 0.45 + (Math.random() - 0.5) * 50;
+  const IY = H * 0.35 + (Math.random() - 0.5) * 50;
+
+  let mirrorImg = null;
+  let shimmerOffset = 0;
+  let phase = 1;
+  let cracksDrawn = [];
+
+  function playCrack() {
+    const crackAudio = new Audio('crack.mp3');
+    crackAudio.volume = 0.4;
+    crackAudio.play().catch(() => {});
+  }
+
+  function loadMirrorImage(cb) {
+    if (MIRROR_IMAGE_URL) {
+      mirrorImg = new Image();
+      mirrorImg.onload = cb;
+      mirrorImg.onerror = cb;
+      mirrorImg.src = MIRROR_IMAGE_URL;
+    } else {
+      cb();
+    }
+  }
+
+  function drawBaseMirror() {
+    ctx.fillStyle = '#030303';
+    ctx.fillRect(0, 0, W, H);
+
+    if (mirrorImg && mirrorImg.complete) {
+      ctx.globalAlpha = 0.25;
+      const imgAspect = mirrorImg.width / mirrorImg.height;
+      const canvasAspect = W / H;
+      let dw, dh;
+      if (canvasAspect > imgAspect) {
+        dw = W; dh = W / imgAspect;
+      } else {
+        dh = H; dw = H * imgAspect;
+      }
+      ctx.drawImage(mirrorImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      ctx.globalAlpha = 1.0;
+    }
+
+    const grad = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.4, Math.max(W, H) * 0.8);
+    grad.addColorStop(0, 'rgba(255,255,255,0.85)');
+    grad.addColorStop(0.3, 'rgba(232,232,232,0.85)');
+    grad.addColorStop(0.7, 'rgba(192,192,192,0.9)');
+    grad.addColorStop(1, 'rgba(144,144,144,0.95)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawShimmer() {
+    ctx.save();
+    shimmerOffset += 5;
+    if(shimmerOffset > W + H) shimmerOffset = -Math.max(W, H);
+    
+    ctx.beginPath();
+    ctx.moveTo(0, H + W - shimmerOffset);
+    ctx.lineTo(W, H - shimmerOffset);
+    ctx.lineTo(W, H - 100 - shimmerOffset);
+    ctx.lineTo(0, H + W - 100 - shimmerOffset);
+    ctx.closePath();
+    
+    const streak = ctx.createLinearGradient(0, H - shimmerOffset, W, H - shimmerOffset - W);
+    streak.addColorStop(0, 'rgba(255,255,255,0)');
+    streak.addColorStop(0.5, 'rgba(255,255,255,0.4)');
+    streak.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = streak;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawCrackSegment(x1, y1, x2, y2, thickness) {
+    ctx.strokeStyle = 'rgba(20,20,20,0.7)';
+    ctx.lineWidth = thickness;
+    ctx.beginPath(); ctx.moveTo(x1 - 0.5, y1 - 0.5); ctx.lineTo(x2 - 0.5, y2 - 0.5); ctx.stroke();
+    
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = thickness * 0.8;
+    ctx.beginPath(); ctx.moveTo(x1 + 0.5, y1 + 0.5); ctx.lineTo(x2 + 0.5, y2 + 0.5); ctx.stroke();
+  }
+
+  function generateCrack(startX, startY, angle, length, minThickness) {
+    let x = startX, y = startY;
+    let remaining = length;
+    let thickness = minThickness + (remaining / 100);
+    let path = [{x, y, thickness}];
+    
+    while (remaining > 0) {
+      let step = 20 + Math.random() * 20;
+      if (step > remaining) step = remaining;
+      
+      angle += (Math.random() - 0.5) * 0.4;
+      x += Math.cos(angle) * step;
+      y += Math.sin(angle) * step;
+      
+      thickness = minThickness + ((remaining - step) / 100);
+      path.push({x, y, thickness: Math.max(0.5, thickness)});
+      remaining -= step;
+    }
+    return path;
+  }
+
+  function branchCracks(baseCracks, numBranches, lengthMultiplier) {
+    let newCracks = [];
+    baseCracks.forEach(crack => {
+       for(let i = 0; i < numBranches; i++) {
+          let ptIdx = Math.floor(Math.random() * (crack.length - 1));
+          let pt = crack[ptIdx];
+          let baseAngle = Math.atan2(crack[ptIdx+1].y - pt.y, crack[ptIdx+1].x - pt.x);
+          let angle = baseAngle + (Math.random() > 0.5 ? 1 : -1) * (0.5 + Math.random() * 0.8);
+          let len = (100 + Math.random() * 200) * lengthMultiplier;
+          newCracks.push(generateCrack(pt.x, pt.y, angle, len, 0.5));
+       }
+    });
+    return newCracks;
+  }
+
+  function renderAllCracks() {
+    cracksDrawn.forEach(crack => {
+      for(let i = 0; i < crack.length - 1; i++) {
+        drawCrackSegment(crack[i].x, crack[i].y, crack[i+1].x, crack[i+1].y, crack[i].thickness);
+      }
+    });
+  }
+
+  let renderLoop;
+  function animatePhase1To4() {
+    drawBaseMirror();
+    drawShimmer();
+    renderAllCracks();
+    if (phase < 5) {
+      renderLoop = requestAnimationFrame(animatePhase1To4);
+    }
+  }
+
+  let c1 = [], c2 = [], c3 = [];
+  for(let i = 0; i < 4; i++) {
+    c1.push(generateCrack(IX, IY, (i / 4) * Math.PI * 2 + Math.random(), 100 + Math.random() * 50, 1.5));
+  }
+  c2 = branchCracks(c1, 2, 1.5);
+  c3 = branchCracks(c2, 3, 2.5);
+  for(let i = 0; i < 8; i++) {
+    c3.push(generateCrack(IX, IY, Math.random() * Math.PI * 2, Math.max(W, H), 0.5));
+  }
+
+  function buildShards() {
+    const numShards = 30;
+    const points = [[IX, IY]];
+    for (let i = 1; i < numShards; i++) {
+      points.push([Math.random() * W, Math.random() * H]);
+    }
+    return points.map(pt => {
+      const cx = pt[0], cy = pt[1];
+      const numVerts = 5 + Math.floor(Math.random() * 4);
+      const angles = Array.from({length: numVerts}, (_, i) => (i / numVerts) * Math.PI * 2 + (Math.random() - 0.5) * 0.5);
+      angles.sort((a, b) => a - b);
+      const verts = angles.map(a => {
+        const r = 80 + Math.random() * Math.max(W, H) * 0.2;
+        return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+      });
+      return { cx, cy, verts };
+    });
+  }
+
+  loadMirrorImage(() => {
+    animatePhase1To4();
+
+    // Phase 2: First Crack
+    setTimeout(() => {
+      phase = 2;
+      cracksDrawn.push(...c1);
+      playCrack();
+    }, 600);
+
+    // Phase 3: Second Impact
+    setTimeout(() => {
+      phase = 3;
+      cracksDrawn.push(...c2);
+      playCrack();
+    }, 1200);
+
+    // Phase 4: Full Crack Network
+    setTimeout(() => {
+      phase = 4;
+      cracksDrawn.push(...c3);
+      playCrack();
+    }, 1800);
+
+    // Phase 5: Shatter
+    setTimeout(() => {
+      phase = 5;
+      cancelAnimationFrame(renderLoop);
+      
+      drawBaseMirror();
+      renderAllCracks();
+      
+      const snapshot = ctx.getImageData(0, 0, W, H);
+      const offscreen = document.createElement('canvas');
+      offscreen.width = W; offscreen.height = H;
+      offscreen.getContext('2d').putImageData(snapshot, 0, 0);
+
+      const shards = buildShards();
+      const shardStates = shards.map(s => {
+        const dx = s.cx - IX, dy = s.cy - IY;
+        const dist = Math.hypot(dx, dy) || 1;
+        const speed = 8 + (1000 / (dist + 100)) + Math.random() * 5; 
+        return {
+          vx: (dx / dist) * speed + (Math.random() - 0.5) * 5,
+          vy: (dy / dist) * speed + (Math.random() - 0.5) * 5,
+          vr: (Math.random() - 0.5) * 10,
+          rotation: 0,
+          opacity: 1,
+          tx: 0, ty: 0
+        };
+      });
+
+      function animateShatter() {
+        ctx.clearRect(0, 0, W, H);
+        let active = false;
+        
+        shards.forEach((shard, i) => {
+          const st = shardStates[i];
+          st.tx += st.vx; 
+          st.ty += st.vy; 
+          st.vy += 0.8; 
+          st.rotation += st.vr; 
+          st.opacity -= 0.02; 
+          
+          if (st.opacity <= 0) return;
+          active = true;
+          
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, st.opacity);
+          ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
+          ctx.rotate(st.rotation * Math.PI / 180);
+          ctx.translate(-shard.cx, -shard.cy);
+          
+          ctx.beginPath();
+          ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
+          for (let j = 1; j < shard.verts.length; j++) {
+            ctx.lineTo(shard.verts[j][0], shard.verts[j][1]);
+          }
+          ctx.closePath();
+          ctx.clip();
+          
+          ctx.drawImage(offscreen, 0, 0);
+          
+          ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          ctx.restore();
+        });
+
+        if (active) requestAnimationFrame(animateShatter);
+      }
+      animateShatter();
+    }, 2200);
+
+    // Phase 6: Reveal
+    setTimeout(() => {
+      canvas.style.display = 'none';
+    }, 3200);
+
+  });
+});
+
 // ── SPOTIFY MODAL ──
 function openSpotify() { document.getElementById('spotify-modal').classList.add('show'); }
 function closeSpotify() { document.getElementById('spotify-modal').classList.remove('show'); }
@@ -752,153 +1033,7 @@ const verdicts = {
   'theatrical': { line: "You didn't come to blend in.", sub: "The entrance is the outfit. The outfit is the entrance." },
   'theatrical femme': { line: "Soft, but staged.", sub: "Every detail here has blocking." },
   'theatrical goth': { line: "Tragedy, but make it tulle.", sub: "Looks like a third act." },
-  'theatrical maximalist': { line: "Feathers, drama, a full production.", sub: "This outfit needs a curtain call." },
-  'theatrical soft': { line: "Gentle, but it still wants an audience.", sub: "Soft doesn't mean subtle here." },
-  'tomboy': { line: "Borrowed the cap, kept the upper hand.", sub: "Comfortable in every sense of the word." },
-  'utilitarian chic': { line: "Function with very good taste.", sub: "Pockets you'll actually use, looks you didn't expect." },
-  'utility': { line: "Built like it has somewhere dirty to be.", sub: "Every strap and buckle earns its place." },
-  'victorian goth': { line: "Mourning dress, modern grudge.", sub: "High collar, higher standards." },
-  'weaponised femininity': { line: "Soft on the outside. Absolute menace within.", sub: "Pretty in a way that makes people reconsider their choices." },
-  'winter intellectual': { line: "Cold weather, warmer opinions.", sub: "Looks like you read in front of a fireplace, on purpose." },
-  'witchy': { line: "Spellbound, intentionally.", sub: "This outfit knows something you don't." },
-  'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
-};
-
-const verdictsUK = {
-  'what about it?': { line: "Ти вже знаєш, що робиш.", sub: "Бант ніколи не був просто аксесуаром." },
-  'Y2K downtown': { line: "Низька посадка і нуль турбот.", sub: "Ти пропустила відродження тренду і звернулася прямо до першоджерела." },
-  'Y2K revival': { line: "Подорож у часі без зайвого багажу.", sub: "Шпильки-метелики за бажанням, впевненість — обов'язкова." },
-  'academic': { line: "Шлях до професури, але без посади.", sub: "Ти одягаєшся так, ніби виноски цікавіші за сам есей." },
-  'all eyes on you': { line: "У кімнаті лише один фокус.", sub: "І це далеко не люстра." },
-  'androgynous': { line: "Жодні рамки не підходять, тому ти створила свої.", sub: "Крій, якому абсолютно байдуже на чужі очікування." },
-  'art student': { line: "Захищена від критики та свідома цього.", sub: "Виглядає як концепт. Читається як впевненість." },
-  'artsy': { line: "Енергія відкриття галереї на кожен день.", sub: "Ти носиш аксесуари так, ніби це знайдені арт-об'єкти." },
-  'arty': { line: "Трохи незавершено, і це абсолютно навмисно.", sub: "Такий образ зазвичай потребує кураторського тексту-пояснення." },
-  'autumn rich': { line: "Погода для кашеміру, постава старих грошей.", sub: "Ти одягаєшся так, ніби листя змінило колір спеціально для тебе." },
-  'autumn witchy': { line: "Магія, але з ідеальним кроєм.", sub: "Рівні пропорції врожаю та прокляття." },
-  'bold femme': { line: "М'якість не означає тишу.", sub: "Цей образ має власну думку і не збирається її приховувати." },
-  'borrowed from the boys': { line: "Вкрала силует, залишила за собою перевагу.", sub: "Чоловічий одяг, перекладений без дозволу." },
-  'borrowed genius': { line: "Виглядаєш так, ніби найрозумніша людина щойно вийшла.", sub: "Оверсайз навмисно, недооцінка ніколи." },
-  'boss': { line: "Ніхто не буде перевіряти твою перепустку двічі.", sub: "Твій піджак вже сказав останнє слово." },
-  'camp cowgirl': { line: "Родео, але на подіумі.", sub: "Ти повірила в образ, і він переміг." },
-  'cerebral': { line: "Читається як дисертація, виглядає як вайб.", sub: "Тиха, гостра, трохи недосяжна." },
-  'city power': { line: "Лінія горизонту погоджується з твоїм вбранням.", sub: "Створено для залів засідань і маршрутів після них." },
-  'classic': { line: "Поза часом, зухвало справжня.", sub: "Тренди колись наздоженуть. Ти навіть не помітиш." },
-  'classic chic': { line: "Образ, якому ніколи не потрібно нічого пояснювати.", sub: "Відполіровано, просто, правильно." },
-  'classic dyke': { line: "Живий архів естетики.", sub: "Десятиліття історії стилю щойно схвально кивнули." },
-  'cool': { line: "Непохитна і якимось чином все ще вчасно.", sub: "Ти робиш так, щоб мінімальні зусилля виглядали як ціла філософія." },
-  'cool Americana': { line: "Відкрита дорога, денім і жодних вибачень.", sub: "Створено для пікапа, якого в тебе, можливо, навіть немає." },
-  'cosy editorial': { line: "Достатньо м'яко для дивана, достатньо гостро для зйомки.", sub: "Комфорт із власним стилістом." },
-  'cosy rich': { line: "Дорогі ковдри, тихо великі почуття.", sub: "Теплі кольори, ще тепліший банківський рахунок." },
-  'dangerous': { line: "Виглядає як проблема. Читається як намір.", sub: "Нічого в цьому образі не є випадковістю." },
-  'dangerous romantic': { line: "Любовні листи, написані чимось гострішим за чорнило.", sub: "Красиво, але це вже попередження." },
-  'dangerous woman': { line: "Ти прийшла, побачила, пішла з альбомом.", sub: "М'яка на поверхні. Ціла епоха всередині." },
-  'dark cowgirl': { line: "Дикий Захід після настання темряви.", sub: "Чоботи, які явно бачили багато." },
-  'dark romantic': { line: "Прекрасна і злегка зловісна.", sub: "Це одяг для щоденника, і запис дуже гарний." },
-  'delicate': { line: "Дрібні деталі роблять величезну роботу.", sub: "Витонченість як демонстрація сили." },
-  'director': { line: "Ти не в сцені. Ти її вибудовуєш.", sub: "Окуляри на місці, погляди гучніші за діалог." },
-  'downtown': { line: "Крута без зусиль, на що пішло багато зусиль.", sub: "Виглядає як друга ночі і хороше рішення." },
-  'downtown art': { line: "Одяг для студії, впевненість для галереї.", sub: "Енергія бризок фарби без самої фарби." },
-  'downtown artist': { line: "Тоновані окуляри, нетоновані думки.", sub: "Виглядаєш так, ніби створюєш те, чого ще ніхто не бачив." },
-  'downtown intellectual': { line: "Полотняний шопер, гостріший аргумент всередині.", sub: "Виглядаєш так, ніби читаєш статтю повністю, а не лише заголовок." },
-  'dramatic': { line: "Тонкість ніколи не була в завданні.", sub: "Кожен шов тут веде монолог." },
-  'dramatic entrance': { line: "Двері відчинилися, і розмова теж.", sub: "Ти не заходиш у кімнати. Ти проголошуєш свою присутність." },
-  'edgy': { line: "Трохи гостро на краях, навмисно.", sub: "Гладко було б просто нудно." },
-  'editorial': { line: "Тебе явно знімав хтось, чиє ім'я я повинна знати.", sub: "Цей образ належить глянцю, а не просто вулиці." },
-  'effortless': { line: "Виглядає так, ніби ти навіть не думала.", sub: "Ми обидві знаємо, що думала. Це спрацювало." },
-  'effortless chic': { line: "Безтурботно ідеально, що вимагало реальної роботи.", sub: "Найбільш невловимий образ з усіх існуючих." },
-  'effortlessly powerful': { line: "Владний стиль без фази одягання.", sub: "Авторитет, якому ніколи не доводилося підвищувати голос." },
-  'effortlessly sexy': { line: "Впевненість робить більшу частину роботи.", sub: "Одяг просто йде поруч." },
-  'eighties revival': { line: "Спочатку плечі, запитання потім.", sub: "Найдраматичніше десятиліття power dressing повертається." },
-  'evening': { line: "Денного світла ніколи б не вистачило для цього.", sub: "Створено для кімнат з кращим освітленням." },
-  'evening editorial': { line: "Знято опівночі, надруковано в глянці.", sub: "Це не просто вбрання, це розворот." },
-  'evening femme': { line: "М'яке освітлення було створено саме для цього.", sub: "Гламур, якому є куди піти." },
-  'extremely online': { line: "У цього лука є цілий фандом.", sub: "Створено для скріншотів, а не просто тротуарів." },
-  'fashion insider': { line: "Ти знала ще до виходу кампейну.", sub: "Логотип, який розпізнають лише свої." },
-  'fashion literate': { line: "Ти читаєш моду так, як деякі читають романи.", sub: "Виноски включені, відсилання навмисні." },
-  'fashion-forward': { line: "На шість місяців попереду і не чекаєш на компанію.", sub: "Всі інші колись наздоженуть." },
-  'feminine danger': { line: "Краса тут робить багато тихої погрози.", sub: "Прозоро, ніжно і точно не для недооцінки." },
-  'feminine touch': { line: "Одна маленька деталь робить усю роботу.", sub: "Стриманість як власний стейтмент." },
-  'femme': { line: "Жіночність як зброя, мова та позиція.", sub: "Ти точно знаєш, що з нею робиш." },
-  'femme confident': { line: "Жодної гри. Просто присутність.", sub: "Цьому образу не потрібна аудиторія, щоб працювати." },
-  'french girl': { line: "Класично, до божевілля круто.", sub: "Смужка завжди була правильним рішенням." },
-  'french intellectual': { line: "Читає філософію в метро, виглядає при цьому неймовірно.", sub: "Легко і чарівно трохи зверхньо." },
-  'glamour': { line: "Олдскульний блиск, жодних вибачень.", sub: "Створено, щоб ловити світло і тримати кімнату." },
-  'going out': { line: "Цьому вбранню є куди піти об 11 вечора.", sub: "Денне світло йому не потрібне." },
-  'intellectual': { line: "Ти одягаєшся так, ніби маєш думку про архітектуру.", sub: "Розумна, виважена, трохи лякає." },
-  'intellectually productive': { line: "Одягнена для плейлиста глибокого фокусу.", sub: "Виглядає як чотири відкриті вкладки і завершена дисертація." },
-  'italian summer': { line: "Льон, золото і жодного поспіху.", sub: "Створено для узбережжя, яке ти ще не знайшла." },
-  'literary': { line: "Твій образ – це буквально перше видання.", sub: "Начитана, добре вдягнена, трохи недоступна." },
-  'literary weekend': { line: "Будиночок, книга, светр, повторити.", sub: "Виглядає так, ніби сюжет закручується повільно і навмисно." },
-  'maximalist': { line: "Більше – це більше, і більше, і більше.", sub: "Ти і є образ. Образ і є ти." },
-  'maximalist angel': { line: "М'який хаос із дуже хорошим освітленням.", sub: "Занадто багато, але в абсолютно правильному напрямку." },
-  'maximalist evening': { line: "Стриманість взяла вихідний.", sub: "Створено, щоб тебе побачили з іншого кінця кімнати." },
-  'maximalist villain': { line: "Пальто, план і кінематографічний вихід.", sub: "Арка лиходійки, але фЕШОН." },
-  'minimalist': { line: "Усе зайве вже було вирізано.", sub: "Те, що залишилося, робить усю роботу." },
-  'minimalist power': { line: "Тихі лінії, гучні результати.", sub: "Не потрібні прикраси, коли крій правильний." },
-  'mysterious': { line: "Ніхто тебе не знає, і тобі це подобається.", sub: "Довге пальто, жодних пояснень, ідеально." },
-  'nineties': { line: "Дев'яності мали рацію майже в усьому.", sub: "Сліп, срібло і прохолодне повітря." },
-  'nineties cool': { line: "Спеціально недбало, гостро всередині.", sub: "Виглядає як позичене. Точно ні." },
-  'nineties goth': { line: "Оксамитовий чокер, перманентний закот очей.", sub: "Темна, трохи знуджена, абсолютно ідеальна." },
-  'nineties revival': { line: "Ти повернула десятиліття без жодних 'але'.", sub: "Хром, низька посадка, ніяких зауважень." },
-  'nocturnal': { line: "Денне світло просто не твоя юрисдикція.", sub: "Цей образ насправді існує лише після настання темряви." },
-  'nocturnal glamour': { line: "Ти була створена для пізньої ночі.", sub: "День ще не заслужив на цей образ." },
-  'off-duty': { line: "Технічно не працюєш. Але візуально перемагаєш.", sub: "Той правильний тип мінімальних зусиль." },
-  'off-duty cool': { line: "Виглядає так, ніби просто накинуто. Це не так.", sub: "На найбільш лінивий образ пішло найбільше думок." },
-  'off-duty editorial': { line: "Виглядає як випадкове фото. Було повністю стилізовано.", sub: "Поза роботою, але під запис." },
-  'off-duty luxury': { line: "Відпочиває, але в кашемірі.", sub: "Навіть нічого не роблячи, це вбрання працює." },
-  'old Hollywood': { line: "Ти прийшла. Усі обернулися.", sub: "Інша, більш глянцева епоха впізнає тебе." },
-  'old Hollywood glam': { line: "Студійне освітлення, навіть на вулиці.", sub: "У цього образу є власний піарник." },
-  'old money': { line: "Успадкований смак, або бездоганна підробка.", sub: "У будь-якому разі, ніхто не питає, що саме." },
-  'parisian': { line: "Легко паризька, в найкращому значенні кліше.", sub: "Ми вважаємо це компліментом, і ти це знаєш." },
-  'perennial chic': { line: "Це не застаріє. Воно вже вирішило цього не робити.", sub: "Образ без терміну придатності." },
-  'polished': { line: "Кожен край на своєму місці.", sub: "Виглядає просто. Потребувало дзеркала і плану." },
-  'power': { line: "Кімната перекалібровується, коли ти заходиш.", sub: "У цього образу є план із семи пунктів, і він перемагає." },
-  'power androgyny': { line: "Ні те, ні інше — а отже, все.", sub: "Плечі, плинність, впевненість того, хто вибирає власні правила." },
-  'power dressing': { line: "Одягнена для переговорів, які ти виграєш.", sub: "Кожна лінія тут — це бізнес." },
-  'power femme': { line: "Тут жіночність — це не м'якість. Це точність.", sub: "Кожна деталь — це вибір, і ти зробила їх усі." },
-  'power jewellery': { line: "Маленькі деталі, величезний авторитет.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
-  'powerful': { line: "Це вбрання не просить кімнату. Воно її забирає.", sub: "Тихо, повністю, без обговорень." },
-  'practical chic': { line: "Створено, щоб пережити день і все одно виглядати свідомо.", sub: "Функція на першому місці. Але стиль нікуди не зникав." },
-  'practical cool': { line: "Створено для того, щоб насправді щось робити.", sub: "Виглядає легким, бо так має бути." },
-  'preppy subverted': { line: "Уніформа з вшитим маленьким бунтом.", sub: "Старі правила, новий власник." },
-  'princess energy': { line: "Фатин увійшов у чат.", sub: "М'яка, трохи екстра, абсолютно не хвилюється через 'занадто багато'." },
-  'punk adjacent': { line: "Досить близько до бунту, щоб відчути його.", sub: "Не повноцінне повстання. Але ти точно є на флаєрі." },
-  'punk heritage': { line: "Ця клітинка пам'ятає, звідки вона взялася.", sub: "Скроєний бунт із довгою пам'яттю." },
-  'quiet': { line: "Майже нічого не каже, але має на увазі кожну деталь.", sub: "Стриманість, розгорнута правильно." },
-  'quiet luxury': { line: "Дорого, але без оголошень.", sub: "Найбільш лякаючий вид багатства." },
-  'quiet luxury peak': { line: "Це та версія, яку люди намагаються скопіювати і не можуть.", sub: "Логотипи не потрібні. Нічому з цього не потрібен логотип." },
-  'quiet subversion': { line: "Виглядає правильно. Але не зовсім.", sub: "Правила дотримані достатньо, щоб чисто порушити одне з них." },
-  'quietly powerful': { line: "Не підвищує голос. Не потребує цього.", sub: "Тип влади, який ніколи не пояснює себе." },
-  'ready for anything': { line: "Екіпірована для плану, який ще не відбувся.", sub: "Практична, готова, якось дивно стильна при цьому." },
-  'regency romantic': { line: "Завищена талія, сучасна зухвалість.", sub: "Виглядає як історична драма, яка знає, що вона історична драма." },
-  'retro glam': { line: "Запозичила епоху і покращила її.", sub: "Вінтажний блиск, сучасний нерв." },
-  'retro glamour': { line: "Стара плівка, нова головна роль.", sub: "У цього образу є власні початкові титри." },
-  'rich girl': { line: "Виглядає дорого. І абсолютно не переймається цим.", sub: "Золоту не потрібен підпис." },
-  'riot grrrl': { line: "Гучно, гордо, трохи загрозливо.", sub: "Ти одягаєшся так, ніби патріархат винен тобі гроші." },
-  'rock': { line: "Шкіра, ставлення, саундтрек, який чуєш лише ти.", sub: "Гучність на максимум ще до того, як ти заговорила." },
-  'rock evening': { line: "Енергія бекстейджу, образ для першого ряду.", sub: "Створено для ночі, яка буде гучною." },
-  'romantic intellectual': { line: "Поезія, але ідеально скроєна.", sub: "Почуття з виносками." },
-  'school-to-stage': { line: "Уніформа зовні, перфоманс всередині.", sub: "Виглядає як покарання. Читається як дебют." },
-  'sculptural': { line: "Це не стільки одяг, скільки структура, яку ти носиш.", sub: "Архітектура одяглася і вийшла на вулицю." },
-  'sculptural minimalism': { line: "Форма зробила всю роботу. Колір залишився тихим.", sub: "Виглядає так, ніби це вирізьблено, а не зшито." },
-  'seventies': { line: "Правильне десятиліття, нарешті.", sub: "Коричневий, кемел і абсолютна впевненість." },
-  'seventies cool': { line: "Вигоріла на сонці і якимось чином все ще гостра.", sub: "Виглядає так, ніби запозичена з обкладинки платівки." },
-  'sharp': { line: "Кожна лінія на цьому одязі має що сказати.", sub: "Чітко, точно, трохи небезпечно." },
-  'soft': { line: "Ніжна, але ніколи не випадкова.", sub: "Комфорт, нарядний рівно настільки, наскільки треба." },
-  'soft butch': { line: "Зручно і абсолютно вивірено.", sub: "Ти змушуєш легкість виглядати як цілий стиль життя." },
-  'soft danger': { line: "Мила, поки не подивишся двічі.", sub: "Тут краса робить тиху, але серйозну роботу." },
-  'soft elegance': { line: "Тут нічого не кричить, і все правильно.", sub: "Елегантність, якій не потрібна гучність." },
-  'soft romantic': { line: "Виглядає як любовний лист, читається як стриманість.", sub: "Романтика, навмисно залишена ніжною." },
-  'sporty chic': { line: "Спортивний крій, нуль намірів кудись бігти.", sub: "Створено для лавки запасних, а не для треку." },
-  'sporty-chic': { line: "Спортивна тканина, життєвий темп.", sub: "Виглядає швидко. Рухається зі швидкістю бранчу." },
-  'summer icon': { line: "Цей образ – це хайлайт всього сезону.", sub: "Білий, яскравий і нікуди не зникне." },
-  'summer minimalist': { line: "Менше тканини, та сама кількість намірів.", sub: "Термостійка і все ще продумана." },
-  'summertime': { line: "Улюблений одяг теплої погоди.", sub: "Створено для довгих днів і ще довшого світла." },
-  'theatrical': { line: "Ти прийшла сюди не для того, щоб злитися з натовпом.", sub: "Вихід – це образ. Образ – це вихід." },
-  'theatrical femme': { line: "М'яка, але постановочна.", sub: "Кожна деталь тут має свої мізансцени." },
-  'theatrical goth': { line: "Трагедія, але нехай це буде фатин.", sub: "Виглядає як третій акт." },
-  'theatrical maximalist': { line: "Пір'я, драма, повноцінна постановка.", sub: "Цьому образу потрібен вихід на уклін." },
+  'theatrical maximalist': { line: "Feathers, drama, a full production.", sub: "Цьому образу потрібен вихід на уклін." },
   'theatrical soft': { line: "Ніжна, але все ще хоче аудиторію.", sub: "М'якість тут не означає стриманість." },
   'tomboy': { line: "Позичила кепку, залишила перевагу.", sub: "Комфортна в кожному сенсі цього слова." },
   'utilitarian chic': { line: "Функція з дуже хорошим смаком.", sub: "Кишені, якими ти дійсно користуєшся, образи, яких ти не очікувала." },
@@ -1150,189 +1285,290 @@ function copyLookList() {
 }
 
 init();
+</script>
 
-// ── MIRROR SHATTER SEQUENCE ──
+<canvas id="mirror-canvas"></canvas>
+
+<script>
+const MIRROR_IMAGE_URL = '1000034236.jpg'; // Using the uploaded upside-down figure
+
 window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('mirror-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  const W = canvas.width, H = canvas.height;
+  let W = canvas.width, H = canvas.height;
+  
+  // Impact point slightly left and above center
+  const IX = W * 0.45 + (Math.random() - 0.5) * 50;
+  const IY = H * 0.35 + (Math.random() - 0.5) * 50;
 
-  // Draw mirror surface
-  function drawMirror() {
-    const grad = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, Math.max(W,H)*0.8);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.3, '#e8e8e8');
-    grad.addColorStop(0.7, '#c0c0c0');
-    grad.addColorStop(1, '#909090');
+  let mirrorImg = null;
+  let shimmerOffset = 0;
+  let phase = 1;
+  let cracksDrawn = [];
+
+  function playCrack() {
+    const crackAudio = new Audio('crack.mp3');
+    crackAudio.volume = 0.4;
+    crackAudio.play().catch(() => {});
+  }
+
+  function loadMirrorImage(cb) {
+    if (MIRROR_IMAGE_URL) {
+      mirrorImg = new Image();
+      mirrorImg.onload = cb;
+      mirrorImg.onerror = cb;
+      mirrorImg.src = MIRROR_IMAGE_URL;
+    } else {
+      cb();
+    }
+  }
+
+  function drawBaseMirror() {
+    ctx.fillStyle = '#030303';
+    ctx.fillRect(0, 0, W, H);
+
+    if (mirrorImg && mirrorImg.complete) {
+      ctx.globalAlpha = 0.25;
+      const imgAspect = mirrorImg.width / mirrorImg.height;
+      const canvasAspect = W / H;
+      let dw, dh;
+      if (canvasAspect > imgAspect) {
+        dw = W; dh = W / imgAspect;
+      } else {
+        dh = H; dw = H * imgAspect;
+      }
+      ctx.drawImage(mirrorImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      ctx.globalAlpha = 1.0;
+    }
+
+    const grad = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.4, Math.max(W, H) * 0.8);
+    grad.addColorStop(0, 'rgba(255,255,255,0.85)');
+    grad.addColorStop(0.3, 'rgba(232,232,232,0.85)');
+    grad.addColorStop(0.7, 'rgba(192,192,192,0.9)');
+    grad.addColorStop(1, 'rgba(144,144,144,0.95)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
-    // shimmer streak
-    const streak = ctx.createLinearGradient(0, 0, W, H);
+  }
+
+  function drawShimmer() {
+    ctx.save();
+    shimmerOffset += 5;
+    if(shimmerOffset > W + H) shimmerOffset = -Math.max(W, H);
+    
+    ctx.beginPath();
+    ctx.moveTo(0, H + W - shimmerOffset);
+    ctx.lineTo(W, H - shimmerOffset);
+    ctx.lineTo(W, H - 100 - shimmerOffset);
+    ctx.lineTo(0, H + W - 100 - shimmerOffset);
+    ctx.closePath();
+    
+    const streak = ctx.createLinearGradient(0, H - shimmerOffset, W, H - shimmerOffset - W);
     streak.addColorStop(0, 'rgba(255,255,255,0)');
-    streak.addColorStop(0.45, 'rgba(255,255,255,0)');
-    streak.addColorStop(0.5, 'rgba(255,255,255,0.55)');
-    streak.addColorStop(0.55, 'rgba(255,255,255,0)');
+    streak.addColorStop(0.5, 'rgba(255,255,255,0.4)');
     streak.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = streak;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fill();
+    ctx.restore();
   }
 
-  drawMirror();
+  function drawCrackSegment(x1, y1, x2, y2, thickness) {
+    ctx.strokeStyle = 'rgba(20,20,20,0.7)';
+    ctx.lineWidth = thickness;
+    ctx.beginPath(); ctx.moveTo(x1 - 0.5, y1 - 0.5); ctx.lineTo(x2 - 0.5, y2 - 0.5); ctx.stroke();
+    
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = thickness * 0.8;
+    ctx.beginPath(); ctx.moveTo(x1 + 0.5, y1 + 0.5); ctx.lineTo(x2 + 0.5, y2 + 0.5); ctx.stroke();
+  }
 
-  // Impact point
-  const IX = W * 0.48 + (Math.random()-0.5)*80;
-  const IY = H * 0.42 + (Math.random()-0.5)*60;
+  function generateCrack(startX, startY, angle, length, minThickness) {
+    let x = startX, y = startY;
+    let remaining = length;
+    let thickness = minThickness + (remaining / 100);
+    let path = [{x, y, thickness}];
+    
+    while (remaining > 0) {
+      let step = 20 + Math.random() * 20;
+      if (step > remaining) step = remaining;
+      
+      angle += (Math.random() - 0.5) * 0.4;
+      x += Math.cos(angle) * step;
+      y += Math.sin(angle) * step;
+      
+      thickness = minThickness + ((remaining - step) / 100);
+      path.push({x, y, thickness: Math.max(0.5, thickness)});
+      remaining -= step;
+    }
+    return path;
+  }
 
-  // Draw cracks
-  function drawCracks() {
-    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-    ctx.lineWidth = 1.2;
-    const numMain = 10 + Math.floor(Math.random()*5);
-    for (let i = 0; i < numMain; i++) {
-      const angle = (i / numMain) * Math.PI * 2 + (Math.random()-0.5)*0.4;
-      const len = (0.4 + Math.random()*0.6) * Math.max(W,H);
-      let x = IX, y = IY;
-      ctx.beginPath(); ctx.moveTo(x, y);
-      let remainingLen = len;
-      while (remainingLen > 0) {
-        const segLen = 30 + Math.random()*80;
-        const jitter = (Math.random()-0.5)*0.35;
-        x += Math.cos(angle+jitter)*Math.min(segLen, remainingLen);
-        y += Math.sin(angle+jitter)*Math.min(segLen, remainingLen);
-        ctx.lineTo(x, y);
-        // branch
-        if (Math.random() < 0.4 && remainingLen > 80) {
-          const bAngle = angle + (Math.random()-0.5)*1.2;
-          const bLen = remainingLen * (0.2 + Math.random()*0.3);
-          let bx = x, by = y;
-          ctx.moveTo(bx, by);
-          for (let b = 0; b < bLen; b += 40+Math.random()*40) {
-            bx += Math.cos(bAngle+(Math.random()-0.5)*0.3)*40;
-            by += Math.sin(bAngle+(Math.random()-0.5)*0.3)*40;
-            ctx.lineTo(bx, by);
-          }
-          ctx.moveTo(x, y);
-        }
-        remainingLen -= segLen;
+  function branchCracks(baseCracks, numBranches, lengthMultiplier) {
+    let newCracks = [];
+    baseCracks.forEach(crack => {
+       for(let i = 0; i < numBranches; i++) {
+          let ptIdx = Math.floor(Math.random() * (crack.length - 1));
+          let pt = crack[ptIdx];
+          let baseAngle = Math.atan2(crack[ptIdx+1].y - pt.y, crack[ptIdx+1].x - pt.x);
+          let angle = baseAngle + (Math.random() > 0.5 ? 1 : -1) * (0.5 + Math.random() * 0.8);
+          let len = (100 + Math.random() * 200) * lengthMultiplier;
+          newCracks.push(generateCrack(pt.x, pt.y, angle, len, 0.5));
+       }
+    });
+    return newCracks;
+  }
+
+  function renderAllCracks() {
+    cracksDrawn.forEach(crack => {
+      for(let i = 0; i < crack.length - 1; i++) {
+        drawCrackSegment(crack[i].x, crack[i].y, crack[i+1].x, crack[i+1].y, crack[i].thickness);
       }
-      ctx.stroke();
+    });
+  }
+
+  let renderLoop;
+  function animatePhase1To4() {
+    drawBaseMirror();
+    drawShimmer();
+    renderAllCracks();
+    if (phase < 5) {
+      renderLoop = requestAnimationFrame(animatePhase1To4);
     }
   }
 
-  // Build shards as polygons tiling the canvas
-  function buildShards(numShards) {
+  let c1 = [], c2 = [], c3 = [];
+  for(let i = 0; i < 4; i++) {
+    c1.push(generateCrack(IX, IY, (i / 4) * Math.PI * 2 + Math.random(), 100 + Math.random() * 50, 1.5));
+  }
+  c2 = branchCracks(c1, 2, 1.5);
+  c3 = branchCracks(c2, 3, 2.5);
+  for(let i = 0; i < 8; i++) {
+    c3.push(generateCrack(IX, IY, Math.random() * Math.PI * 2, Math.max(W, H), 0.5));
+  }
+
+  function buildShards() {
+    const numShards = 30;
     const points = [[IX, IY]];
     for (let i = 1; i < numShards; i++) {
-      points.push([Math.random()*W, Math.random()*H]);
+      points.push([Math.random() * W, Math.random() * H]);
     }
-    return points.map((pt) => {
+    return points.map(pt => {
       const cx = pt[0], cy = pt[1];
-      const numVerts = 6 + Math.floor(Math.random()*4);
-      // FIXED: removed 'a' and 'a.length', strictly use numVerts
-      const angles = Array.from({length: numVerts}, (_, i) => (i / numVerts) * Math.PI * 2 + (Math.random()-0.5)*0.5);
+      const numVerts = 5 + Math.floor(Math.random() * 4);
+      const angles = Array.from({length: numVerts}, (_, i) => (i / numVerts) * Math.PI * 2 + (Math.random() - 0.5) * 0.5);
+      angles.sort((a, b) => a - b);
       const verts = angles.map(a => {
-        const r = 60 + Math.random() * Math.max(W,H) * 0.18;
-        return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
+        const r = 80 + Math.random() * Math.max(W, H) * 0.2;
+        return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
       });
       return { cx, cy, verts };
     });
   }
 
-  let shards = null;
-  let animating = false;
-  let shardStates = [];
-  let offscreen = null;
+  loadMirrorImage(() => {
+    animatePhase1To4();
 
-  function startShatter() {
-    // Capture the cracked mirror reflection
-    const snapshot = ctx.getImageData(0, 0, W, H);
-    
-    // Draw it to an offscreen canvas so drawImage respects rotation
-    offscreen = document.createElement('canvas');
-    offscreen.width = W;
-    offscreen.height = H;
-    offscreen.getContext('2d').putImageData(snapshot, 0, 0);
+    // Phase 2: First Crack
+    setTimeout(() => {
+      phase = 2;
+      cracksDrawn.push(...c1);
+      playCrack();
+    }, 600);
 
-    shards = buildShards(22);
-    shardStates = shards.map(s => {
-      const dx = s.cx - IX, dy = s.cy - IY;
-      const dist = Math.hypot(dx, dy) || 1;
-      const speed = 4 + Math.random()*8 + (1/(dist/300+0.1))*2;
-      return {
-        vx: (dx/dist)*speed + (Math.random()-0.5)*3,
-        vy: (dy/dist)*speed + (Math.random()-0.5)*3,
-        vr: (Math.random()-0.5)*6,
-        rotation: 0,
-        opacity: 1,
-        tx: 0, ty: 0
-      };
-    });
-    animating = true;
-    requestAnimationFrame(animateShatter);
-  }
+    // Phase 3: Second Impact
+    setTimeout(() => {
+      phase = 3;
+      cracksDrawn.push(...c2);
+      playCrack();
+    }, 1200);
 
-  function animateShatter() {
-    ctx.clearRect(0, 0, W, H);
+    // Phase 4: Full Crack Network
+    setTimeout(() => {
+      phase = 4;
+      cracksDrawn.push(...c3);
+      playCrack();
+    }, 1800);
 
-    let allGone = true;
-    shards.forEach((shard, i) => {
-      const st = shardStates[i];
-      st.tx += st.vx; 
-      st.ty += st.vy; 
-      st.vy += 0.4; // gravity
-      st.rotation += st.vr; 
-      st.opacity -= 0.018;
+    // Phase 5: Shatter
+    setTimeout(() => {
+      phase = 5;
+      cancelAnimationFrame(renderLoop);
       
-      if (st.opacity <= 0) return;
-      allGone = false;
+      drawBaseMirror();
+      renderAllCracks();
       
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, st.opacity);
-      
-      // Move to the shard's current position and rotate
-      ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
-      ctx.rotate(st.rotation * Math.PI / 180);
-      ctx.translate(-shard.cx, -shard.cy);
-      
-      // Cut out the shard shape
-      ctx.beginPath();
-      ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
-      shard.verts.forEach(v => ctx.lineTo(v[0], v[1]));
-      ctx.closePath();
-      ctx.clip();
-      
-      // Draw the mirrored reflection correctly transformed
-      ctx.drawImage(offscreen, 0, 0);
-      
-      // Tint & outline
-      ctx.fillStyle = 'rgba(200,220,255,0.15)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      ctx.restore();
-    });
+      const snapshot = ctx.getImageData(0, 0, W, H);
+      const offscreen = document.createElement('canvas');
+      offscreen.width = W; offscreen.height = H;
+      offscreen.getContext('2d').putImageData(snapshot, 0, 0);
 
-    if (allGone) { 
-      canvas.style.display = 'none'; 
-      return; 
-    }
-    requestAnimationFrame(animateShatter);
-  }
+      const shards = buildShards();
+      const shardStates = shards.map(s => {
+        const dx = s.cx - IX, dy = s.cy - IY;
+        const dist = Math.hypot(dx, dy) || 1;
+        const speed = 8 + (1000 / (dist + 100)) + Math.random() * 5; 
+        return {
+          vx: (dx / dist) * speed + (Math.random() - 0.5) * 5,
+          vy: (dy / dist) * speed + (Math.random() - 0.5) * 5,
+          vr: (Math.random() - 0.5) * 10,
+          rotation: 0,
+          opacity: 1,
+          tx: 0, ty: 0
+        };
+      });
 
-  // Play crack sound
-  setTimeout(() => {
-    drawCracks();
-    const crackAudio = new Audio('crack.mp3');
-    crackAudio.volume = 0.4;
-    crackAudio.play().catch(() => {});
-  }, 1500);
+      function animateShatter() {
+        ctx.clearRect(0, 0, W, H);
+        let active = false;
+        
+        shards.forEach((shard, i) => {
+          const st = shardStates[i];
+          st.tx += st.vx; 
+          st.ty += st.vy; 
+          st.vy += 0.8; // Gravity
+          st.rotation += st.vr; 
+          st.opacity -= 0.02; // Fade out
+          
+          if (st.opacity <= 0) return;
+          active = true;
+          
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, st.opacity);
+          ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
+          ctx.rotate(st.rotation * Math.PI / 180);
+          ctx.translate(-shard.cx, -shard.cy);
+          
+          ctx.beginPath();
+          ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
+          for (let j = 1; j < shard.verts.length; j++) {
+            ctx.lineTo(shard.verts[j][0], shard.verts[j][1]);
+          }
+          ctx.closePath();
+          ctx.clip();
+          
+          ctx.drawImage(offscreen, 0, 0);
+          
+          // Light catching edges
+          ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          ctx.restore();
+        });
 
-  setTimeout(startShatter, 1900);
+        if (active) requestAnimationFrame(animateShatter);
+      }
+      animateShatter();
+    }, 2200);
+
+    // Phase 6: Reveal
+    setTimeout(() => {
+      canvas.style.display = 'none';
+    }, 3200);
+
+  });
 });
 </script>
 </body>
