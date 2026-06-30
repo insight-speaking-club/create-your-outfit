@@ -107,7 +107,7 @@
   .on-canvas .oc-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; display: block; }
   .on-canvas .remove-btn, .on-canvas .resize-handle, .on-canvas .rotate-handle, .on-canvas .rotate-stem { display: none; }
   .on-canvas.active-item .remove-btn { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: var(--ink); color: var(--bg); border: none; border-radius: 50%; font-size: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
-  .on-canvas.active-item .resize-handle { position: absolute; bottom: -9px; right: -9px; width: 20px; height: 20px; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: nwse-resize; z-index: 6; display: flex; align-items: center; justify-content: center; touch-action: none; }
+  .on-canvas.active-item .resize-handle { position: absolute bottom: -9px; right: -9px; width: 20px; height: 20px; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: nwse-resize; z-index: 6; display: flex; align-items: center; justify-content: center; touch-action: none; }
   .on-canvas.active-item .resize-handle::before { content: ''; width: 7px; height: 7px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
   .on-canvas.active-item .rotate-stem { position: absolute; top: -28px; left: 50%; width: 1.5px; height: 20px; background: var(--muted); transform: translateX(-50%); z-index: 5; display: block; }
   .on-canvas.active-item .rotate-handle { position: absolute; top: -42px; left: 50%; width: 22px; height: 22px; transform: translateX(-50%); background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: grab; z-index: 6; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; touch-action: none; }
@@ -650,7 +650,7 @@ const verdicts = {
   'dark cowgirl': { line: "The frontier, after dark.", sub: "Boots that have clearly seen things." },
   'dark romantic': { line: "Beautiful and faintly ominous.", sub: "This is journal-entry dressing, and the entry is very good." },
   'delicate': { line: "Small details doing enormous work.", sub: "Subtlety as a flex." },
-  'director': { line: "You're not in the scene. You're framing it.", sub: "Glasses on, opinions louder than the dialogue." },
+  'director': { line: "You're not in the scene. Youre framing it.", sub: "Glasses on, opinions louder than the dialogue." },
   'downtown': { line: "Cool without trying, which took a lot of trying.", sub: "Looks like 2am and a good decision." },
   'downtown art': { line: "Studio-visit dressing, gallery-opening confidence.", sub: "Paint-splatter energy without the paint." },
   'downtown artist': { line: "Tinted glasses, untinted opinions.", sub: "Looks like you make something nobody's seen yet." },
@@ -905,8 +905,8 @@ const verdictsUK = {
   'utility': { line: "Створено так, ніби має побувати в бруді.", sub: "Кожен ремінець і пряжка заслужили своє місце." },
   'victorian goth': { line: "Траурна сукня, сучасна образа.", sub: "Високий комір, ще вищі стандарти." },
   'weaponised femininity': { line: "М'яка зовні. Абсолютна загроза всередині.", sub: "Красива так, що змушує людей переглянути свої рішення." },
-  'winter intellectual': { line: "Холодна погода, тепліші думки.", sub: "Виглядаєш так, ніби читаєш біля каміна навмисно." },
-  'witchy': { line: "Зачарована, навмисно.", sub: "Цей образ знає щось, чого не знаєш ти." },
+  'winter intellectual': { line: "Cold weather, warmer opinions.", sub: "Виглядаєш так, ніби читаєш біля каміна навмисно." },
+  'witchy': { line: "Spellbound, intentionally.", sub: "Цей образ знає щось, чого не знаєш ти." },
   'default': { line: "Безпомилково, неповторно ти.", sub: "У цієї комбінації ще немає назви. Але буде." },
 };
 
@@ -1160,7 +1160,7 @@ window.addEventListener('DOMContentLoaded', () => {
   canvas.height = window.innerHeight;
   const W = canvas.width, H = canvas.height;
 
-  // Draw mirror surface
+  // Draw mirror surface fallback
   function drawMirror() {
     const grad = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, Math.max(W,H)*0.8);
     grad.addColorStop(0, '#ffffff');
@@ -1180,11 +1180,39 @@ window.addEventListener('DOMContentLoaded', () => {
     ctx.fillRect(0, 0, W, H);
   }
 
-  drawMirror();
+  // Draw from image
+  function drawMirrorFromImage(callback) {
+    const img = new Image();
+    img.onload = () => {
+      const canvasRatio = W / H;
+      const imgRatio = img.width / img.height;
+      let drawW, drawH, offsetX, offsetY;
+
+      if (imgRatio > canvasRatio) {
+        drawH = H;
+        drawW = img.width * (H / img.height);
+        offsetX = (W - drawW) / 2;
+        offsetY = 0;
+      } else {
+        drawW = W;
+        drawH = img.height * (W / img.width);
+        offsetX = 0;
+        offsetY = (H - drawH) / 2;
+      }
+
+      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+      if (callback) callback();
+    };
+    img.onerror = () => {
+      // Fallback to the old gradient if the image fails to load
+      drawMirror();
+      if (callback) callback();
+    };
+    img.src = 'mirrorshatter.jpg';
+  }
 
   // Impact point
-  const IX = W * 0.48 + (Math.random()-0.5)*80;
-  const IY = H * 0.42 + (Math.random()-0.5)*60;
+  let IX, IY;
 
   // Draw cracks
   function drawCracks() {
@@ -1231,7 +1259,6 @@ window.addEventListener('DOMContentLoaded', () => {
     return points.map((pt) => {
       const cx = pt[0], cy = pt[1];
       const numVerts = 6 + Math.floor(Math.random()*4);
-      // FIXED: removed 'a' and 'a.length', strictly use numVerts
       const angles = Array.from({length: numVerts}, (_, i) => (i / numVerts) * Math.PI * 2 + (Math.random()-0.5)*0.5);
       const verts = angles.map(a => {
         const r = 60 + Math.random() * Math.max(W,H) * 0.18;
@@ -1324,15 +1351,21 @@ window.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(animateShatter);
   }
 
-  // Play crack sound
-  setTimeout(() => {
-    drawCracks();
-    const crackAudio = new Audio('crack.mp3');
-    crackAudio.volume = 0.4;
-    crackAudio.play().catch(() => {});
-  }, 1500);
+  // Load the image and execute timing triggers inside the callback
+  drawMirrorFromImage(() => {
+    IX = W * 0.48 + (Math.random()-0.5)*80;
+    IY = H * 0.42 + (Math.random()-0.5)*60;
 
-  setTimeout(startShatter, 1900);
+    // Play crack sound
+    setTimeout(() => {
+      drawCracks();
+      const crackAudio = new Audio('crack.mp3');
+      crackAudio.volume = 0.4;
+      crackAudio.play().catch(() => {});
+    }, 1500);
+
+    setTimeout(startShatter, 1900);
+  });
 });
 </script>
 </body>
