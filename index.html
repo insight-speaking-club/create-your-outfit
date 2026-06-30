@@ -38,6 +38,16 @@
     pointer-events: auto;
   }
 
+  #tap-overlay {
+    position: fixed; inset: 0; z-index: 100000;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10, 8, 6, 0.25);
+    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+    color: #f7f4f0; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.3em;
+    cursor: pointer; transition: opacity 0.3s ease;
+  }
+
   /* ── TOP BAR ── */
   #topbar {
     display: flex; align-items: center; justify-content: space-between;
@@ -107,7 +117,7 @@
   .on-canvas .oc-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; display: block; }
   .on-canvas .remove-btn, .on-canvas .resize-handle, .on-canvas .rotate-handle, .on-canvas .rotate-stem { display: none; }
   .on-canvas.active-item .remove-btn { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: var(--ink); color: var(--bg); border: none; border-radius: 50%; font-size: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
-  .on-canvas.active-item .resize-handle { position: absolute bottom: -9px; right: -9px; width: 20px; height: 20px; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: nwse-resize; z-index: 6; display: flex; align-items: center; justify-content: center; touch-action: none; }
+  .on-canvas.active-item .resize-handle { position: absolute; bottom: -9px; right: -9px; width: 20px; height: 20px; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: nwse-resize; z-index: 6; display: flex; align-items: center; justify-content: center; touch-action: none; }
   .on-canvas.active-item .resize-handle::before { content: ''; width: 7px; height: 7px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
   .on-canvas.active-item .rotate-stem { position: absolute; top: -28px; left: 50%; width: 1.5px; height: 20px; background: var(--muted); transform: translateX(-50%); z-index: 5; display: block; }
   .on-canvas.active-item .rotate-handle { position: absolute; top: -42px; left: 50%; width: 22px; height: 22px; transform: translateX(-50%); background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: grab; z-index: 6; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; touch-action: none; }
@@ -212,6 +222,7 @@
 <body>
 
 <canvas id="mirror-canvas"></canvas>
+<div id="tap-overlay">Tap to enter</div>
 
 <div id="topbar">
   <h1>Dream Closet</h1>
@@ -650,7 +661,7 @@ const verdicts = {
   'dark cowgirl': { line: "The frontier, after dark.", sub: "Boots that have clearly seen things." },
   'dark romantic': { line: "Beautiful and faintly ominous.", sub: "This is journal-entry dressing, and the entry is very good." },
   'delicate': { line: "Small details doing enormous work.", sub: "Subtlety as a flex." },
-  'director': { line: "You're not in the scene. Youre framing it.", sub: "Glasses on, opinions louder than the dialogue." },
+  'director': { line: "You're not in the scene. You're framing it.", sub: "Glasses on, opinions louder than the dialogue." },
   'downtown': { line: "Cool without trying, which took a lot of trying.", sub: "Looks like 2am and a good decision." },
   'downtown art': { line: "Studio-visit dressing, gallery-opening confidence.", sub: "Paint-splatter energy without the paint." },
   'downtown artist': { line: "Tinted glasses, untinted opinions.", sub: "Looks like you make something nobody's seen yet." },
@@ -903,11 +914,11 @@ const verdictsUK = {
   'tomboy': { line: "Позичила кепку, залишила перевагу.", sub: "Комфортна в кожному сенсі цього слова." },
   'utilitarian chic': { line: "Функція з дуже хорошим смаком.", sub: "Кишені, якими ти дійсно користуєшся, образи, яких ти не очікувала." },
   'utility': { line: "Створено так, ніби має побувати в бруді.", sub: "Кожен ремінець і пряжка заслужили своє місце." },
-  'victorian goth': { line: "Траурна сукня, сучасна образа.", sub: "Високий комір, ще вищі стандарти." },
-  'weaponised femininity': { line: "М'яка зовні. Абсолютна загроза всередині.", sub: "Красива так, що змушує людей переглянути свої рішення." },
-  'winter intellectual': { line: "Cold weather, warmer opinions.", sub: "Виглядаєш так, ніби читаєш біля каміна навмисно." },
+  'victorian goth': { line: "Мourning dress, modern grudge.", sub: "High collar, higher standards." },
+  'weaponised femininity': { line: "Soft on the outside. Absolute menace within.", sub: "Pretty in a way that makes people reconsider their choices." },
+  'winter intellectual': { line: "Cold weather, warmer opinions.", sub: "Looks like you read in front of a fireplace, on purpose." },
   'witchy': { line: "Spellbound, intentionally.", sub: "Цей образ знає щось, чого не знаєш ти." },
-  'default': { line: "Безпомилково, неповторно ти.", sub: "У цієї комбінації ще немає назви. Але буде." },
+  'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
 };
 
 let activeCategory = 'iconic';
@@ -1351,20 +1362,32 @@ window.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(animateShatter);
   }
 
-  // Load the image and execute timing triggers inside the callback
+  // Load the image, then WAIT for the user to tap before cracking
   drawMirrorFromImage(() => {
     IX = W * 0.48 + (Math.random()-0.5)*80;
     IY = H * 0.42 + (Math.random()-0.5)*60;
 
-    // Play crack sound
-    setTimeout(() => {
-      drawCracks();
-      const crackAudio = new Audio('crack.mp3');
-      crackAudio.volume = 0.4;
-      crackAudio.play().catch(() => {});
-    }, 1500);
+    const tapOverlay = document.getElementById('tap-overlay');
+    const crackAudio = new Audio('crack.mp3');
+    crackAudio.volume = 0.4;
 
-    setTimeout(startShatter, 1900);
+    // Wait for the tactile tap to bypass audio restrictions
+    tapOverlay.addEventListener('click', () => {
+      
+      // 1. Play sound instantly on click
+      crackAudio.play().catch(() => {});
+      
+      // 2. Draw cracks instantly
+      drawCracks();
+      
+      // 3. Fade out overlay
+      tapOverlay.style.opacity = '0';
+      setTimeout(() => tapOverlay.style.display = 'none', 400);
+
+      // 4. Shatter a split second later for dramatic effect
+      setTimeout(startShatter, 600);
+      
+    }, { once: true }); // Ensure it only fires once
   });
 });
 </script>
