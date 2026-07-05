@@ -67,44 +67,6 @@
   }
   #verdict-btn:hover { opacity: 0.75; }
 
-  #headphone-btn {
-    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem;
-    text-transform: uppercase; letter-spacing: 0.12em; background: rgba(194,168,130,0.15);
-    color: var(--ink); border: 1px solid rgba(194,168,130,0.4);
-    padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer;
-    display: flex; align-items: center; gap: 0.4rem; transition: background 0.2s;
-  }
-  #headphone-btn:hover { background: rgba(194,168,130,0.3); }
-  #headphone-btn svg { width: 14px; height: 14px; fill: var(--ink); }
-
-  /* ── SPOTIFY MODAL ── */
-  #spotify-modal {
-    display: none; position: fixed; inset: 0; z-index: 2147483647 !important;
-    align-items: flex-end; justify-content: center; padding-bottom: env(safe-area-inset-bottom);
-  }
-  #spotify-modal.show { display: flex; }
-  #spotify-backdrop {
-    position: absolute; inset: 0; background: rgba(10,8,6,0.6);
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  }
-  #spotify-sheet {
-    position: relative; z-index: 1; background: #1a1612;
-    border-top: 1px solid #2e2a26; border-radius: 16px 16px 0 0;
-    padding: 2rem 1.5rem 2.5rem; width: 100%; max-width: 480px;
-    transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-  #spotify-modal.show #spotify-sheet { transform: translateY(0); }
-  #spotify-pill { width: 36px; height: 3px; background: #3a3630; border-radius: 2px; margin: 0 auto 1.8rem; }
-  #spotify-eyebrow { font-family: 'DM Sans', sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 0.6rem; }
-  #spotify-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400; font-size: 1.8rem; color: #f0ede8; line-height: 1.15; margin-bottom: 0.9rem; }
-  #spotify-body { font-size: 0.82rem; color: #6a6460; line-height: 1.65; margin-bottom: 1.8rem; }
-  #spotify-body strong { color: #9a9390; font-weight: 500; }
-  #spotify-tracks { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.8rem; }
-  .spotify-track-tag { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.22rem 0.5rem; background: rgba(194,168,130,0.1); border: 1px solid rgba(194,168,130,0.2); border-radius: 20px; color: var(--accent); }
-  #spotify-cta { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.85rem; background: #1DB954; border: none; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: #000; cursor: pointer; text-decoration: none; margin-bottom: 0.6rem; }
-  #spotify-cta svg { width: 16px; height: 16px; fill: #000; flex-shrink: 0; }
-  #spotify-dismiss { width: 100%; padding: 0.6rem; background: none; border: 1px solid #2e2a26; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: #4a4540; cursor: pointer; }
-
   /* ── CANVAS ── */
   #canvas { flex: 1; position: relative; overflow: hidden; background: #ffffff; touch-action: none; }
   #canvas-empty { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center; pointer-events: none; opacity: 0.4; }
@@ -189,9 +151,9 @@
   
   #translate-btn {
     position: absolute; top: 1.5rem; right: 1.5rem; background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15); color: #d8d4cf; padding: 0.4rem 0.8rem;
-    border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 0.55rem;
-    text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: background 0.2s; z-index: 2;
+    border: 1px solid rgba(255,255,255,0.15); color: #d8d4cf;
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; z-index: 2;
   }
   #translate-btn:hover { background: rgba(255,255,255,0.15); }
 
@@ -222,45 +184,12 @@
 <body>
 
 <canvas id="mirror-canvas"></canvas>
-<div id="tap-overlay">Tap to enter</div>
+<div id="tap-overlay">Tap to shatter</div>
 
 <div id="topbar">
   <h1>Dream Closet</h1>
   <div style="display:flex;align-items:center;gap:0.5rem;">
-    <button id="headphone-btn" onclick="openSpotify()" aria-label="Fashion playlist">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3C7.03 3 3 7.03 3 12v5c0 1.1.9 2 2 2h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H5v-1c0-3.87 3.13-7 7-7s7 3.13 7 7v1h-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1c1.1 0 2-.9 2-2v-5c0-4.97-4.03-9-9-9z"/>
-      </svg>
-      Playlist
-    </button>
     <button id="verdict-btn" onclick="showVerdict()">Get my vibe</button>
-  </div>
-</div>
-
-<div id="spotify-modal" onclick="handleBackdropClick(event)">
-  <div id="spotify-backdrop"></div>
-  <div id="spotify-sheet">
-    <div id="spotify-pill"></div>
-    <div id="spotify-eyebrow">Music for the moment</div>
-    <div id="spotify-title">in Vogue, in FΛSHION</div>
-    <div id="spotify-body">
-      Put this on while you build your look. Britney Manson, Madonna, RuPaul, Bowie, Beyoncé — and Ariana Grande, because Dangerous Woman is genuinely one of the best songs ever made and the whole album holds up and yes this is a hill worth dying on.<br><br>Open in Spotify to listen, follow, or add your own tracks.
-    </div>
-    <div id="spotify-tracks">
-      <span class="spotify-track-tag">FASHION — Britney Manson</span>
-      <span class="spotify-track-tag">Vogue — Madonna</span>
-      <span class="spotify-track-tag">Supermodel — RuPaul</span>
-      <span class="spotify-track-tag">Freakum Dress — Beyoncé</span>
-      <span class="spotify-track-tag">Fashion — David Bowie</span>
-      <span class="spotify-track-tag">Category Is… — RuPaul</span>
-      <span class="spotify-track-tag">Dangerous Woman — Ariana Grande</span>
-      <span class="spotify-track-tag">+ more</span>
-    </div>
-    <a id="spotify-cta" href="https://open.spotify.com/playlist/0YBMWmwqM5DrQMIzCj0qRm" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      Open in Spotify
-    </a>
-    <button id="spotify-dismiss" onclick="closeSpotify()">Back to styling</button>
   </div>
 </div>
 
@@ -284,7 +213,7 @@
 </div>
 
 <div id="verdict-overlay">
-  <button id="translate-btn" onclick="toggleLanguage()">🇺🇦 Translate</button>
+  <button id="translate-btn" onclick="toggleLanguage()" aria-label="Translate">🌐</button>
   <div id="verdict-eyebrow">Your style, decoded</div>
   <div id="verdict-aesthetic"></div>
   <div id="verdict-text"></div>
@@ -297,18 +226,13 @@
       <span id="screenshot-text">Screenshot this — some looks are too good to keep in the closet.</span>
     </div>
 
-    <button id="verdict-share" onclick="shareToTelegram()">Come out of the closet. Share your look with the group — we genuinely want to see it.</button>
+    <button id="verdict-share" onclick="shareToTelegram()">Come out of the closet. Share your look with the group.</button>
     <button class="verdict-secondary" id="verdict-copy" onclick="copyLookList()">Copy my pieces</button>
   </div>
   <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended)</button>
 </div>
 
 <script>
-// ── SPOTIFY MODAL ──
-function openSpotify() { document.getElementById('spotify-modal').classList.add('show'); }
-function closeSpotify() { document.getElementById('spotify-modal').classList.remove('show'); }
-function handleBackdropClick(e) { if (e.target === document.getElementById('spotify-backdrop')) closeSpotify(); }
-
 // ── WARDROBE DATA ──
 const categories = [
   {
@@ -316,6 +240,18 @@ const categories = [
     items: [
       { name: "Sasha's bow", color: '#111', vibe: 'what about it?', w: 80, h: 70 }, 
       { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
+      { name: 'Burn book', color: '#d89eb7', vibe: 'fugly slut', w: 90, h: 110 },
+      { name: 'Elle’s pink courtroom dress', color: '#ff69b4', vibe: 'what like its hard', w: 105, h: 155 },
+      { name: 'Sabrina’s platform boots', color: '#111', vibe: 'taste maker', w: 110, h: 125 },
+      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
+      { name: 'Ariana’s oversized pastel hoodie', color: '#ffc0cb', vibe: 'sweetener', w: 125, h: 130 },
+      { name: 'Cher’s yellow plaid blazer', color: '#ffd700', vibe: 'as if', w: 118, h: 132 },
+      { name: 'Blair’s red headband', color: '#8b0000', vibe: 'queen bee', w: 85, h: 45 },
+      { name: 'Serena’s undone school tie', color: '#1a2a4a', vibe: 'it-girl immunity', w: 45, h: 115 },
+      { name: 'Carrie’s nameplate necklace', color: '#d4a017', vibe: 'couldnt help but wonder', w: 75, h: 40 },
+      { name: 'Brat green mini dress', color: '#8bce00', vibe: 'bumpin that', w: 100, h: 140 },
+      { name: 'Thigh-high Chanel boots', color: '#111', vibe: 'are you wearing the', w: 110, h: 155 },
+      { name: 'Cerulean blue sweater', color: '#2a52be', vibe: 'cerulean', w: 110, h: 115 },
       { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
       { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
       { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
@@ -325,7 +261,6 @@ const categories = [
       { name: 'Monogram scarf', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
       { name: 'Logo belt', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
       { name: 'Tartan blazer', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
-      { name: 'All-white look trousers', color: '#f0ede8', vibe: 'summer icon', w: 100, h: 145 },
       { name: 'Power shoulders blazer', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
       { name: 'Trench mac cropped', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
     ]
@@ -580,7 +515,7 @@ const categories = [
     id: 'belts', label: 'Belts',
     items: [
       { name: 'Black leather belt thin', color: '#111', vibe: 'classic', w: 120, h: 28 },
-      { name: 'Black leather belt wide', color: '#111', vibe: 'powerful', w: 120, h: 38 },
+      { name: 'Black leather belt thin wide', color: '#111', vibe: 'powerful', w: 120, h: 38 },
       { name: 'Gold buckle belt', color: '#b8864e', vibe: 'old money', w: 120, h: 32 },
       { name: 'Corset belt black', color: '#111', vibe: 'victorian goth', w: 110, h: 60 },
       { name: 'Chain belt silver', color: '#c8c8c8', vibe: 'nineties revival', w: 115, h: 32 },
@@ -631,6 +566,17 @@ const supercategories = [
 
 const verdicts = {
   'what about it?': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." },
+  'fugly slut': { line: "Irresistible sabotage.", sub: "You turned a Burn Book prank into a school-wide trend. Everyone is cutting holes in their shirts tomorrow." },
+  'what like its hard': { line: "Whoever said orange was the new pink was seriously disturbed.", sub: "Law school, but make it high fashion." },
+  'taste maker': { line: "Heartbreak is the motif.", sub: "Platform boots high enough to look down on your ex's new era. Short n' sweet, but completely lethal." },
+  'sweetener': { line: "God is a woman, and she's wearing pastels.", sub: "Oversized silhouette, high ponytail energy, and zero tolerance for anyone else's drama." },
+  'as if': { line: "A totally important designer.", sub: "You don't rely on mirrors, you rely on Polaroids. Flawlessly curated." },
+  'queen bee': { line: "Dictator of taste.", sub: "Tights are not pants, and this step-and-repeat is not a democracy. Bow down." },
+  'it-girl immunity': { line: "I have to go.", sub: "You completely ignored the dress code, missed curfew, and somehow still made the front page." },
+  'couldnt help but wonder': { line: "Looking for love and vintage labels.", sub: "Your shoes cost more than your rent, you think in monologues, and you're entirely fine with that." },
+  'bumpin that': { line: "360 party girl.", sub: "Smudged eyeliner, a dead phone battery, and an absolutely unapologetic attitude. Very that." },
+  'are you wearing the': { line: "The Chanel boots? Yeah, you are.", sub: "You sold your soul to the runway, and honestly? It was a great trade." },
+  'cerulean': { line: "It's not just blue.", sub: "It's not lapis, it's actually cerulean. And you know exactly how many millions of dollars it represents." },
   'Y2K downtown': { line: "Low-rise and unbothered.", sub: "You skipped the revival and went straight to the source." },
   'Y2K revival': { line: "You time-traveled and packed light.", sub: "Butterfly clips optional, attitude mandatory." },
   'academic': { line: "Tenure-track, never tenured.", sub: "You dress like the footnotes are more interesting than the essay." },
@@ -777,6 +723,17 @@ const verdicts = {
 
 const verdictsUK = {
   'what about it?': { line: "Ти вже знаєш, що робиш.", sub: "Бант ніколи не був просто аксесуаром." },
+  'fugly slut': { line: "Невстояти перед саботажем.", sub: "Ти перетворила розіграш із Регіною Джордж на масовий тренд. Завтра всі прийдуть із вирізами на топах." },
+  'what like its hard': { line: "Той, хто сказав, що рожевий — це несмак, помилявся.", sub: "Гарвардський юридичний, але зроби це фЕШОН." },
+  'taste maker': { line: "Мотив образу — розбите серце.", sub: "Чоботи на платформі достатньо високі, щоб дивитися згори вниз на твого колишнього. Коротко, солодко, смертельно." },
+  'sweetener': { line: "God is a woman, і вона носить пастель.", sub: "Оверсайз силует, енергія високого хвоста і нуль толерантності до чужої драми." },
+  'as if': { line: "Дуже важливий дизайнер.", sub: "Ти не довіряєш дзеркалам, ти довіряєш полароїдам. Бездоганно підібрано." },
+  'queen bee': { line: "Диктаторка смаку.", sub: "Колготки — це не штани, а цей зал — не демократія. Схиліть голови." },
+  'it-girl immunity': { line: "Мені треба йти.", sub: "Ти повністю проігнорувала дрес-код, пропустила дедлайн і все одно опинилася на головній сторінці." },
+  'couldnt help but wonder': { line: "У пошуках кохання та вінтажних брендів.", sub: "Твої туфлі коштують дорожче за оренду, ти мислиш монологами, і тебе це влаштовує." },
+  'bumpin that': { line: "Енергія 360 party girl.", sub: "Розмазана підводка, розряджений телефон і абсолютно безкомпромісне ставлення до життя." },
+  'are you wearing the': { line: "Ті самі чоботи від Chanel? Так.", sub: "Ти продала душу подіуму, і, чесно кажучи? Це був чудовий обмін." },
+  'cerulean': { line: "Це не просто синій.", sub: "Це справжній лазуровий. І ти точно знаєш, скільки мільйонів доларів він представляє." },
   'Y2K downtown': { line: "Низька посадка і нуль турбот.", sub: "Ти пропустила відродження тренду і звернулася прямо до першоджерела." },
   'Y2K revival': { line: "Подорож у часі без зайвого багажу.", sub: "Шпильки-метелики за бажанням, впевненість — обов'язкова." },
   'academic': { line: "Шлях до професури, але без посади.", sub: "Ти одягаєшся так, ніби виноски цікавіші за сам есей." },
@@ -933,21 +890,19 @@ let currentLang = 'en';
 const translations = {
   en: {
     eyebrow: "Your style, decoded",
-    share: "Come out of the closet. Share your look with the group — we genuinely want to see it.",
+    share: "Come out of the closet. Share your look with the group.",
     screenshot: "Screenshot this — some looks are too good to keep in the closet.",
     copy: "Copy my pieces",
     back: "Go back to the closet (no pun intended)",
-    translate: "🇺🇦 Translate",
     aestheticPrefix: "",
     aestheticSuffix: ""
   },
   uk: {
     eyebrow: "Ваш стиль, розшифровано",
-    share: "Нарешті! Виходь із шафи та поділися своїм луком з комітетом Vogue (пліз, я хочу це побачити).",
+    share: "Нарешті! Виходь із шафи та поділися своїм луком з комітетом Vogue.",
     screenshot: "Зроби скріншот, щоб зберегти цей образ",
     copy: "Скопіювати речі",
     back: "Повернутися до шафи (без каламбурів)",
-    translate: "🇬🇧 Translate",
     aestheticPrefix: "Естетика ",
     aestheticSuffix: ""
   }
@@ -1130,7 +1085,6 @@ function applyTranslations() {
   document.getElementById('screenshot-text').textContent = t.screenshot;
   document.getElementById('verdict-copy').textContent = t.copy;
   document.getElementById('verdict-close').textContent = t.back;
-  document.getElementById('translate-btn').innerHTML = t.translate;
   
   if (currentVerdict) {
     let sourceDict = currentLang === 'uk' ? verdictsUK : verdicts;
