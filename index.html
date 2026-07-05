@@ -5,30 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Dream Closet</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap');
+  /* Added Permanent Marker for the default scrapbook/ransom aesthetic */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  /* BASE THEME VARIABLES (Burn Book Pink is the default resting state) */
   :root {
-    --bg: #f7f4f0;
-    --ink: #1a1612;
+    --bg: #f5c6d6;
+    --ink: #111111;
     --muted: #9a9390;
-    --rail: #e8e4df;
+    --rail: rgba(0,0,0,0.1);
+    
+    /* Keep drawer dark for contrast as requested */
     --drawer-bg: #1e1b18;
     --drawer-border: #3a3530;
     --drawer-muted: #6a6460;
     --drawer-active: #f0ede8;
-    --accent: #c2a882;
-    --tag-bg: rgba(194,168,130,0.15);
+    
+    --accent: #ff3d7f;
+    --tag-bg: rgba(255, 61, 127, 0.15);
+    
+    --font-display: 'Permanent Marker', cursive;
+    --font-body: 'DM Sans', sans-serif;
+    
+    --bg-pattern: repeating-linear-gradient(45deg, rgba(255,255,255,0.3) 0px, rgba(255,255,255,0.3) 2px, transparent 2px, transparent 15px);
+    --overlay-bg: rgba(245, 198, 214, 0.96);
   }
 
   html, body { height: 100%; }
   body {
-    background: var(--bg);
-    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg);
+    background-image: var(--bg-pattern);
+    font-family: var(--font-body);
     height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transition: background-color 0.6s ease, color 0.6s ease, background-image 0.6s ease;
   }
 
   /* ── MIRROR SHATTER OVERLAY ── */
@@ -43,7 +57,7 @@
     display: flex; align-items: center; justify-content: center;
     background: rgba(10, 8, 6, 0.25);
     backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-    color: #f7f4f0; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    color: #f7f4f0; font-family: var(--font-body); font-weight: 500;
     font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.3em;
     cursor: pointer; transition: opacity 0.3s ease;
   }
@@ -53,25 +67,27 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.85rem 1.2rem; background: var(--bg);
     border-bottom: 1px solid var(--rail); flex-shrink: 0; z-index: 10000;
+    transition: background-color 0.6s ease;
   }
   #topbar h1 {
-    font-family: 'Playfair Display', serif; font-style: italic;
+    font-family: var(--font-display);
     font-weight: 400; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.02em;
+    transition: color 0.6s ease, font-family 0.6s ease;
   }
   
   #verdict-btn {
-    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.68rem;
+    font-family: var(--font-body); font-weight: 700; font-size: 0.68rem;
     text-transform: uppercase; letter-spacing: 0.12em; background: var(--ink);
     color: var(--bg); border: none; padding: 0.5rem 1rem; border-radius: 2px;
-    cursor: pointer; transition: opacity 0.15s;
+    cursor: pointer; transition: opacity 0.15s, background-color 0.6s ease, color 0.6s ease;
   }
   #verdict-btn:hover { opacity: 0.75; }
 
   /* ── CANVAS ── */
-  #canvas { flex: 1; position: relative; overflow: hidden; background: #ffffff; touch-action: none; }
-  #canvas-empty { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center; pointer-events: none; opacity: 0.4; }
-  #canvas-empty .big-label { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--ink); margin-bottom: 0.4rem; }
-  #canvas-empty p { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); }
+  #canvas { flex: 1; position: relative; overflow: hidden; touch-action: none; background: transparent; }
+  #canvas-empty { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center; pointer-events: none; opacity: 0.6; }
+  #canvas-empty .big-label { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); margin-bottom: 0.4rem; transition: color 0.6s ease, font-family 0.6s ease; }
+  #canvas-empty p { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink); opacity: 0.8; }
   .on-canvas { position: absolute; cursor: grab; user-select: none; touch-action: none; }
   .on-canvas:active { cursor: grabbing; }
   .on-canvas .oc-spin { position: relative; width: 100%; height: 100%; transform-origin: 50% 50%; }
@@ -81,7 +97,7 @@
   .on-canvas.active-item .remove-btn { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: var(--ink); color: var(--bg); border: none; border-radius: 50%; font-size: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
   .on-canvas.active-item .resize-handle { position: absolute; bottom: -9px; right: -9px; width: 20px; height: 20px; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: nwse-resize; z-index: 6; display: flex; align-items: center; justify-content: center; touch-action: none; }
   .on-canvas.active-item .resize-handle::before { content: ''; width: 7px; height: 7px; border-right: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
-  .on-canvas.active-item .rotate-stem { position: absolute; top: -28px; left: 50%; width: 1.5px; height: 20px; background: var(--muted); transform: translateX(-50%); z-index: 5; display: block; }
+  .on-canvas.active-item .rotate-stem { position: absolute; top: -28px; left: 50%; width: 1.5px; height: 20px; background: var(--ink); transform: translateX(-50%); z-index: 5; display: block; }
   .on-canvas.active-item .rotate-handle { position: absolute; top: -42px; left: 50%; width: 22px; height: 22px; transform: translateX(-50%); background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: grab; z-index: 6; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; touch-action: none; }
 
   /* ── DRAWER ── */
@@ -101,7 +117,7 @@
   #drawer.collapsed #drawer-toggle { transform: rotate(180deg); }
 
   #search-row { padding: 0 1rem 0.5rem; flex-shrink: 0; }
-  #search-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--drawer-border); border-radius: 3px; padding: 0.4rem 0.8rem; font-family: 'DM Sans', sans-serif; font-size: 0.7rem; color: #ccc; outline: none; }
+  #search-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--drawer-border); border-radius: 3px; padding: 0.4rem 0.8rem; font-family: var(--font-body); font-size: 0.7rem; color: #ccc; outline: none; transition: border-color 0.3s ease; }
   #search-input:focus { border-color: var(--accent); }
 
   #cat-tabs { display: flex; overflow-x: auto; padding: 0 1rem 0.5rem; gap: 2rem; scrollbar-width: none; flex-shrink: 0; }
@@ -109,13 +125,13 @@
   
   .super-group { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.5rem; }
   .super-header { 
-    font-family: 'Playfair Display', serif; 
-    font-style: italic; 
+    font-family: var(--font-display); 
     color: #f7f4f0; 
     font-size: 1.3rem; 
     padding-left: 0.2rem; 
-    border-bottom: 1px solid rgba(194,168,130,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     padding-bottom: 0.3rem;
+    transition: color 0.6s ease, font-family 0.6s ease;
   }
   .sub-tabs-row { display: flex; gap: 0.5rem; }
 
@@ -130,55 +146,56 @@
   #item-grid { display: flex; overflow-x: auto; padding: 0.4rem 1rem 1.5rem; gap: 0.6rem; scrollbar-width: none; align-items: flex-start; flex-shrink: 0; flex-wrap: nowrap; }
   #item-grid::-webkit-scrollbar { display: none; }
 
-  .grid-item { flex: 0 0 auto; width: 76px; background: #252118; border: 1px solid var(--drawer-border); border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; cursor: pointer; transition: border-color 0.15s; padding: 6px 4px 6px; position: relative; }
+  .grid-item { flex: 0 0 auto; width: 76px; background: #252118; border: 1px solid var(--drawer-border); border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; cursor: pointer; transition: border-color 0.3s ease, background-color 0.3s ease; padding: 6px 4px 6px; position: relative; }
   .grid-item:active { transform: scale(0.96); }
   .grid-item.on-board { border-color: var(--accent); background: #2a2418; }
   .grid-item .gi-visual { position: relative; width: 100%; height: 54px; }
   .grid-item .gi-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   .grid-item .gi-name { font-size: 0.44rem; text-transform: uppercase; letter-spacing: 0.05em; color: #ccc; margin-top: 6px; text-align: center; line-height: 1.3; width: 100%; }
   .grid-item .gi-vibe { font-size: 0.38rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6a6460; margin-top: 2px; text-align: center; line-height: 1.2; width: 100%; }
-  .grid-item.on-board .gi-name, .grid-item.on-board .gi-vibe { color: var(--accent); }
+  .grid-item.on-board .gi-name, .grid-item.on-board .gi-vibe { color: var(--accent); transition: color 0.3s ease; }
   .grid-item .gi-color-dot { width: 6px; height: 6px; border-radius: 50%; position: absolute; top: 4px; right: 4px; opacity: 0.7; }
 
   /* ── VERDICT OVERLAY ── */
   #verdict-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(18, 15, 12, 0.96);
+    display: none; position: fixed; inset: 0; background: var(--overlay-bg);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     z-index: 2147483647 !important; flex-direction: column; align-items: center;
     justify-content: center; padding: 2rem; text-align: center; overflow-y: auto;
+    transition: background-color 0.6s ease;
   }
   #verdict-overlay.show { display: flex; }
   
   #translate-btn {
-    position: absolute; top: 1.5rem; right: 1.5rem; background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15); color: #d8d4cf;
+    position: absolute; top: 1.5rem; right: 1.5rem; background: rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.15); color: var(--ink);
     width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: background 0.2s; z-index: 2;
+    border-radius: 50%; font-size: 1.2rem; cursor: pointer; transition: background 0.2s, color 0.6s ease; z-index: 2;
   }
-  #translate-btn:hover { background: rgba(255,255,255,0.15); }
+  #translate-btn:hover { background: rgba(0,0,0,0.15); }
 
-  #verdict-eyebrow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; color: #9a9390; margin-bottom: 0.5rem; }
-  #verdict-aesthetic { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 1.5rem; }
-  #verdict-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1; color: #f7f4f0; margin-bottom: 0.8rem; }
-  #verdict-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #a8a09b; line-height: 1.5; margin-bottom: 2rem; max-width: 320px; }
+  #verdict-eyebrow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; color: var(--ink); opacity: 0.6; margin-bottom: 0.5rem; transition: color 0.6s ease; }
+  #verdict-aesthetic { font-family: var(--font-body); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 1.5rem; transition: color 0.6s ease; }
+  #verdict-text { font-family: var(--font-display); font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1; color: var(--ink); margin-bottom: 0.8rem; transition: color 0.6s ease, font-family 0.6s ease; }
+  #verdict-sub { font-family: var(--font-body); font-style: italic; font-size: 1.1rem; color: var(--ink); opacity: 0.8; line-height: 1.5; margin-bottom: 2rem; max-width: 320px; transition: color 0.6s ease; }
   
   #verdict-pieces { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-bottom: 2.5rem; max-width: 340px; }
-  .verdict-tag { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.3rem 0.6rem; background: var(--tag-bg); border: 1px solid rgba(194,168,130,0.25); border-radius: 20px; color: var(--accent); }
+  .verdict-tag { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.3rem 0.6rem; background: var(--tag-bg); border: 1px solid var(--accent); border-radius: 2px; color: var(--accent); font-weight: bold; transition: background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease; }
   
   #verdict-actions { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; width: 100%; max-width: 400px; }
   
   #screenshot-hint {
     display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    background: rgba(255,255,255,0.05); border: 1px dashed rgba(194,168,130,0.4);
-    color: var(--accent); padding: 0.8rem 1.2rem; border-radius: 4px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.65rem; text-transform: uppercase;
-    letter-spacing: 0.1em; width: 100%; margin-bottom: 0.4rem;
+    background: rgba(255,255,255,0.2); border: 1px dashed var(--accent);
+    color: var(--ink); padding: 0.8rem 1.2rem; border-radius: 4px;
+    font-family: var(--font-body); font-size: 0.65rem; text-transform: uppercase;
+    letter-spacing: 0.1em; width: 100%; margin-bottom: 0.4rem; transition: border-color 0.6s ease, color 0.6s ease;
   }
   #screenshot-hint span.icon { font-size: 0.9rem; }
 
-  #verdict-share { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent); color: var(--ink); border: none; padding: 0.8rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5; }
-  .verdict-secondary { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(255,255,255,0.06); color: #d8d4cf; border: 1px solid var(--drawer-border); padding: 0.7rem 0.5rem; border-radius: 2px; cursor: pointer; line-height: 1.4; width: 100%; }
-  #verdict-close { background: none; border: none; color: #666; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.5rem; cursor: pointer; margin-top: 0.5rem; }
+  #verdict-share { font-family: var(--font-body); font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent); color: #fff; border: none; padding: 0.8rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5; transition: background-color 0.6s ease; }
+  .verdict-secondary { font-family: var(--font-body); font-weight: 700; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; background: transparent; color: var(--ink); border: 2px solid var(--ink); padding: 0.7rem 0.5rem; border-radius: 2px; cursor: pointer; line-height: 1.4; width: 100%; transition: color 0.6s ease, border-color 0.6s ease; }
+  #verdict-close { background: none; border: none; color: var(--ink); opacity: 0.6; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.5rem; cursor: pointer; margin-top: 0.5rem; font-weight: bold; transition: color 0.6s ease; }
 </style>
 </head>
 <body>
@@ -233,36 +250,102 @@
 </div>
 
 <script>
+// ── MOOD FAMILIES (LIVE THEMING) ──
+const moodFamilies = {
+  power: {
+    keys: ['power', 'boss', 'sharp', 'authority', 'director', 'suit', 'business'],
+    vars: { bg: '#e8ecef', ink: '#1a1c20', accent: '#003366', tagBg: 'rgba(0, 51, 102, 0.15)', overlayBg: 'rgba(232, 236, 239, 0.96)', font: "'Playfair Display', serif", bgPattern: 'none' }
+  },
+  romantic: {
+    keys: ['romantic', 'soft', 'delicate', 'princess', 'femme', 'floral', 'sweet', 'elegant'],
+    vars: { bg: '#fdfbf7', ink: '#4a3b32', accent: '#d48c96', tagBg: 'rgba(212, 140, 150, 0.15)', overlayBg: 'rgba(253, 251, 247, 0.96)', font: "'Playfair Display', serif", bgPattern: 'none' }
+  },
+  maximalist: {
+    keys: ['theatrical', 'dramatic', 'maximalist', 'riot', 'all eyes', 'camp', 'loud', 'attention'],
+    vars: { bg: '#2b193d', ink: '#fdfbf7', accent: '#ff3366', tagBg: 'rgba(255, 51, 102, 0.25)', overlayBg: 'rgba(43, 25, 61, 0.96)', font: "'Playfair Display', serif", bgPattern: 'none' }
+  },
+  quiet_luxury: {
+    keys: ['old money', 'minimalist', 'classic', 'quiet', 'chic', 'intellectual', 'effortless', 'luxury'],
+    vars: { bg: '#f7f4f0', ink: '#1a1612', accent: '#c2a882', tagBg: 'rgba(194, 168, 130, 0.15)', overlayBg: 'rgba(247, 244, 240, 0.96)', font: "'Playfair Display', serif", bgPattern: 'none' }
+  },
+  nocturnal: {
+    keys: ['mysterious', 'dangerous', 'goth', 'nocturnal', 'dark', 'witchy', 'night', 'midnight'],
+    vars: { bg: '#121212', ink: '#e0e0e0', accent: '#8b1a1a', tagBg: 'rgba(139, 26, 26, 0.25)', overlayBg: 'rgba(18, 18, 18, 0.96)', font: "'Playfair Display', serif", bgPattern: 'none' }
+  },
+  downtown: {
+    keys: ['y2k', 'art', 'punk', 'downtown', 'nineties', 'cool', 'rock', 'grunge', 'bumpin'],
+    vars: { bg: '#d9d9d9', ink: '#111111', accent: '#5a7aaa', tagBg: 'rgba(90, 122, 170, 0.15)', overlayBg: 'rgba(217, 217, 217, 0.96)', font: "'DM Sans', sans-serif", bgPattern: 'none' }
+  },
+  default: {
+    keys: [], // Match nothing, fallback (Burn Book Pink)
+    vars: { bg: '#f5c6d6', ink: '#111111', accent: '#ff3d7f', tagBg: 'rgba(255, 61, 127, 0.15)', overlayBg: 'rgba(245, 198, 214, 0.96)', font: "'Permanent Marker', cursive", bgPattern: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.3) 0px, rgba(255,255,255,0.3) 2px, transparent 2px, transparent 15px)' }
+  }
+};
+
+function applyTheme(familyId) {
+  const theme = moodFamilies[familyId].vars;
+  const root = document.documentElement;
+  root.style.setProperty('--bg', theme.bg);
+  root.style.setProperty('--ink', theme.ink);
+  root.style.setProperty('--accent', theme.accent);
+  root.style.setProperty('--tag-bg', theme.tagBg);
+  root.style.setProperty('--overlay-bg', theme.overlayBg);
+  root.style.setProperty('--font-display', theme.font);
+  root.style.setProperty('--bg-pattern', theme.bgPattern);
+}
+
+function updateTheme() {
+  const itemsOnCanvas = Object.values(onCanvas).map(o => o.item);
+  
+  if (itemsOnCanvas.length < 3) {
+    applyTheme('default');
+    return;
+  }
+
+  let scores = { power: 0, romantic: 0, maximalist: 0, quiet_luxury: 0, nocturnal: 0, downtown: 0 };
+  
+  itemsOnCanvas.forEach(item => {
+    const v = item.vibe.toLowerCase();
+    for (let family in moodFamilies) {
+      if (family === 'default') continue;
+      if (moodFamilies[family].keys.some(k => v.includes(k))) {
+        scores[family]++;
+        break;
+      }
+    }
+  });
+
+  let bestFamily = 'default';
+  let maxScore = 0;
+  for (let family in scores) {
+    if (scores[family] > maxScore) {
+      maxScore = scores[family];
+      bestFamily = family;
+    }
+  }
+  
+  if (maxScore === 0) bestFamily = 'default';
+  applyTheme(bestFamily);
+}
+
 // ── WARDROBE DATA ──
 const categories = [
   {
     id: 'iconic', label: 'Iconic Pieces',
     items: [
       { name: "Sasha's bow", color: '#111', vibe: 'what about it?', w: 80, h: 70 }, 
-      { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
+      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
       { name: 'Burn book', color: '#d89eb7', vibe: 'fugly slut', w: 90, h: 110 },
       { name: 'Elle’s pink courtroom dress', color: '#ff69b4', vibe: 'what like its hard', w: 105, h: 155 },
       { name: 'Sabrina’s platform boots', color: '#111', vibe: 'taste maker', w: 110, h: 125 },
-      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
       { name: 'Ariana’s oversized pastel hoodie', color: '#ffc0cb', vibe: 'sweetener', w: 125, h: 130 },
       { name: 'Cher’s yellow plaid blazer', color: '#ffd700', vibe: 'as if', w: 118, h: 132 },
       { name: 'Blair’s red headband', color: '#8b0000', vibe: 'queen bee', w: 85, h: 45 },
       { name: 'Serena’s undone school tie', color: '#1a2a4a', vibe: 'it-girl immunity', w: 45, h: 115 },
       { name: 'Carrie’s nameplate necklace', color: '#d4a017', vibe: 'couldnt help but wonder', w: 75, h: 40 },
       { name: 'Brat green mini dress', color: '#8bce00', vibe: 'bumpin that', w: 100, h: 140 },
-      { name: 'Thigh-high Chanel boots', color: '#111', vibe: 'are you wearing the', w: 110, h: 155 },
       { name: 'Cerulean blue sweater', color: '#2a52be', vibe: 'cerulean', w: 110, h: 115 },
-      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
-      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
-      { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
-      { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
-      { name: 'Cape black', color: '#111', vibe: 'dramatic entrance', w: 140, h: 155 },
-      { name: 'Jumpsuit all-black', color: '#111', vibe: 'effortlessly powerful', w: 105, h: 165 },
-      { name: 'Monogram scarf', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
-      { name: 'Logo belt', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
-      { name: 'Tartan blazer', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
-      { name: 'Power shoulders blazer', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
-      { name: 'Trench mac cropped', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
+      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 }
     ]
   },
   {
@@ -316,6 +399,7 @@ const categories = [
   {
     id: 'tops-statement', label: 'Statement Tops',
     items: [
+      { name: 'Feather trim top', color: '#111', vibe: 'theatrical maximalist', w: 112, h: 110 },
       { name: 'Black waistcoat', color: '#111', vibe: 'power', w: 95, h: 120 },
       { name: 'White waistcoat', color: '#f0ede8', vibe: 'androgynous', w: 95, h: 120 },
       { name: 'Satin corset black', color: '#111', vibe: 'weaponised femininity', w: 90, h: 100 },
@@ -379,6 +463,8 @@ const categories = [
   {
     id: 'dresses', label: 'Dresses',
     items: [
+      { name: 'Sequin mini dress', color: '#c8c860', vibe: 'all eyes on you', w: 105, h: 130 },
+      { name: 'Jumpsuit all-black', color: '#111', vibe: 'effortlessly powerful', w: 105, h: 165 },
       { name: 'Slip dress black', color: '#111', vibe: 'nineties', w: 105, h: 160 },
       { name: 'Slip dress ivory', color: '#f5efdf', vibe: 'quiet luxury', w: 105, h: 160 },
       { name: 'Slip dress red', color: '#8b1a1a', vibe: 'dangerous', w: 105, h: 160 },
@@ -428,6 +514,10 @@ const categories = [
   {
     id: 'jackets', label: 'Jackets',
     items: [
+      { name: 'Cape black', color: '#111', vibe: 'dramatic entrance', w: 140, h: 155 },
+      { name: 'Tartan blazer', color: '#8b1a1a', vibe: 'punk heritage', w: 118, h: 132 },
+      { name: 'Power shoulders blazer', color: '#111', vibe: 'eighties revival', w: 125, h: 132 },
+      { name: 'Trench mac cropped', color: '#c2903a', vibe: 'off-duty luxury', w: 115, h: 130 },
       { name: 'Black leather jacket', color: '#111', vibe: 'classic dyke', w: 120, h: 122 },
       { name: 'Brown leather jacket', color: '#5a3018', vibe: 'seventies', w: 120, h: 122 },
       { name: 'Long black trench', color: '#111', vibe: 'mysterious', w: 112, h: 172 },
@@ -465,6 +555,7 @@ const categories = [
   {
     id: 'neck', label: 'Neckwear',
     items: [
+      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
       { name: 'Black ribbon', color: '#111', vibe: 'dark romantic', w: 45, h: 130 },
       { name: 'Red ribbon', color: '#8b1a1a', vibe: 'dangerous romantic', w: 45, h: 130 },
       { name: 'White ribbon', color: '#f0ede8', vibe: 'soft romantic', w: 45, h: 130 },
@@ -483,6 +574,7 @@ const categories = [
   {
     id: 'bags', label: 'Bags',
     items: [
+      { name: 'Birkin-style bag tan', color: '#b8864e', vibe: 'quiet luxury peak', w: 108, h: 95 },
       { name: 'Mini shoulder bag black', color: '#111', vibe: 'polished', w: 80, h: 80 },
       { name: 'Mini shoulder bag tan', color: '#b8864e', vibe: 'classic', w: 80, h: 80 },
       { name: 'Tote bag black', color: '#111', vibe: 'practical chic', w: 92, h: 100 },
@@ -514,6 +606,7 @@ const categories = [
   {
     id: 'belts', label: 'Belts',
     items: [
+      { name: 'Logo belt', color: '#111', vibe: 'fashion insider', w: 118, h: 32 },
       { name: 'Black leather belt thin', color: '#111', vibe: 'classic', w: 120, h: 28 },
       { name: 'Black leather belt thin wide', color: '#111', vibe: 'powerful', w: 120, h: 38 },
       { name: 'Gold buckle belt', color: '#b8864e', vibe: 'old money', w: 120, h: 32 },
@@ -544,6 +637,7 @@ const categories = [
   {
     id: 'scarves', label: 'Scarves',
     items: [
+      { name: 'Monogram scarf', color: '#d4a017', vibe: 'fashion literate', w: 105, h: 75 },
       { name: 'Wool scarf black', color: '#111', vibe: 'winter intellectual', w: 120, h: 45 },
       { name: 'Plaid wool scarf', color: '#8b6914', vibe: 'literary', w: 120, h: 45 },
       { name: 'Silk headscarf printed', color: '#c87878', vibe: 'retro glam', w: 105, h: 105 },
@@ -871,7 +965,7 @@ const verdictsUK = {
   'tomboy': { line: "Позичила кепку, залишила перевагу.", sub: "Комфортна в кожному сенсі цього слова." },
   'utilitarian chic': { line: "Функція з дуже хорошим смаком.", sub: "Кишені, якими ти дійсно користуєшся, образи, яких ти не очікувала." },
   'utility': { line: "Створено так, ніби має побувати в бруді.", sub: "Кожен ремінець і пряжка заслужили своє місце." },
-  'victorian goth': { line: "Мourning dress, modern grudge.", sub: "High collar, higher standards." },
+  'victorian goth': { line: "Mourning dress, modern grudge.", sub: "High collar, higher standards." },
   'weaponised femininity': { line: "Soft on the outside. Absolute menace within.", sub: "Pretty in a way that makes people reconsider their choices." },
   'winter intellectual': { line: "Cold weather, warmer opinions.", sub: "Looks like you read in front of a fireplace, on purpose." },
   'witchy': { line: "Spellbound, intentionally.", sub: "Цей образ знає щось, чого не знаєш ти." },
@@ -921,7 +1015,7 @@ categories.forEach(cat => cat.items.forEach(item => { verdictMap[cat.id + '_' + 
 document.getElementById('canvas').addEventListener('mousedown', function(e) { if (e.target === this || e.target.id === 'canvas-empty') setActive(null); });
 document.getElementById('canvas').addEventListener('touchstart', function(e) { if (e.target === this || e.target.id === 'canvas-empty') setActive(null); }, {passive: true});
 
-function init() { renderTabs(); renderGrid(activeCategory); }
+function init() { renderTabs(); renderGrid(activeCategory); applyTheme('default'); } 
 
 function renderTabs() {
   const el = document.getElementById('cat-tabs');
@@ -997,13 +1091,17 @@ function addToCanvas(uid, item, catId) {
   const rotateHandle = document.createElement('div'); rotateHandle.className = 'rotate-handle'; rotateHandle.textContent = '↻'; el.appendChild(rotateHandle);
   const resizeHandle = document.createElement('div'); resizeHandle.className = 'resize-handle'; el.appendChild(resizeHandle);
   canvas.appendChild(el); setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid);
-  onCanvas[uid] = { el, item, state }; updateGridCard(uid, true); setActive(uid);
+  onCanvas[uid] = { el, item, state }; 
+  updateGridCard(uid, true); 
+  setActive(uid);
+  updateTheme(); 
 }
 
 function removeFromCanvas(uid) {
   if (!onCanvas[uid]) return;
   onCanvas[uid].el.remove(); delete onCanvas[uid]; updateGridCard(uid, false);
   if (Object.keys(onCanvas).length === 0) document.getElementById('canvas-empty').style.display = 'block';
+  updateTheme(); 
 }
 
 function updateGridCard(uid, active) { const card = document.getElementById('gi-' + uid); if (card) card.classList.toggle('on-board', active); }
@@ -1125,7 +1223,6 @@ window.addEventListener('DOMContentLoaded', () => {
   canvas.height = window.innerHeight;
   const W = canvas.width, H = canvas.height;
 
-  // Draw mirror surface fallback
   function drawMirror() {
     const grad = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, Math.max(W,H)*0.8);
     grad.addColorStop(0, '#ffffff');
@@ -1134,7 +1231,6 @@ window.addEventListener('DOMContentLoaded', () => {
     grad.addColorStop(1, '#909090');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
-    // shimmer streak
     const streak = ctx.createLinearGradient(0, 0, W, H);
     streak.addColorStop(0, 'rgba(255,255,255,0)');
     streak.addColorStop(0.45, 'rgba(255,255,255,0)');
@@ -1145,7 +1241,6 @@ window.addEventListener('DOMContentLoaded', () => {
     ctx.fillRect(0, 0, W, H);
   }
 
-  // Draw from image
   function drawMirrorFromImage(callback) {
     const img = new Image();
     img.onload = () => {
@@ -1169,17 +1264,14 @@ window.addEventListener('DOMContentLoaded', () => {
       if (callback) callback();
     };
     img.onerror = () => {
-      // Fallback to the old gradient if the image fails to load
       drawMirror();
       if (callback) callback();
     };
     img.src = 'mirrorshatter.jpg';
   }
 
-  // Impact point
   let IX, IY;
 
-  // Draw cracks
   function drawCracks() {
     ctx.strokeStyle = 'rgba(0,0,0,0.35)';
     ctx.lineWidth = 1.2;
@@ -1196,7 +1288,6 @@ window.addEventListener('DOMContentLoaded', () => {
         x += Math.cos(angle+jitter)*Math.min(segLen, remainingLen);
         y += Math.sin(angle+jitter)*Math.min(segLen, remainingLen);
         ctx.lineTo(x, y);
-        // branch
         if (Math.random() < 0.4 && remainingLen > 80) {
           const bAngle = angle + (Math.random()-0.5)*1.2;
           const bLen = remainingLen * (0.2 + Math.random()*0.3);
@@ -1215,7 +1306,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Build shards as polygons tiling the canvas
   function buildShards(numShards) {
     const points = [[IX, IY]];
     for (let i = 1; i < numShards; i++) {
@@ -1234,15 +1324,11 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   let shards = null;
-  let animating = false;
   let shardStates = [];
   let offscreen = null;
 
   function startShatter() {
-    // Capture the cracked mirror reflection
     const snapshot = ctx.getImageData(0, 0, W, H);
-    
-    // Draw it to an offscreen canvas so drawImage respects rotation
     offscreen = document.createElement('canvas');
     offscreen.width = W;
     offscreen.height = H;
@@ -1262,7 +1348,6 @@ window.addEventListener('DOMContentLoaded', () => {
         tx: 0, ty: 0
       };
     });
-    animating = true;
     requestAnimationFrame(animateShatter);
   }
 
@@ -1274,7 +1359,7 @@ window.addEventListener('DOMContentLoaded', () => {
       const st = shardStates[i];
       st.tx += st.vx; 
       st.ty += st.vy; 
-      st.vy += 0.4; // gravity
+      st.vy += 0.4; 
       st.rotation += st.vr; 
       st.opacity -= 0.018;
       
@@ -1284,22 +1369,18 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.save();
       ctx.globalAlpha = Math.max(0, st.opacity);
       
-      // Move to the shard's current position and rotate
       ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
       ctx.rotate(st.rotation * Math.PI / 180);
       ctx.translate(-shard.cx, -shard.cy);
       
-      // Cut out the shard shape
       ctx.beginPath();
       ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
       shard.verts.forEach(v => ctx.lineTo(v[0], v[1]));
       ctx.closePath();
       ctx.clip();
       
-      // Draw the mirrored reflection correctly transformed
       ctx.drawImage(offscreen, 0, 0);
       
-      // Tint & outline
       ctx.fillStyle = 'rgba(200,220,255,0.15)';
       ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,0.6)';
@@ -1316,7 +1397,6 @@ window.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(animateShatter);
   }
 
-  // Load the image, then WAIT for the user to tap before cracking
   drawMirrorFromImage(() => {
     IX = W * 0.48 + (Math.random()-0.5)*80;
     IY = H * 0.42 + (Math.random()-0.5)*60;
@@ -1325,23 +1405,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const crackAudio = new Audio('crack.mp3');
     crackAudio.volume = 0.4;
 
-    // Wait for the tactile tap to bypass audio restrictions
     tapOverlay.addEventListener('click', () => {
-      
-      // 1. Play sound instantly on click
       crackAudio.play().catch(() => {});
-      
-      // 2. Draw cracks instantly
       drawCracks();
-      
-      // 3. Fade out overlay
       tapOverlay.style.opacity = '0';
       setTimeout(() => tapOverlay.style.display = 'none', 400);
-
-      // 4. Shatter a split second later for dramatic effect
       setTimeout(startShatter, 600);
-      
-    }, { once: true }); // Ensure it only fires once
+    }, { once: true });
   });
 });
 </script>
