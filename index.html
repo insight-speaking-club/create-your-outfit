@@ -50,61 +50,69 @@
     cursor: pointer; transition: opacity 0.3s ease;
   }
 
-  /* ── TOP BAR (RESTYLED TO BURN BOOK/THANK U NEXT) ── */
+  /* ── TOP BAR (Burn Book / Thank U Next banner) ── */
   #topbar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0.85rem 1.2rem; 
-    background: #f5c6d6; /* Bubblegum pink */
-    border-bottom: 1px solid var(--rail); flex-shrink: 0; z-index: 10000;
+    padding: 0.85rem 1.2rem;
+    background: linear-gradient(135deg, #ff9eb5 0%, #f4829f 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.08); flex-shrink: 0; z-index: 10000;
     position: relative;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
-  
+
   #topbar-title-container {
     position: relative;
     display: flex;
     align-items: center;
+    gap: 10px;
   }
 
   #topbar h1 {
-    display: flex; align-items: center; gap: 1px;
+    display: flex; align-items: center; gap: 6px;
     margin: 0;
   }
 
-  #topbar h1 .cutout {
+  #topbar h1 .word-cutout {
     display: inline-block;
-    padding: 3px 5px;
-    background: #fff;
-    color: #111;
-    font-size: 1.15rem;
-    font-weight: bold;
-    box-shadow: 1px 2px 3px rgba(0,0,0,0.3);
-    line-height: 1;
-    text-transform: uppercase;
-  }
-  
-  #topbar h1 .cutout.dark {
-    background: #111;
-    color: #fff;
+    padding: 2px 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.2;
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.25);
+    white-space: nowrap;
   }
 
-  /* Red lipstick kiss mark */
-  .kiss-mark {
-    position: absolute;
-    width: 55px;
-    height: auto;
-    top: -12px;
-    left: 42%;
-    transform: rotate(-12deg);
-    opacity: 0.85;
-    pointer-events: none;
-    z-index: 2;
-    mix-blend-mode: multiply;
+  #topbar h1 .word-cutout.paper-white {
+    background: #fffdf9;
+    color: #1a1414;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    transform: rotate(-3deg);
   }
-  
+
+  #topbar h1 .word-cutout.paper-black {
+    background: #1a1414;
+    color: #fffdf9;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    transform: rotate(2deg);
+  }
+
+  .kiss-print {
+    width: 30px;
+    height: auto;
+    position: relative;
+    top: -4px;
+    transform: rotate(-8deg);
+    opacity: 0.95;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
   #verdict-btn {
     font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.68rem;
-    text-transform: uppercase; letter-spacing: 0.12em; background: var(--ink);
+    text-transform: uppercase; letter-spacing: 0.12em; background: #1a1414;
     color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 2px;
     cursor: pointer; transition: opacity 0.15s;
     box-shadow: 1px 2px 4px rgba(0,0,0,0.2);
@@ -233,25 +241,10 @@
 <div id="topbar">
   <div id="topbar-title-container">
     <h1>
-      <!-- "Dream" -->
-      <span class="cutout dark" style="transform: rotate(-4deg); font-family: 'Playfair Display', serif;">D</span>
-      <span class="cutout" style="transform: rotate(3deg); font-family: Arial, sans-serif;">r</span>
-      <span class="cutout" style="transform: rotate(-2deg); font-family: Courier, monospace;">e</span>
-      <span class="cutout" style="transform: rotate(5deg); font-family: 'Times New Roman', serif;">a</span>
-      <span class="cutout dark" style="transform: rotate(-3deg); font-family: Impact, sans-serif;">m</span>
-      <span style="width: 6px;"></span>
-      <!-- "Closet" -->
-      <span class="cutout" style="transform: rotate(2deg); font-family: Arial, sans-serif;">C</span>
-      <span class="cutout" style="transform: rotate(-5deg); font-family: 'Playfair Display', serif;">l</span>
-      <span class="cutout dark" style="transform: rotate(4deg); font-family: Impact, sans-serif;">o</span>
-      <span class="cutout" style="transform: rotate(-2deg); font-family: Courier, monospace;">s</span>
-      <span class="cutout" style="transform: rotate(3deg); font-family: Arial, sans-serif;">e</span>
-      <span class="cutout" style="transform: rotate(-4deg); font-family: 'Times New Roman', serif;">t</span>
+      <span class="word-cutout paper-white">Dream</span>
+      <span class="word-cutout paper-black">Closet</span>
     </h1>
-    <!-- Lipstick kiss mark -->
-    <svg class="kiss-mark" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#D2143A" d="M495.9,206c-17.5-23.7-52.9-42.3-95.6-43.2c-29.2-0.6-58,11.8-82.6,26.9c-20.7,12.7-40.8,29-63.7,29 c-22.1,0-42-15.6-62.4-28.1C167,175.7,137.4,162.8,107,162.8c-45.7,0-84.5,21.5-103.7,47.4C-4.3,220.6,0,234.3,10.6,243.6 c8.7,7.6,22.3,8.7,33,3.8c12.2-5.5,26.7-10.7,42.5-13.8c19.1-3.7,40.3-4.3,60.6,2c21.8,6.8,40.5,18.8,61.9,27.1 c15.2,5.9,31.4,9.4,47.5,9.4c16.3,0,32.7-3.5,48-9.5c21.5-8.4,40.3-20.5,62.4-27.3c20.3-6.2,41.4-5.5,60.5-1.7 c15.6,3.1,30.1,8.3,42.2,13.7c10.8,4.9,24.4,3.7,33-3.8C512.6,234.4,513.6,221.1,495.9,206z M254.1,289.8 c-16.1,0-32.3,3.7-47.5,9.8c-21,8.3-39.7,20.3-61.2,27.2c-22.1,6.9-45.6,8.7-68.8,3.7c-17-3.6-33.1-9.9-47.2-18 c-11.4-6.6-26.1-5.7-36.4,2.3c-11.4,8.9-14.8,24.6-7.8,37.3c21.4,38.9,68.4,66.8,124.9,66.8c34.1,0,67.6-14,94-31.4 c17.6-11.6,33.5-25.1,52.2-25.1c18.5,0,34.4,13.4,51.8,24.9c26.4,17.4,59.9,31.5,93.9,31.5c56.4,0,103.4-27.8,124.7-66.6 c7-12.7,3.6-28.5-7.8-37.4c-10.4-8-25.1-9-36.5-2.4c-14.1,8.1-30.2,14.4-47.2,18.1c-23.3,5.1-46.7,3.3-68.8-3.6 c-21.5-6.8-40.2-18.9-61.3-27.2C286.3,293.6,270.2,289.8,254.1,289.8z"/>
-    </svg>
+    <img src="kissprint.png" alt="" class="kiss-print">
   </div>
   <div style="display:flex;align-items:center;gap:0.5rem;">
     <button id="verdict-btn" onclick="showVerdict()">Get my vibe</button>
@@ -895,7 +888,7 @@ const verdictsUK = {
   'practical cool': { line: "Створено для того, щоб насправді щось робити.", sub: "Виглядає легким, бо так має бути." },
   'preppy subverted': { line: "Уніформа з вшитим маленьким бунтом.", sub: "Старі правила, новий власник." },
   'princess energy': { line: "Фатин увійшов у чат.", sub: "М'яка, трохи екстра, абсолютно не хвилюється через 'занадто багато'." },
-  'punk adjacent': { line: "Close enough to the riot to feel it.", sub: "Не повноцінне повстання. Але ти точно є на флаєрі." },
+  'punk adjacent': { line: "Досить близько до бунту, щоб відчути його.", sub: "Не повноцінне повстання. Але ти точно є на флаєрі." },
   'punk heritage': { line: "Ця клітинка пам'ятає, звідки вона взялася.", sub: "Скроєний бунт із довгою пам'яттю." },
   'quiet': { line: "Майже нічого не каже, але має на увазі кожну деталь.", sub: "Стриманість, розгорнута правильно." },
   'quiet luxury': { line: "Дорого, але без оголошень.", sub: "Найбільш лякаючий вид багатства." },
