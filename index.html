@@ -109,6 +109,37 @@
   .clip-1 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.05em; top: -46px; left: -92px; transform: rotate(-7deg); }
   .clip-2 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.85rem; top: -14px; right: -104px; transform: rotate(5deg); background: none; border: none; color: var(--muted); }
   .clip-3 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 0.55rem; letter-spacing: 0.08em; bottom: -38px; left: -58px; transform: rotate(4deg); background: var(--accent); color: #fff; border: none; border-radius: 2px; }
+
+  /* ── GLITCH EFFECT (nod to the distorted TMZ clipping) ── */
+  .glitch { position: relative; display: inline-block; }
+  .glitch::before, .glitch::after {
+    content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    overflow: hidden; background: inherit;
+  }
+  .glitch::before {
+    color: #ff2d6b; left: 2px; clip-path: inset(0 0 0 0);
+    animation: glitch-1 2.6s infinite linear alternate-reverse;
+  }
+  .glitch::after {
+    color: #4de8ff; left: -2px; clip-path: inset(0 0 0 0);
+    animation: glitch-2 3.1s infinite linear alternate-reverse;
+  }
+  @keyframes glitch-1 {
+    0%   { clip-path: inset(10% 0 82% 0); transform: translate(-1px,-1px); }
+    20%  { clip-path: inset(55% 0 12% 0); transform: translate(1px, 1px); }
+    40%  { clip-path: inset(2% 0 88% 0);  transform: translate(-1px, 1px); }
+    60%  { clip-path: inset(70% 0 5% 0);  transform: translate(1px,-1px); }
+    80%  { clip-path: inset(30% 0 50% 0); transform: translate(-1px,0); }
+    100% { clip-path: inset(45% 0 40% 0); transform: translate(1px,1px); }
+  }
+  @keyframes glitch-2 {
+    0%   { clip-path: inset(60% 0 15% 0); transform: translate(1px, 0); }
+    20%  { clip-path: inset(5% 0 80% 0);  transform: translate(-1px,-1px); }
+    40%  { clip-path: inset(35% 0 45% 0); transform: translate(1px, 1px); }
+    60%  { clip-path: inset(15% 0 70% 0); transform: translate(-1px, 0); }
+    80%  { clip-path: inset(75% 0 8% 0);  transform: translate(1px,-1px); }
+    100% { clip-path: inset(20% 0 60% 0); transform: translate(-1px, 1px); }
+  }
   
   .on-canvas { position: absolute; cursor: grab; user-select: none; touch-action: none; }
   .on-canvas:active { cursor: grabbing; }
@@ -280,7 +311,7 @@
   <div id="canvas-empty">
     <span class="headline-clip clip-1">"Iconic"</span>
     <span class="headline-clip clip-2">I want it, I got it</span>
-    <span class="headline-clip clip-3">thank u, next</span>
+    <span class="headline-clip clip-3 glitch" data-text="thank u, next">thank u, next</span>
     <div class="big-label">Your look, your rules.</div>
     <p>Tap anything below to start.</p>
   </div>
@@ -1357,49 +1388,4 @@ window.addEventListener('DOMContentLoaded', () => {
   const mirrorImg = new Image();
   let mirrorImgLoaded = false;
   mirrorImg.onload = () => { mirrorImgLoaded = true; drawMirror(); };
-  mirrorImg.onerror = () => { mirrorImgLoaded = false; };
-  mirrorImg.src = 'mirrorshatter.jpg';
-
-  function drawCoverImage(image, w, h) {
-    const imgRatio = image.width / image.height;
-    const boxRatio = w / h;
-    let sx, sy, sw, sh;
-    if (imgRatio > boxRatio) {
-      sh = image.height; sw = sh * boxRatio; sx = (image.width - sw) / 2; sy = 0;
-    } else {
-      sw = image.width; sh = sw / boxRatio; sx = 0; sy = (image.height - sh) / 2;
-    }
-    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, w, h);
-  }
-
-  function drawMirror() {
-    ctx.clearRect(0, 0, W, H);
-    if (mirrorImgLoaded) {
-      drawCoverImage(mirrorImg, W, H);
-      const sheen = ctx.createLinearGradient(0, 0, W, H);
-      sheen.addColorStop(0, 'rgba(255,255,255,0.08)');
-      sheen.addColorStop(0.5, 'rgba(255,255,255,0.02)');
-      sheen.addColorStop(1, 'rgba(255,255,255,0.08)');
-      ctx.fillStyle = sheen;
-      ctx.fillRect(0, 0, W, H);
-    } else {
-      const streak = ctx.createLinearGradient(0, 0, W, H);
-      streak.addColorStop(0, 'rgba(255,255,255,0.1)');
-      streak.addColorStop(0.45, 'rgba(255,255,255,0)');
-      streak.addColorStop(0.5, 'rgba(255,255,255,0.4)');
-      streak.addColorStop(0.55, 'rgba(255,255,255,0)');
-      streak.addColorStop(1, 'rgba(255,255,255,0.1)');
-      ctx.fillStyle = streak;
-      ctx.fillRect(0, 0, W, H);
-    }
-  }
-
-  let IX, IY;
-
-  function drawCracks() {
-    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-    ctx.lineWidth = 1.2;
-    const numMain = 10 + Math.floor(Math.random()*5);
-    for (let i = 0; i < numMain; i++) {
-      const angle = (i / numMain) * Math.PI * 2 + (Math.random()-0.5)*0.4;
-      c
+  mirrorImg.onerror = () => { mirrorImgLoaded 
