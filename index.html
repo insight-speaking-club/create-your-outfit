@@ -1438,4 +1438,36 @@ window.addEventListener('DOMContentLoaded', () => {
       // Give the falling shards a shiny glass tint
       ctx.fillStyle = 'rgba(255,255,255,0.15)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(255,25
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.restore();
+    });
+
+    if (allGone) {
+      canvas.style.display = 'none';
+      return;
+    }
+    requestAnimationFrame(animateShatter);
+  }
+
+  drawMirror();
+  IX = W * 0.48 + (Math.random()-0.5)*80;
+  IY = H * 0.42 + (Math.random()-0.5)*60;
+
+  const tapOverlay = document.getElementById('tap-overlay');
+  const crackAudio = new Audio('crack.mp3');
+  crackAudio.volume = 0.4;
+
+  tapOverlay.addEventListener('click', () => {
+    crackAudio.play().catch(() => {});
+    drawCracks();
+    tapOverlay.style.opacity = '0';
+    setTimeout(() => tapOverlay.style.display = 'none', 400);
+    setTimeout(startShatter, 600);
+  }, { once: true });
+});
+</script>
+</body>
+</html>
