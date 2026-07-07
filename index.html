@@ -1378,11 +1378,10 @@ window.addEventListener('DOMContentLoaded', () => {
   let offscreen = null;
 
   function startShatter() {
-    const snapshot = ctx.getImageData(0, 0, W, H);
     offscreen = document.createElement('canvas');
     offscreen.width = W;
     offscreen.height = H;
-    offscreen.getContext('2d').putImageData(snapshot, 0, 0);
+    offscreen.getContext('2d').drawImage(canvas, 0, 0);
 
     shards = buildShards(22);
     shardStates = shards.map(s => {
@@ -1437,4 +1436,6 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(offscreen, 0, 0);
       
       // Give the falling shards a shiny glass tint
-      ctx.fillStyle = 'rgba(255,255,255,0.15)'
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,25
