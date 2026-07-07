@@ -45,7 +45,7 @@
     position: fixed; inset: 0; z-index: 100000;
     display: flex; align-items: center; justify-content: center;
     background: rgba(10, 8, 6, 0.15);
-    color: #111; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 500;
     font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.2em;
     cursor: pointer; transition: opacity 0.4s ease;
   }
@@ -210,7 +210,7 @@
 <canvas id="mirror-canvas"></canvas>
 <div id="tap-overlay">
   <div style="text-align: center; line-height: 1.6; text-shadow: 0 2px 15px rgba(255,255,255,0.8);">
-    The closet has always been made of glass.<br>
+    The closet was made of glass.<br>
     <span style="font-weight: 700; font-size: 1.2rem; letter-spacing: 0.15em;">SHATTER IT.</span>
   </div>
 </div>
@@ -1144,10 +1144,10 @@ function showVerdict() {
   currentVerdictKey = currentVerdict.key;
   
   applyTranslations();
-  buildOutfitPreview();
   
   setActive(null); 
   document.getElementById('verdict-overlay').classList.add('show');
+  requestAnimationFrame(() => requestAnimationFrame(buildOutfitPreview));
 }
 
 function toggleLanguage() {
