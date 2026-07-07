@@ -1198,7 +1198,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let mirrorImgLoaded = false;
   mirrorImg.onload = () => { mirrorImgLoaded = true; drawMirror(); };
   mirrorImg.onerror = () => { mirrorImgLoaded = false; };
-  mirrorImg.src = 'mirror.jpg';
+  mirrorImg.src = 'mirrorshatter.jpg';
 
   function drawCoverImage(image, w, h) {
     const imgRatio = image.width / image.height;
@@ -1225,7 +1225,7 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.fillStyle = sheen;
       ctx.fillRect(0, 0, W, H);
     } else {
-      // Fallback frosted-glass streak if mirror.jpg hasn't loaded (or is missing)
+      // Fallback frosted-glass streak if mirrorshatter.jpg hasn't loaded (or is missing)
       const streak = ctx.createLinearGradient(0, 0, W, H);
       streak.addColorStop(0, 'rgba(255,255,255,0.1)');
       streak.addColorStop(0.45, 'rgba(255,255,255,0)');
