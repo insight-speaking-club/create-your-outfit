@@ -191,7 +191,7 @@
   /* The outfit the user actually built, shown clearly below the verdict text */
   #verdict-outfit-preview {
     position: relative; width: min(80vw, 300px); margin: 1.8rem auto;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    background: #ffffff; border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow: hidden; flex-shrink: 0;
   }
 
@@ -1198,7 +1198,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let mirrorImgLoaded = false;
   mirrorImg.onload = () => { mirrorImgLoaded = true; drawMirror(); };
   mirrorImg.onerror = () => { mirrorImgLoaded = false; };
-  mirrorImg.src = 'mirrorshatter.jpg';
+  mirrorImg.src = 'mirror.jpg';
 
   function drawCoverImage(image, w, h) {
     const imgRatio = image.width / image.height;
@@ -1225,7 +1225,7 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.fillStyle = sheen;
       ctx.fillRect(0, 0, W, H);
     } else {
-      // Fallback frosted-glass streak if mirrorshatter.jpg hasn't loaded (or is missing)
+      // Fallback frosted-glass streak if mirror.jpg hasn't loaded (or is missing)
       const streak = ctx.createLinearGradient(0, 0, W, H);
       streak.addColorStop(0, 'rgba(255,255,255,0.1)');
       streak.addColorStop(0.45, 'rgba(255,255,255,0)');
