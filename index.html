@@ -1354,4 +1354,238 @@ function applyTranslations() {
     
     document.getElementById('verdict-aesthetic').textContent = `${t.aestheticPrefix}${vAesthetic}${t.aestheticSuffix}`;
     document.getElementById('verdict-text').textContent = vLine;
-    document.getElem
+    document.getElementById('verdict-sub').textContent = vSub;
+
+    const links = getVerdictLinks(currentVerdictKey);
+    
+    const songBtn = document.getElementById('verdict-song-link');
+    const sceneBtn = document.getElementById('verdict-scene-link');
+    
+    const isIconic = Object.keys(onCanvas).some(uid => uid.startsWith('iconic_') || (onCanvas[uid].item._catId === 'iconic'));
+    const isSashaBow = currentVerdictKey === "what about it?"; 
+
+    if (isIconic) {
+      if (isSashaBow) {
+        // Sasha's bow gets the specific Spotify playlist and NO scene button
+        songBtn.style.display = 'flex';
+        songBtn.href = links.songUrl;
+        sceneBtn.style.display = 'none';
+      } else {
+        // Other Iconic pieces get "Watch the scene" and NO listen button
+        songBtn.style.display = 'none';
+        sceneBtn.style.display = 'flex';
+        sceneBtn.href = links.sceneUrl;
+      }
+    } else {
+      // Non-iconic pieces get "Listen" and NO scene button
+      songBtn.style.display = 'flex';
+      songBtn.href = links.songUrl;
+      sceneBtn.style.display = 'none';
+    }
+  }
+}
+
+function closeVerdict() { 
+  document.getElementById('verdict-overlay').classList.remove('show'); 
+}
+function shareToTelegram() { window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank'); }
+
+init();
+
+// ── GLASS SHATTER SEQUENCE ──
+window.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('mirror-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const W = canvas.width, H = canvas.height;
+
+  const mirrorImg = new Image();
+  let mirrorImgLoaded = false;
+  mirrorImg.onload = () => { mirrorImgLoaded = true; drawMirror(); };
+  mirrorImg.onerror = () => { mirrorImgLoaded = false; };
+  mirrorImg.src = 'mirrorshatter.jpg';
+
+  function drawCoverImage(image, w, h) {
+    const imgRatio = image.width / image.height;
+    const boxRatio = w / h;
+    let sx, sy, sw, sh;
+    if (imgRatio > boxRatio) {
+      sh = image.height; sw = sh * boxRatio; sx = (image.width - sw) / 2; sy = 0;
+    } else {
+      sw = image.width; sh = sw / boxRatio; sx = 0; sy = (image.height - sh) / 2;
+    }
+    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, w, h);
+  }
+
+  function drawMirror() {
+    ctx.clearRect(0, 0, W, H);
+    if (mirrorImgLoaded) {
+      drawCoverImage(mirrorImg, W, H);
+      const sheen = ctx.createLinearGradient(0, 0, W, H);
+      sheen.addColorStop(0, 'rgba(255,255,255,0.08)');
+      sheen.addColorStop(0.5, 'rgba(255,255,255,0.02)');
+      sheen.addColorStop(1, 'rgba(255,255,255,0.08)');
+      ctx.fillStyle = sheen;
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      const streak = ctx.createLinearGradient(0, 0, W, H);
+      streak.addColorStop(0, 'rgba(255,255,255,0.1)');
+      streak.addColorStop(0.45, 'rgba(255,255,255,0)');
+      streak.addColorStop(0.5, 'rgba(255,255,255,0.4)');
+      streak.addColorStop(0.55, 'rgba(255,255,255,0)');
+      streak.addColorStop(1, 'rgba(255,255,255,0.1)');
+      ctx.fillStyle = streak;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  let IX, IY;
+
+  function drawCracks() {
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 1.2;
+    const numMain = 10 + Math.floor(Math.random()*5);
+    for (let i = 0; i < numMain; i++) {
+      const angle = (i / numMain) * Math.PI * 2 + (Math.random()-0.5)*0.4;
+      const len = (0.4 + Math.random()*0.6) * Math.max(W,H);
+      let x = IX, y = IY;
+      ctx.beginPath(); ctx.moveTo(x, y);
+      let remainingLen = len;
+      while (remainingLen > 0) {
+        const segLen = 30 + Math.random()*80;
+        const jitter = (Math.random()-0.5)*0.35;
+        x += Math.cos(angle+jitter)*Math.min(segLen, remainingLen);
+        y += Math.sin(angle+jitter)*Math.min(segLen, remainingLen);
+        ctx.lineTo(x, y);
+        if (Math.random() < 0.4 && remainingLen > 80) {
+          const bAngle = angle + (Math.random()-0.5)*1.2;
+          const bLen = remainingLen * (0.2 + Math.random()*0.3);
+          let bx = x, by = y;
+          ctx.moveTo(bx, by);
+          for (let b = 0; b < bLen; b += 40+Math.random()*40) {
+            bx += Math.cos(bAngle+(Math.random()-0.5)*0.3)*40;
+            by += Math.sin(bAngle+(Math.random()-0.5)*0.3)*40;
+            ctx.lineTo(bx, by);
+          }
+          ctx.moveTo(x, y);
+        }
+        remainingLen -= segLen;
+      }
+      ctx.stroke();
+    }
+  }
+
+  function buildShards(numShards) {
+    const points = [[IX, IY]];
+    for (let i = 1; i < numShards; i++) {
+      points.push([Math.random()*W, Math.random()*H]);
+    }
+    return points.map((pt) => {
+      const cx = pt[0], cy = pt[1];
+      const numVerts = 6 + Math.floor(Math.random()*4);
+      const angles = Array.from({length: numVerts}, (_, i) => (i / numVerts) * Math.PI * 2 + (Math.random()-0.5)*0.5);
+      const verts = angles.map(a => {
+        const r = 60 + Math.random() * Math.max(W,H) * 0.18;
+        return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
+      });
+      return { cx, cy, verts };
+    });
+  }
+
+  let shards = null;
+  let shardStates = [];
+  let offscreen = null;
+
+  function startShatter() {
+    offscreen = document.createElement('canvas');
+    offscreen.width = W;
+    offscreen.height = H;
+    offscreen.getContext('2d').drawImage(canvas, 0, 0);
+
+    shards = buildShards(22);
+    shardStates = shards.map(s => {
+      const dx = s.cx - IX, dy = s.cy - IY;
+      const dist = Math.hypot(dx, dy) || 1;
+      const speed = 4 + Math.random()*8 + (1/(dist/300+0.1))*2;
+      return {
+        vx: (dx/dist)*speed + (Math.random()-0.5)*3,
+        vy: (dy/dist)*speed + (Math.random()-0.5)*3,
+        vr: (Math.random()-0.5)*6,
+        rotation: 0,
+        opacity: 1,
+        tx: 0, ty: 0
+      };
+    });
+    
+    canvas.style.backdropFilter = 'none';
+    canvas.style.webkitBackdropFilter = 'none';
+    
+    requestAnimationFrame(animateShatter);
+  }
+
+  function animateShatter() {
+    ctx.clearRect(0, 0, W, H);
+
+    let allGone = true;
+    shards.forEach((shard, i) => {
+      const st = shardStates[i];
+      st.tx += st.vx; 
+      st.ty += st.vy; 
+      st.vy += 0.4; 
+      st.rotation += st.vr; 
+      st.opacity -= 0.018;
+      
+      if (st.opacity <= 0) return;
+      allGone = false;
+      
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, st.opacity);
+      
+      ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
+      ctx.rotate(st.rotation * Math.PI / 180);
+      ctx.translate(-shard.cx, -shard.cy);
+      
+      ctx.beginPath();
+      ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
+      shard.verts.forEach(v => ctx.lineTo(v[0], v[1]));
+      ctx.closePath();
+      ctx.clip();
+      
+      ctx.drawImage(offscreen, 0, 0);
+      
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      ctx.restore();
+    });
+
+    if (allGone) { 
+      canvas.style.display = 'none'; 
+      return; 
+    }
+    requestAnimationFrame(animateShatter);
+  }
+
+  IX = W * 0.48 + (Math.random()-0.5)*80;
+  IY = H * 0.42 + (Math.random()-0.5)*60;
+
+  const tapOverlay = document.getElementById('tap-overlay');
+  const crackAudio = new Audio('crack.mp3');
+  crackAudio.volume = 0.4;
+
+  tapOverlay.addEventListener('click', () => {
+    crackAudio.play().catch(() => {});
+    drawCracks();
+    tapOverlay.style.opacity = '0';
+    setTimeout(() => tapOverlay.style.display = 'none', 400);
+    setTimeout(startShatter, 600);
+  }, { once: true });
+});
+</script>
+</body>
+</html>
