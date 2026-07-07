@@ -14,12 +14,12 @@
     --ink: #1a1612;
     --muted: #9a9390;
     --rail: #e8e4df;
-    --drawer-bg: #1e1b18;
+    --drawer-bg: #201319;
     --drawer-border: #3a3530;
     --drawer-muted: #6a6460;
     --drawer-active: #f0ede8;
-    --accent: #c2a882;
-    --tag-bg: rgba(194,168,130,0.15);
+    --accent: #ff5c8d;
+    --tag-bg: rgba(255,92,141,0.15);
   }
 
   html, body { height: 100%; }
@@ -54,7 +54,7 @@
   #topbar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.85rem 1.2rem;
-    background: linear-gradient(135deg, #ff9eb5 0%, #f4829f 100%);
+    background: linear-gradient(135deg, #ff5c8d 0%, #ff2f6e 55%, #d4145a 100%);
     border-bottom: 1px solid rgba(0,0,0,0.08); flex-shrink: 0; z-index: 10000;
     position: relative;
   }
@@ -134,7 +134,7 @@
     color: #f7f4f0; 
     font-size: 1.3rem; 
     padding-left: 0.2rem; 
-    border-bottom: 1px solid rgba(194,168,130,0.3);
+    border-bottom: 1px solid rgba(255,92,141,0.3);
     padding-bottom: 0.3rem;
   }
   .sub-tabs-row { display: flex; gap: 0.5rem; }
@@ -160,7 +160,7 @@
   .grid-item.on-board .gi-name, .grid-item.on-board .gi-vibe { color: var(--accent); }
   .grid-item .gi-color-dot { width: 6px; height: 6px; border-radius: 50%; position: absolute; top: 4px; right: 4px; opacity: 0.7; }
 
-  /* ── VERDICT SCREEN (solid, self-contained — not layered over the closet) ── */
+  /* ── VERDICT SCREEN ── */
   #verdict-overlay {
     display: none; position: fixed; inset: 0; 
     background: #100d0a;
@@ -188,7 +188,6 @@
   #verdict-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1; color: #f7f4f0; margin-bottom: 0.8rem; }
   #verdict-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #a8a09b; line-height: 1.5; max-width: 320px; }
 
-  /* The outfit the user actually built, shown clearly below the verdict text */
   #verdict-outfit-preview {
     position: relative; width: min(80vw, 300px); margin: 1.8rem auto;
     background: #ffffff; border: 1px solid rgba(255,255,255,0.1);
@@ -200,13 +199,13 @@
   #verdict-links { display: flex; gap: 0.6rem; margin: 0 auto 0.4rem; flex-shrink: 0; }
   .verdict-link-btn {
     display: flex; align-items: center; gap: 0.4rem;
-    background: rgba(194,168,130,0.1); border: 1px solid var(--accent);
+    background: rgba(255,92,141,0.1); border: 1px solid var(--accent);
     color: var(--accent); font-family: 'DM Sans', sans-serif; font-weight: 500;
     font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em;
     padding: 0.5rem 0.85rem; border-radius: 20px; text-decoration: none;
     cursor: pointer; transition: background 0.15s;
   }
-  .verdict-link-btn:hover { background: rgba(194,168,130,0.2); }
+  .verdict-link-btn:hover { background: rgba(255,92,141,0.2); }
   .verdict-link-btn svg { width: 14px; height: 14px; stroke: currentColor; flex-shrink: 0; }
   
   #verdict-close {
@@ -229,7 +228,7 @@
 
 <div id="topbar">
   <div id="topbar-title-container">
-    <img src="glasscloset.png" alt="Dream Closet" style="max-height: 25px; width: auto;" onerror="this.style.display='none'">
+    <img src="glasscloset.png" alt="Dream Closet" style="max-height: 25px; width: auto;" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'Dream Closet',style:'font-family:\'Playfair Display\',serif;font-weight:700;color:#fffdf9;font-size:1.1rem;'}))">
     <img src="kissprint.png" alt="" class="kiss-print">
   </div>
   <div style="display:flex;align-items:center;gap:0.5rem;">
@@ -900,7 +899,7 @@ const verdictsUK = {
   'power androgyny': { line: "Ні те, ні інше — а отже, все.", sub: "Плечі, плинність, впевненість того, хто вибирає власні правила." },
   'power dressing': { line: "Одягнена для переговорів, які ти виграєш.", sub: "Кожна лінія тут — це бізнес." },
   'power femme': { line: "Тут жіночність — це не м'якість. Це точність.", sub: "Кожна деталь — це вибір, і ти зробила їх усі." },
-  'power jewellery': { line: "Small pieces, outsized authority.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
+  'power jewellery': { line: "Маленькі деталі, величезний авторитет.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
   'powerful': { line: "Це вбрання не просить кімнату. Воно її забирає.", sub: "Тихо, повністю, без обговорень." },
   'practical chic': { line: "Створено, щоб пережити день і все одно виглядати свідомо.", sub: "Функція на першому місці. Але стиль нікуди не зникав." },
   'practical cool': { line: "Створено для того, щоб насправді щось робити.", sub: "Виглядає легким, бо так має бути." },
@@ -961,10 +960,7 @@ let currentVerdict = null;
 let currentVerdictKey = '';
 
 // ── SONG / SCENE LINKS ──
-// Curated entries for the "Iconic Pieces" tier: exact scene URLs where we have them,
-// otherwise a specific search query (safer than guessing a track/video ID that might be wrong or taken down).
 const verdictLinks = {
-  'what about it?':          { song: '7 rings Ariana Grande' },
   'thank u, next':           { song: 'thank u next Ariana Grande', scene: 'thank u next Ariana Grande official video' },
   'sweetener':               { song: 'God is a woman Ariana Grande' },
   'dangerous woman':         { song: 'Dangerous Woman Ariana Grande' },
@@ -986,13 +982,18 @@ function youtubeSearchUrl(q) { return 'https://www.youtube.com/results?search_qu
 
 function getVerdictLinks(key) {
   const entry = verdictLinks[key] || {};
-  const songUrl = entry.songUrl || spotifySearchUrl(entry.song || (key + ' aesthetic playlist'));
+  const songUrl = key === "what about it?" 
+    ? "https://open.spotify.com/playlist/0YBMWmwqM5DrQMIzCj0qRm?si=otVQpm1ATCOy2ePWQ4M8oQ&utm_source=copy-link" 
+    : (entry.songUrl || spotifySearchUrl(entry.song || (key + ' aesthetic playlist')));
+  
   const sceneUrl = entry.sceneUrl || youtubeSearchUrl(entry.scene || (key + ' aesthetic edit'));
+  
   return { songUrl, sceneUrl };
 }
 
-// Translation Configuration
+// Ensure translation starts strictly in English
 let currentLang = 'en';
+
 const translations = {
   en: {
     eyebrow: "Your style, decoded",
@@ -1027,7 +1028,11 @@ categories.forEach(cat => cat.items.forEach(item => { verdictMap[cat.id + '_' + 
 document.getElementById('canvas').addEventListener('mousedown', function(e) { if (e.target === this || e.target.id === 'canvas-empty') setActive(null); });
 document.getElementById('canvas').addEventListener('touchstart', function(e) { if (e.target === this || e.target.id === 'canvas-empty') setActive(null); }, {passive: true});
 
-function init() { renderTabs(); renderGrid(activeCategory); }
+function init() { 
+  renderTabs(); 
+  renderGrid(activeCategory); 
+  applyTranslations(); // Enforce English on startup
+}
 
 function renderTabs() {
   const el = document.getElementById('cat-tabs');
@@ -1172,14 +1177,12 @@ function buildOutfitPreview() {
   const canvasW = canvas.offsetWidth, canvasH = canvas.offsetHeight;
   if (!canvasW || !canvasH) return;
 
-  // Give the preview box the same aspect ratio as the real canvas so nothing looks stretched
   preview.style.aspectRatio = `${canvasW} / ${canvasH}`;
 
   const previewW = preview.offsetWidth;
   const previewH = previewW * (canvasH / canvasW);
   const scale = previewW / canvasW;
 
-  // Sort by the same stacking order they had on the real canvas
   const uids = Object.keys(onCanvas).sort((a, b) => (parseInt(onCanvas[a].el.style.zIndex)||0) - (parseInt(onCanvas[b].el.style.zIndex)||0));
 
   uids.forEach(uid => {
@@ -1257,7 +1260,17 @@ function applyTranslations() {
 
     const links = getVerdictLinks(currentVerdictKey);
     document.getElementById('verdict-song-link').href = links.songUrl;
-    document.getElementById('verdict-scene-link').href = links.sceneUrl;
+    
+    const sceneBtn = document.getElementById('verdict-scene-link');
+    const isIconic = Object.keys(onCanvas).some(uid => uid.startsWith('iconic_') || (onCanvas[uid].item._catId === 'iconic'));
+    const isSashaBow = currentVerdictKey === "what about it?"; 
+
+    if (isIconic && !isSashaBow) {
+      sceneBtn.style.display = 'flex';
+      sceneBtn.href = links.sceneUrl;
+    } else {
+      sceneBtn.style.display = 'none';
+    }
   }
 }
 
@@ -1298,9 +1311,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function drawMirror() {
     ctx.clearRect(0, 0, W, H);
     if (mirrorImgLoaded) {
-      // The actual mirror image is the thing that shatters
       drawCoverImage(mirrorImg, W, H);
-      // Faint sheen so it still reads as glass, not a flat photo
       const sheen = ctx.createLinearGradient(0, 0, W, H);
       sheen.addColorStop(0, 'rgba(255,255,255,0.08)');
       sheen.addColorStop(0.5, 'rgba(255,255,255,0.02)');
@@ -1308,7 +1319,6 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.fillStyle = sheen;
       ctx.fillRect(0, 0, W, H);
     } else {
-      // Fallback frosted-glass streak if mirrorshatter.jpg hasn't loaded (or is missing)
       const streak = ctx.createLinearGradient(0, 0, W, H);
       streak.addColorStop(0, 'rgba(255,255,255,0.1)');
       streak.addColorStop(0.45, 'rgba(255,255,255,0)');
@@ -1398,7 +1408,6 @@ window.addEventListener('DOMContentLoaded', () => {
       };
     });
     
-    // Once shattering starts, remove the CSS blur so it doesn't blur the UI behind flying shards
     canvas.style.backdropFilter = 'none';
     canvas.style.webkitBackdropFilter = 'none';
     
@@ -1435,24 +1444,22 @@ window.addEventListener('DOMContentLoaded', () => {
       
       ctx.drawImage(offscreen, 0, 0);
       
-      // Give the falling shards a shiny glass tint
       ctx.fillStyle = 'rgba(255,255,255,0.15)';
       ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,0.6)';
       ctx.lineWidth = 1;
       ctx.stroke();
-
+      
       ctx.restore();
     });
 
-    if (allGone) {
-      canvas.style.display = 'none';
-      return;
+    if (allGone) { 
+      canvas.style.display = 'none'; 
+      return; 
     }
     requestAnimationFrame(animateShatter);
   }
 
-  drawMirror();
   IX = W * 0.48 + (Math.random()-0.5)*80;
   IY = H * 0.42 + (Math.random()-0.5)*60;
 
