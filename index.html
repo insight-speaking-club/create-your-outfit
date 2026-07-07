@@ -368,26 +368,48 @@
 // ── WARDROBE DATA ──
 const categories = [
   {
-    id: 'iconic', label: 'Iconic Pieces',
+    id: 'iconic-club', label: 'Club',
     items: [
-      { name: "Sasha's bow", color: '#111', vibe: 'what about it?', w: 80, h: 70 }, 
-      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
+      { name: "Sasha's bow", color: '#111', vibe: 'yes, and?', w: 80, h: 70 },
+      { name: 'I ❤ Insight shirt', color: '#1a1a1a', vibe: 'club kid', w: 105, h: 105 }
+    ]
+  },
+  {
+    id: 'iconic-tun', label: 'thank u, next',
+    items: [
       { name: 'Burn book', color: '#d89eb7', vibe: 'iconic villain era', w: 90, h: 110 },
-      { name: 'Elle’s pink courtroom dress', color: '#ff69b4', vibe: 'what like its hard', w: 105, h: 155 },
-      { name: '13 Going on 30 wrapping paper dress', color: '#f7c9dc', vibe: 'thirty flirty and thriving', w: 100, h: 145 },
-      { name: 'Toros cheer uniform', color: '#c8102e', vibe: 'spirit fingers', w: 105, h: 120 },
       { name: '"A little bit needy" shirt', color: '#f0ede8', vibe: 'thank u, next', w: 105, h: 105 },
-      { name: 'Sabrina’s platform boots', color: '#111', vibe: 'taste maker', w: 110, h: 125 },
-      { name: 'Ariana’s oversized pastel hoodie', color: '#ffc0cb', vibe: 'sweetener', w: 125, h: 130 },
+      { name: 'Elle’s courtroom pen', color: '#ff69b4', vibe: 'what like its hard', w: 90, h: 25 },
+      { name: '13 Going on 30 wrapping paper dress', color: '#f7c9dc', vibe: 'thirty flirty and thriving', w: 100, h: 145 },
+      { name: 'Toros cheer uniform', color: '#c8102e', vibe: 'spirit fingers', w: 105, h: 120 }
+    ]
+  },
+  {
+    id: 'iconic-movies-tv', label: 'Movies & TV',
+    items: [
       { name: 'Cher’s yellow plaid blazer', color: '#ffd700', vibe: 'as if', w: 118, h: 132 },
       { name: 'Blair’s red headband', color: '#8b0000', vibe: 'queen bee', w: 85, h: 45 },
       { name: 'Serena’s undone school tie', color: '#1a2a4a', vibe: 'it-girl immunity', w: 45, h: 115 },
       { name: 'Carrie’s nameplate necklace', color: '#d4a017', vibe: 'couldnt help but wonder', w: 75, h: 40 },
-      { name: 'Brat green mini dress', color: '#8bce00', vibe: 'bumpin that', w: 100, h: 140 },
       { name: 'Cerulean blue sweater', color: '#2a52be', vibe: 'cerulean', w: 110, h: 115 },
-      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
       { name: '"A little bit dramatic" shirt', color: '#f0b8c0', vibe: 'a little bit dramatic', w: 105, h: 105 },
-      { name: "Jennifer's pink heart top", color: '#f4a3c0', vibe: 'i go both ways', w: 100, h: 95 },
+      { name: "Jennifer's pink heart top", color: '#f4a3c0', vibe: 'i go both ways', w: 100, h: 95 }
+    ]
+  },
+  {
+    id: 'iconic-music', label: 'Music',
+    items: [
+      { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
+      { name: 'Sabrina’s platform boots', color: '#111', vibe: 'taste maker', w: 110, h: 125 },
+      { name: 'Ariana’s oversized pastel hoodie', color: '#ffc0cb', vibe: 'sweetener', w: 125, h: 130 },
+      { name: 'Brat green mini dress', color: '#8bce00', vibe: 'bumpin that', w: 100, h: 140 },
+      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
+      { name: 'Ariana’s no tears left to cry dress', color: '#1a1a1a', vibe: 'no tears left to cry', w: 105, h: 150 }
+    ]
+  },
+  {
+    id: 'iconic-cartoons', label: 'Cartoons',
+    items: [
       { name: "Rarity's cutie mark", color: '#9b6fc7', vibe: 'generosity era', w: 65, h: 60 },
       { name: "Flora's Harmonix dress", color: '#b6e08a', vibe: 'nature\'s touch', w: 105, h: 155 },
       { name: "Bloom's boots", color: '#3ba9dc', vibe: 'magic winx', w: 105, h: 150 },
@@ -703,7 +725,7 @@ const categories = [
 ];
 
 const supercategories = [
-  { name: "Iconic Pieces", cats: ["iconic"] },
+  { name: "Iconic Pieces", cats: ["iconic-club", "iconic-tun", "iconic-movies-tv", "iconic-music", "iconic-cartoons"] },
   { name: "Tops", cats: ["tops-basic", "tops-shirts", "tops-knitwear", "tops-statement"] },
   { name: "Bottoms", cats: ["bottoms-trousers", "bottoms-jeans", "bottoms-skirts"] },
   { name: "Dresses & Jumpsuits", cats: ["dresses"] },
@@ -713,7 +735,8 @@ const supercategories = [
 ];
 
 const verdicts = {
-  'what about it?': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." },
+  'yes, and?': { line: "Yes, and?", sub: "You did that. No further questions, no follow-up needed." },
+  'club kid': { line: "Out past the point of explaining yourself.", sub: "The shirt already said everything you needed it to." },
   'iconic villain era': { line: "Irresistible sabotage.", sub: "You turned a Burn Book prank into a school-wide trend. Everyone is cutting holes in their shirts tomorrow." },
   'what like its hard': { line: "Whoever said orange was the new pink was seriously disturbed.", sub: "Law school, but make it high fashion." },
   'thirty flirty and thriving': { line: "Thirty, flirty, and thriving.", sub: "Wished on the dust, woke up in the dream. Wrapping paper never looked so good." },
@@ -875,11 +898,13 @@ const verdicts = {
   'nature\'s touch': { line: "Grown, not manufactured.", sub: "Petals, ribbon, and a little bit of forest magic. Effortless in the way that takes real effort." },
   'magic winx': { line: "Believix achieved.", sub: "You didn't just get dressed. You transformed." },
   'tune it out': { line: "Main character, headphones in.", sub: "Sparkly, sharp-edged, and completely unbothered by the noise." },
+  'no tears left to cry': { line: "Right off the earth, dust myself off.", sub: "You already survived the hard part. Now you're just twirling." },
   'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
 };
 
 const verdictsUK = {
-  'what about it?': { line: "Ти вже знаєш, що робиш.", sub: "Бант ніколи не був просто аксесуаром." },
+  'yes, and?': { line: "Так, і що?", sub: "Ти це зробила. Більше питань немає." },
+  'club kid': { line: "Уже за межею пояснень.", sub: "Футболка вже сказала все, що треба." },
   'iconic villain era': { line: "Невстояти перед саботажем.", sub: "Ти перетворила розіграш із Регіною Джордж на масовий тренд. Завтра всі прийдуть із вирізами на топах." },
   'what like its hard': { line: "Той, хто сказав, що рожевий — це несмак, помилявся.", sub: "Гарвардський юридичний, але зроби це фЕШОН." },
   'thirty flirty and thriving': { line: "Тридцять, кокетливо і на висоті.", sub: "Загадала бажання на золотий пил і прокинулась у мрії. Обгортковий папір ще ніколи не мав такого вигляду." },
@@ -1041,10 +1066,11 @@ const verdictsUK = {
   'nature\'s touch': { line: "Вирощено, а не виготовлено.", sub: "Пелюстки, стрічки й трохи лісової магії. Легкість, що коштувала справжніх зусиль." },
   'magic winx': { line: "Believix досягнуто.", sub: "Ти не просто вдягнулась. Ти трансформувалась." },
   'tune it out': { line: "Головна героїня, навушники в вухах.", sub: "Блискуча, гостра й абсолютно незворушна шумом навколо." },
+  'no tears left to cry': { line: "Впала, обтрусилась, пішла далі.", sub: "Найважче вже позаду. Тепер ти просто кружляєш." },
   'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
 };
 
-let activeCategory = 'iconic';
+let activeCategory = 'iconic-club';
 const onCanvas = {};
 let zCounter = 10;
 let searchMode = false;
@@ -1073,6 +1099,8 @@ const verdictLinks = {
   'i go both ways':          { scene: "Jennifer's Body I go both ways scene" },
   'taste maker':             { scene: 'Sabrina Carpenter live concert' },
   'generosity era':          { scene: 'My Little Pony Rarity generosity moment' },
+  'yes, and?':               { scene: 'Ariana Grande yes and official video' },
+  'no tears left to cry':    { scene: 'Ariana Grande no tears left to cry official video' },
   'nature\'s touch':         { scene: 'Winx Club Flora Harmonix transformation' },
   'magic winx':              { scene: 'Winx Club Bloom Harmonix transformation' },
   'tune it out':             { scene: 'Winx Club Musa Bloomix transformation' },
@@ -1083,7 +1111,7 @@ function youtubeSearchUrl(q) { return 'https://www.youtube.com/results?search_qu
 
 function getVerdictLinks(key) {
   const entry = verdictLinks[key] || {};
-  const songUrl = key === "what about it?" 
+  const songUrl = key === "yes, and?" 
     ? "https://open.spotify.com/playlist/0YBMWmwqM5DrQMIzCj0qRm?si=otVQpm1ATCOy2ePWQ4M8oQ&utm_source=copy-link" 
     : (entry.songUrl || spotifySearchUrl(entry.song || (key + ' aesthetic playlist')));
   
@@ -1165,7 +1193,7 @@ function renderGrid(catId, items) {
     const card = document.createElement('div');
     card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : ''); card.id = 'gi-' + uid;
     const isSashaBow = item.name === "Sasha's bow";
-    const vibeCaption = isSashaBow ? "what about it? · yes, and?" : '';
+    const vibeCaption = isSashaBow ? "yes, and?" : '';
     card.innerHTML = `<div class="gi-visual"><img alt="${item.name}" title="Vibe: ${item.vibe}"></div><div class="gi-name">${item.name}</div>${vibeCaption ? `<div class="gi-vibe">${vibeCaption}</div>` : ''}`;
     setupImgFallback(card.querySelector('img'), item.name);
     if (item.color) { const dot = document.createElement('div'); dot.className = 'gi-color-dot'; dot.style.background = item.color; card.appendChild(dot); }
@@ -1256,7 +1284,7 @@ function toggleDrawer() {
 }
 
 function calculateVerdict() {
-  if (Object.keys(onCanvas).some(uid => onCanvas[uid].item.name === "Sasha's bow")) { return { key: "what about it?", ...verdicts["what about it?"] }; }
+  if (Object.keys(onCanvas).some(uid => onCanvas[uid].item.name === "Sasha's bow")) { return { key: "yes, and?", ...verdicts["yes, and?"] }; }
   const vibes = Object.keys(onCanvas).map(uid => verdictMap[uid]).filter(Boolean);
   if (vibes.length === 0) return null;
   const freq = {}; vibes.forEach(v => freq[v] = (freq[v]||0)+1);
@@ -1361,12 +1389,13 @@ function applyTranslations() {
     const songBtn = document.getElementById('verdict-song-link');
     const sceneBtn = document.getElementById('verdict-scene-link');
     
-    const isIconic = Object.keys(onCanvas).some(uid => uid.startsWith('iconic_') || (onCanvas[uid].item._catId === 'iconic'));
-    const isSashaBow = currentVerdictKey === "what about it?"; 
+    const isIconic = Object.keys(onCanvas).some(uid => uid.startsWith('iconic-') || (onCanvas[uid].item._catId || '').startsWith('iconic-'));
+    const isSashaBow = currentVerdictKey === "yes, and?"; 
+    const isClubKid = currentVerdictKey === "club kid";
 
     if (isIconic) {
-      if (isSashaBow) {
-        // Sasha's bow gets the specific Spotify playlist and NO scene button
+      if (isSashaBow || isClubKid) {
+        // Sasha's bow and the club shirt get the "listen" link and NO scene button
         songBtn.style.display = 'flex';
         songBtn.href = links.songUrl;
         sceneBtn.style.display = 'none';
