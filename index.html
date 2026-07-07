@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Dream Closet</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   
@@ -91,9 +91,24 @@
 
   /* ── CANVAS ── */
   #canvas { flex: 1; position: relative; overflow: hidden; background: #ffffff; touch-action: none; transition: height 0.3s ease; }
-  #canvas-empty { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center; pointer-events: none; opacity: 0.4; }
-  #canvas-empty .big-label { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--ink); margin-bottom: 0.4rem; }
+  #canvas::before {
+    content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(26,22,18,0.05) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.6;
+  }
+  #canvas-empty { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center; pointer-events: none; opacity: 0.4; z-index: 1; }
+  #canvas-empty .big-label { font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.5rem; color: var(--ink); margin-bottom: 0.4rem; }
   #canvas-empty p { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); }
+
+  /* ── TABLOID HEADLINE CLIPPINGS (decorative, thank u next moodboard nod) ── */
+  .headline-clip {
+    position: absolute; white-space: nowrap; color: var(--ink);
+    background: rgba(255,255,255,0.7); padding: 2px 8px; border: 1px solid rgba(26,22,18,0.15);
+  }
+  .clip-1 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.05em; top: -46px; left: -92px; transform: rotate(-7deg); }
+  .clip-2 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.85rem; top: -14px; right: -104px; transform: rotate(5deg); background: none; border: none; color: var(--muted); }
+  .clip-3 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 0.55rem; letter-spacing: 0.08em; bottom: -38px; left: -58px; transform: rotate(4deg); background: var(--accent); color: #fff; border: none; border-radius: 2px; }
   
   .on-canvas { position: absolute; cursor: grab; user-select: none; touch-action: none; }
   .on-canvas:active { cursor: grabbing; }
@@ -141,10 +156,11 @@
   
   .super-group { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.5rem; }
   .super-header { 
-    font-family: 'Playfair Display', serif; 
-    font-style: italic; 
+    font-family: 'Anton', sans-serif; 
+    text-transform: uppercase;
+    letter-spacing: 0.015em;
     color: #f7f4f0; 
-    font-size: 1.3rem; 
+    font-size: 1.15rem; 
     padding-left: 0.2rem; 
     border-bottom: 1px solid rgba(212, 155, 177, 0.3);
     padding-bottom: 0.3rem;
@@ -157,7 +173,11 @@
     letter-spacing: 0.1em; color: var(--drawer-muted); cursor: pointer;
     white-space: nowrap; transition: all 0.15s; background: rgba(255,255,255,0.03);
   }
-  .cat-tab.active { background: var(--accent); color: var(--ink); border-color: var(--accent); font-weight: 700; }
+  .cat-tab.active {
+    background: linear-gradient(160deg, #f2c9d6 0%, var(--accent) 55%, #bb7f97 100%);
+    color: var(--ink); border-color: var(--accent); font-weight: 700;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 2px 5px rgba(0,0,0,0.25);
+  }
 
   #item-grid { display: flex; overflow-x: auto; padding: 0.4rem 1rem 1.5rem; gap: 0.6rem; scrollbar-width: none; align-items: flex-start; flex-shrink: 0; flex-wrap: nowrap; }
   #item-grid::-webkit-scrollbar { display: none; }
@@ -197,13 +217,18 @@
 
   #verdict-eyebrow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; color: #9a9390; margin-bottom: 0.5rem; }
   #verdict-aesthetic { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 1.5rem; }
-  #verdict-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1; color: #f7f4f0; margin-bottom: 0.8rem; }
+  #verdict-text { font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.01em; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.05; color: #f7f4f0; margin-bottom: 0.8rem; }
   #verdict-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #a8a09b; line-height: 1.5; max-width: 320px; }
 
+  #verdict-photo-frame {
+    width: min(80vw, 300px); margin: 1.8rem auto;
+    background: #ffffff; padding: 10px 10px 34px;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.55);
+    transform: rotate(-1.5deg); flex-shrink: 0;
+  }
   #verdict-outfit-preview {
-    position: relative; width: min(80vw, 300px); margin: 1.8rem auto;
-    background: #ffffff; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow: hidden; flex-shrink: 0;
+    position: relative; width: 100%;
+    background: #ffffff; border-radius: 2px; overflow: hidden;
   }
 
   #verdict-bottom { gap: 0.5rem; max-width: 400px; margin: 0.5rem auto 0; }
@@ -221,7 +246,10 @@
   .verdict-link-btn svg { width: 14px; height: 14px; stroke: currentColor; flex-shrink: 0; }
   
   #verdict-close {
-    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent); color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5; box-shadow: 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+    background: linear-gradient(160deg, #f2c9d6 0%, var(--accent) 55%, #bb7f97 100%);
+    color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
   }
 
   #verdict-join { background: none; border: none; color: #a8a09b; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.6rem; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; opacity: 0.85; }
@@ -240,7 +268,7 @@
 
 <div id="topbar">
   <div id="topbar-title-container">
-    <img src="glasscloset.png" alt="Dream Closet" style="max-height: 25px; width: auto;" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'Dream Closet',style:'font-family:\'Playfair Display\',serif;font-weight:700;color:#fffdf9;font-size:1.1rem;'}))">
+    <img src="glasscloset.png" alt="Dream Closet" style="max-height: 25px; width: auto;" onerror="this.style.display='none'">
     <img src="kissprint.png" alt="" class="kiss-print">
   </div>
   <div style="display:flex;align-items:center;gap:0.5rem;">
@@ -250,6 +278,9 @@
 
 <div id="canvas">
   <div id="canvas-empty">
+    <span class="headline-clip clip-1">"Iconic"</span>
+    <span class="headline-clip clip-2">I want it, I got it</span>
+    <span class="headline-clip clip-3">thank u, next</span>
     <div class="big-label">Your look, your rules.</div>
     <p>Tap anything below to start.</p>
   </div>
@@ -283,7 +314,7 @@
     <div id="verdict-sub"></div>
   </div>
   
-  <div id="verdict-outfit-preview"></div>
+  <div id="verdict-photo-frame"><div id="verdict-outfit-preview"></div></div>
   
   <div id="verdict-links">
     <a id="verdict-song-link" class="verdict-link-btn" target="_blank" rel="noopener">
@@ -312,6 +343,9 @@ const categories = [
       { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
       { name: 'Burn book', color: '#d89eb7', vibe: 'iconic villain era', w: 90, h: 110 },
       { name: 'Elle’s pink courtroom dress', color: '#ff69b4', vibe: 'what like its hard', w: 105, h: 155 },
+      { name: '13 Going on 30 wrapping paper dress', color: '#f7c9dc', vibe: 'thirty flirty and thriving', w: 100, h: 145 },
+      { name: 'Toros cheer uniform', color: '#c8102e', vibe: 'spirit fingers', w: 105, h: 120 },
+      { name: '"A little bit needy" shirt', color: '#f0ede8', vibe: 'thank u, next', w: 105, h: 105 },
       { name: 'Sabrina’s platform boots', color: '#111', vibe: 'taste maker', w: 110, h: 125 },
       { name: 'Ariana’s oversized pastel hoodie', color: '#ffc0cb', vibe: 'sweetener', w: 125, h: 130 },
       { name: 'Cher’s yellow plaid blazer', color: '#ffd700', vibe: 'as if', w: 118, h: 132 },
@@ -322,7 +356,6 @@ const categories = [
       { name: 'Cerulean blue sweater', color: '#2a52be', vibe: 'cerulean', w: 110, h: 115 },
       { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
       { name: '"A little bit dramatic" shirt', color: '#f0b8c0', vibe: 'a little bit dramatic', w: 105, h: 105 },
-      { name: '"A little bit needy" shirt', color: '#f0ede8', vibe: 'thank u, next', w: 105, h: 105 },
       { name: "Jennifer's pink heart top", color: '#f4a3c0', vibe: 'i go both ways', w: 100, h: 95 }
     ]
   },
@@ -648,6 +681,8 @@ const verdicts = {
   'what about it?': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." },
   'iconic villain era': { line: "Irresistible sabotage.", sub: "You turned a Burn Book prank into a school-wide trend. Everyone is cutting holes in their shirts tomorrow." },
   'what like its hard': { line: "Whoever said orange was the new pink was seriously disturbed.", sub: "Law school, but make it high fashion." },
+  'thirty flirty and thriving': { line: "Thirty, flirty, and thriving.", sub: "Wished on the dust, woke up in the dream. Wrapping paper never looked so good." },
+  'spirit fingers': { line: "Spirit fingers, full commitment.", sub: "Captain energy, cheer squad choreography, and zero room for second place." },
   'taste maker': { line: "Heartbreak is the motif.", sub: "Platform boots high enough to look down on your ex's new era. Short n' sweet, but completely lethal." },
   'sweetener': { line: "God is a woman, and she's wearing pastels.", sub: "Oversized silhouette, high ponytail energy, and zero tolerance for anyone else's drama." },
   'as if': { line: "A totally important designer.", sub: "You don't rely on mirrors, you rely on Polaroids. Flawlessly curated." },
@@ -808,6 +843,8 @@ const verdictsUK = {
   'what about it?': { line: "Ти вже знаєш, що робиш.", sub: "Бант ніколи не був просто аксесуаром." },
   'iconic villain era': { line: "Невстояти перед саботажем.", sub: "Ти перетворила розіграш із Регіною Джордж на масовий тренд. Завтра всі прийдуть із вирізами на топах." },
   'what like its hard': { line: "Той, хто сказав, що рожевий — це несмак, помилявся.", sub: "Гарвардський юридичний, але зроби це фЕШОН." },
+  'thirty flirty and thriving': { line: "Тридцять, кокетливо і на висоті.", sub: "Загадала бажання на золотий пил і прокинулась у мрії. Обгортковий папір ще ніколи не мав такого вигляду." },
+  'spirit fingers': { line: "Пальчики-іскорки, повна віддача.", sub: "Енергія капітанки, хореографія черлідингу, і жодного місця для другого місця." },
   'taste maker': { line: "Мотив образу — розбите серце.", sub: "Чоботи на платформі достатньо високі, щоб дивитися згори вниз на твого колишнього. Коротко, солодко, смертельно." },
   'sweetener': { line: "God is a woman, і вона носить пастель.", sub: "Оверсайз силует, енергія високого хвоста і нуль толерантності до чужої драми." },
   'as if': { line: "Дуже важливий дизайнер.", sub: "Ти не довіряєш дзеркалам, ти довіряєш полароїдам. Бездоганно підібрано." },
@@ -983,7 +1020,9 @@ const verdictLinks = {
   'queen bee':               { sceneUrl: 'https://youtu.be/e8_Z7-97mIw' },
   'iconic villain era':      { scene: 'Mean Girls burn book scene' },
   'a little bit dramatic':   { scene: 'Mean Girls a little bit dramatic scene' },
-  'what like its hard':      { scene: 'Legally Blonde courtroom scene' },
+  'what like its hard':      { songUrl: 'https://music.youtube.com/watch?v=Iak0RqGn5B8&si=Pk5IEgSux1fcvnhA', scene: 'Legally Blonde courtroom scene' },
+  'thirty flirty and thriving': { scene: '13 Going on 30 Thriller dance scene' },
+  'spirit fingers':          { scene: 'Bring It On spirit fingers cheer routine' },
   'as if':                   { scene: 'Clueless as if closet scene' },
   'it-girl immunity':        { scene: 'Gossip Girl Serena pilot entrance' },
   'couldnt help but wonder': { scene: 'Sex and the City opening credits' },
@@ -1363,143 +1402,4 @@ window.addEventListener('DOMContentLoaded', () => {
     const numMain = 10 + Math.floor(Math.random()*5);
     for (let i = 0; i < numMain; i++) {
       const angle = (i / numMain) * Math.PI * 2 + (Math.random()-0.5)*0.4;
-      const len = (0.4 + Math.random()*0.6) * Math.max(W,H);
-      let x = IX, y = IY;
-      ctx.beginPath(); ctx.moveTo(x, y);
-      let remainingLen = len;
-      while (remainingLen > 0) {
-        const segLen = 30 + Math.random()*80;
-        const jitter = (Math.random()-0.5)*0.35;
-        x += Math.cos(angle+jitter)*Math.min(segLen, remainingLen);
-        y += Math.sin(angle+jitter)*Math.min(segLen, remainingLen);
-        ctx.lineTo(x, y);
-        if (Math.random() < 0.4 && remainingLen > 80) {
-          const bAngle = angle + (Math.random()-0.5)*1.2;
-          const bLen = remainingLen * (0.2 + Math.random()*0.3);
-          let bx = x, by = y;
-          ctx.moveTo(bx, by);
-          for (let b = 0; b < bLen; b += 40+Math.random()*40) {
-            bx += Math.cos(bAngle+(Math.random()-0.5)*0.3)*40;
-            by += Math.sin(bAngle+(Math.random()-0.5)*0.3)*40;
-            ctx.lineTo(bx, by);
-          }
-          ctx.moveTo(x, y);
-        }
-        remainingLen -= segLen;
-      }
-      ctx.stroke();
-    }
-  }
-
-  function buildShards(numShards) {
-    const points = [[IX, IY]];
-    for (let i = 1; i < numShards; i++) {
-      points.push([Math.random()*W, Math.random()*H]);
-    }
-    return points.map((pt) => {
-      const cx = pt[0], cy = pt[1];
-      const numVerts = 6 + Math.floor(Math.random()*4);
-      const angles = Array.from({length: numVerts}, (_, i) => (i / numVerts) * Math.PI * 2 + (Math.random()-0.5)*0.5);
-      const verts = angles.map(a => {
-        const r = 60 + Math.random() * Math.max(W,H) * 0.18;
-        return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
-      });
-      return { cx, cy, verts };
-    });
-  }
-
-  let shards = null;
-  let shardStates = [];
-  let offscreen = null;
-
-  function startShatter() {
-    offscreen = document.createElement('canvas');
-    offscreen.width = W;
-    offscreen.height = H;
-    offscreen.getContext('2d').drawImage(canvas, 0, 0);
-
-    shards = buildShards(22);
-    shardStates = shards.map(s => {
-      const dx = s.cx - IX, dy = s.cy - IY;
-      const dist = Math.hypot(dx, dy) || 1;
-      const speed = 4 + Math.random()*8 + (1/(dist/300+0.1))*2;
-      return {
-        vx: (dx/dist)*speed + (Math.random()-0.5)*3,
-        vy: (dy/dist)*speed + (Math.random()-0.5)*3,
-        vr: (Math.random()-0.5)*6,
-        rotation: 0,
-        opacity: 1,
-        tx: 0, ty: 0
-      };
-    });
-    
-    canvas.style.backdropFilter = 'none';
-    canvas.style.webkitBackdropFilter = 'none';
-    
-    requestAnimationFrame(animateShatter);
-  }
-
-  function animateShatter() {
-    ctx.clearRect(0, 0, W, H);
-
-    let allGone = true;
-    shards.forEach((shard, i) => {
-      const st = shardStates[i];
-      st.tx += st.vx; 
-      st.ty += st.vy; 
-      st.vy += 0.4; 
-      st.rotation += st.vr; 
-      st.opacity -= 0.018;
-      
-      if (st.opacity <= 0) return;
-      allGone = false;
-      
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, st.opacity);
-      
-      ctx.translate(shard.cx + st.tx, shard.cy + st.ty);
-      ctx.rotate(st.rotation * Math.PI / 180);
-      ctx.translate(-shard.cx, -shard.cy);
-      
-      ctx.beginPath();
-      ctx.moveTo(shard.verts[0][0], shard.verts[0][1]);
-      shard.verts.forEach(v => ctx.lineTo(v[0], v[1]));
-      ctx.closePath();
-      ctx.clip();
-      
-      ctx.drawImage(offscreen, 0, 0);
-      
-      ctx.fillStyle = 'rgba(255,255,255,0.15)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      ctx.restore();
-    });
-
-    if (allGone) { 
-      canvas.style.display = 'none'; 
-      return; 
-    }
-    requestAnimationFrame(animateShatter);
-  }
-
-  IX = W * 0.48 + (Math.random()-0.5)*80;
-  IY = H * 0.42 + (Math.random()-0.5)*60;
-
-  const tapOverlay = document.getElementById('tap-overlay');
-  const crackAudio = new Audio('crack.mp3');
-  crackAudio.volume = 0.4;
-
-  tapOverlay.addEventListener('click', () => {
-    crackAudio.play().catch(() => {});
-    drawCracks();
-    tapOverlay.style.opacity = '0';
-    setTimeout(() => tapOverlay.style.display = 'none', 400);
-    setTimeout(startShatter, 600);
-  }, { once: true });
-});
-</script>
-</body>
-</html>
+      c
