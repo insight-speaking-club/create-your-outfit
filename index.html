@@ -160,18 +160,17 @@
   .grid-item.on-board .gi-name, .grid-item.on-board .gi-vibe { color: var(--accent); }
   .grid-item .gi-color-dot { width: 6px; height: 6px; border-radius: 50%; position: absolute; top: 4px; right: 4px; opacity: 0.7; }
 
-  /* ── VERDICT OVERLAY (Top and Bottom Gradient, Clear Middle) ── */
+  /* ── VERDICT SCREEN (solid, self-contained — not layered over the closet) ── */
   #verdict-overlay {
     display: none; position: fixed; inset: 0; 
-    background: linear-gradient(to bottom, rgba(18, 15, 12, 0.95) 0%, rgba(18, 15, 12, 0.6) 20%, rgba(18, 15, 12, 0) 40%, rgba(18, 15, 12, 0) 60%, rgba(18, 15, 12, 0.7) 85%, rgba(18, 15, 12, 0.95) 100%);
+    background: #100d0a;
     z-index: 20000 !important; flex-direction: column; align-items: center;
-    justify-content: space-between; padding: 4rem 1.5rem 2.5rem; text-align: center; 
-    pointer-events: none; /* Let clicks pass through to the canvas */
+    justify-content: flex-start; padding: 3rem 1.5rem 2.5rem; text-align: center; 
+    overflow-y: auto;
   }
   #verdict-overlay.show { display: flex; }
   
   #verdict-top, #verdict-bottom {
-    pointer-events: auto; /* Re-enable clicks for the text and buttons */
     display: flex; flex-direction: column; align-items: center; width: 100%;
   }
 
@@ -180,25 +179,32 @@
     border: 1px solid rgba(255,255,255,0.15); color: #d8d4cf;
     width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
     border-radius: 50%; cursor: pointer; transition: background 0.2s; z-index: 2;
-    pointer-events: auto;
   }
   #translate-btn:hover { background: rgba(255,255,255,0.15); }
   #translate-btn svg { width: 20px; height: 20px; stroke: currentColor; }
 
   #verdict-eyebrow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; color: #9a9390; margin-bottom: 0.5rem; }
   #verdict-aesthetic { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 1.5rem; }
-  #verdict-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1; color: #f7f4f0; margin-bottom: 0.8rem; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
-  #verdict-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #a8a09b; line-height: 1.5; margin-bottom: 2rem; max-width: 320px; }
-  
-  #verdict-bottom { gap: 0.5rem; max-width: 400px; margin: 0 auto; }
-  
-  #verdict-join {
-    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent); color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  #verdict-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(2rem, 9vw, 3rem); line-height: 1.1; color: #f7f4f0; margin-bottom: 0.8rem; }
+  #verdict-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #a8a09b; line-height: 1.5; max-width: 320px; }
+
+  /* The outfit the user actually built, shown clearly below the verdict text */
+  #verdict-outfit-preview {
+    position: relative; width: min(80vw, 300px); margin: 1.8rem auto;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow: hidden; flex-shrink: 0;
   }
 
-  #verdict-close { background: none; border: none; color: #d8d4cf; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.8rem; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  #verdict-bottom { gap: 0.5rem; max-width: 400px; margin: 0.5rem auto 0; }
+  
+  #verdict-close {
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent); color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5; box-shadow: 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
+  }
+
+  #verdict-join { background: none; border: none; color: #a8a09b; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.6rem; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; opacity: 0.85; }
 </style>
 </head>
+
 <body>
 
 <canvas id="mirror-canvas"></canvas>
@@ -254,9 +260,11 @@
     <div id="verdict-sub"></div>
   </div>
   
+  <div id="verdict-outfit-preview"></div>
+  
   <div id="verdict-bottom">
-    <button id="verdict-join" onclick="shareToTelegram()">Join Vogue Committee</button>
     <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended)</button>
+    <button id="verdict-join" onclick="shareToTelegram()">Join Vogue Committee</button>
   </div>
 </div>
 
@@ -268,7 +276,7 @@ const categories = [
     items: [
       { name: "Sasha's bow", color: '#111', vibe: 'what about it?', w: 80, h: 70 }, 
       { name: 'Bunny ears', color: '#111', vibe: 'dangerous woman', w: 85, h: 65 },
-      { name: 'Burn book', color: '#d89eb7', vibe: 'fugly slut', w: 90, h: 110 },
+      { name: 'Burn book', color: '#d89eb7', vibe: 'iconic villain era', w: 90, h: 110 },
       { name: 'Elle’s pink courtroom dress', color: '#ff69b4', vibe: 'what like its hard', w: 105, h: 155 },
       { name: 'Sabrina’s platform boots', color: '#111', vibe: 'taste maker', w: 110, h: 125 },
       { name: 'Ariana’s oversized pastel hoodie', color: '#ffc0cb', vibe: 'sweetener', w: 125, h: 130 },
@@ -593,7 +601,7 @@ const supercategories = [
 
 const verdicts = {
   'what about it?': { line: "You already know what you're doing.", sub: "The bow was never just an accessory." },
-  'fugly slut': { line: "Irresistible sabotage.", sub: "You turned a Burn Book prank into a school-wide trend. Everyone is cutting holes in their shirts tomorrow." },
+  'iconic villain era': { line: "Irresistible sabotage.", sub: "You turned a Burn Book prank into a school-wide trend. Everyone is cutting holes in their shirts tomorrow." },
   'what like its hard': { line: "Whoever said orange was the new pink was seriously disturbed.", sub: "Law school, but make it high fashion." },
   'taste maker': { line: "Heartbreak is the motif.", sub: "Platform boots high enough to look down on your ex's new era. Short n' sweet, but completely lethal." },
   'sweetener': { line: "God is a woman, and she's wearing pastels.", sub: "Oversized silhouette, high ponytail energy, and zero tolerance for anyone else's drama." },
@@ -750,7 +758,7 @@ const verdicts = {
 
 const verdictsUK = {
   'what about it?': { line: "Ти вже знаєш, що робиш.", sub: "Бант ніколи не був просто аксесуаром." },
-  'fugly slut': { line: "Невстояти перед саботажем.", sub: "Ти перетворила розіграш із Регіною Джордж на масовий тренд. Завтра всі прийдуть із вирізами на топах." },
+  'iconic villain era': { line: "Невстояти перед саботажем.", sub: "Ти перетворила розіграш із Регіною Джордж на масовий тренд. Завтра всі прийдуть із вирізами на топах." },
   'what like its hard': { line: "Той, хто сказав, що рожевий — це несмак, помилявся.", sub: "Гарвардський юридичний, але зроби це фЕШОН." },
   'taste maker': { line: "Мотив образу — розбите серце.", sub: "Чоботи на платформі достатньо високі, щоб дивитися згори вниз на твого колишнього. Коротко, солодко, смертельно." },
   'sweetener': { line: "God is a woman, і вона носить пастель.", sub: "Оверсайз силует, енергія високого хвоста і нуль толерантності до чужої драми." },
@@ -1078,15 +1086,65 @@ function calculateVerdict() {
   return { key: top, ...(verdicts[top] || verdicts['default']) };
 }
 
+function buildOutfitPreview() {
+  const canvas = document.getElementById('canvas');
+  const preview = document.getElementById('verdict-outfit-preview');
+  preview.innerHTML = '';
+
+  const canvasW = canvas.offsetWidth, canvasH = canvas.offsetHeight;
+  if (!canvasW || !canvasH) return;
+
+  // Give the preview box the same aspect ratio as the real canvas so nothing looks stretched
+  preview.style.aspectRatio = `${canvasW} / ${canvasH}`;
+
+  const previewW = preview.offsetWidth;
+  const previewH = previewW * (canvasH / canvasW);
+  const scale = previewW / canvasW;
+
+  // Sort by the same stacking order they had on the real canvas
+  const uids = Object.keys(onCanvas).sort((a, b) => (parseInt(onCanvas[a].el.style.zIndex)||0) - (parseInt(onCanvas[b].el.style.zIndex)||0));
+
+  uids.forEach(uid => {
+    const entry = onCanvas[uid];
+    const el = entry.el;
+    const left = parseFloat(el.style.left) || 0;
+    const top = parseFloat(el.style.top) || 0;
+    const w = parseFloat(el.style.width) || 0;
+    const h = parseFloat(el.style.height) || 0;
+    const spin = el.querySelector('.oc-spin');
+    const img = el.querySelector('img');
+    if (!img) return;
+
+    const clone = document.createElement('div');
+    clone.style.position = 'absolute';
+    clone.style.left = (left * scale) + 'px';
+    clone.style.top = (top * scale) + 'px';
+    clone.style.width = (w * scale) + 'px';
+    clone.style.height = (h * scale) + 'px';
+
+    const spinClone = document.createElement('div');
+    spinClone.style.width = '100%';
+    spinClone.style.height = '100%';
+    spinClone.style.transformOrigin = '50% 50%';
+    if (spin) spinClone.style.transform = spin.style.transform;
+
+    const imgClone = document.createElement('img');
+    imgClone.src = img.src;
+    imgClone.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;';
+
+    spinClone.appendChild(imgClone);
+    clone.appendChild(spinClone);
+    preview.appendChild(clone);
+  });
+}
+
 function showVerdict() {
   if (Object.keys(onCanvas).length === 0) { alert("The closet's full. Pick something to wear."); return; }
   currentVerdict = calculateVerdict();
   currentVerdictKey = currentVerdict.key;
   
-  applyTranslations(); 
-  
-  // Hide the drawer so the outfit shines beautifully behind the verdict gradient
-  document.getElementById('drawer').style.display = 'none';
+  applyTranslations();
+  buildOutfitPreview();
   
   setActive(null); 
   document.getElementById('verdict-overlay').classList.add('show');
@@ -1120,8 +1178,6 @@ function applyTranslations() {
 
 function closeVerdict() { 
   document.getElementById('verdict-overlay').classList.remove('show'); 
-  // Bring the drawer back
-  document.getElementById('drawer').style.display = 'flex';
 }
 function shareToTelegram() { window.open('https://t.me/+UC1vcZZRBWA0ZDg6', '_blank'); }
 
@@ -1136,17 +1192,47 @@ window.addEventListener('DOMContentLoaded', () => {
   canvas.height = window.innerHeight;
   const W = canvas.width, H = canvas.height;
 
+  const mirrorImg = new Image();
+  let mirrorImgLoaded = false;
+  mirrorImg.onload = () => { mirrorImgLoaded = true; drawMirror(); };
+  mirrorImg.onerror = () => { mirrorImgLoaded = false; };
+  mirrorImg.src = 'mirrorshatter.jpg';
+
+  function drawCoverImage(image, w, h) {
+    const imgRatio = image.width / image.height;
+    const boxRatio = w / h;
+    let sx, sy, sw, sh;
+    if (imgRatio > boxRatio) {
+      sh = image.height; sw = sh * boxRatio; sx = (image.width - sw) / 2; sy = 0;
+    } else {
+      sw = image.width; sh = sw / boxRatio; sx = 0; sy = (image.height - sh) / 2;
+    }
+    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, w, h);
+  }
+
   function drawMirror() {
     ctx.clearRect(0, 0, W, H);
-    // Draw a translucent streak to make it look like a frosted glass pane
-    const streak = ctx.createLinearGradient(0, 0, W, H);
-    streak.addColorStop(0, 'rgba(255,255,255,0.1)');
-    streak.addColorStop(0.45, 'rgba(255,255,255,0)');
-    streak.addColorStop(0.5, 'rgba(255,255,255,0.4)');
-    streak.addColorStop(0.55, 'rgba(255,255,255,0)');
-    streak.addColorStop(1, 'rgba(255,255,255,0.1)');
-    ctx.fillStyle = streak;
-    ctx.fillRect(0, 0, W, H);
+    if (mirrorImgLoaded) {
+      // The actual mirror image is the thing that shatters
+      drawCoverImage(mirrorImg, W, H);
+      // Faint sheen so it still reads as glass, not a flat photo
+      const sheen = ctx.createLinearGradient(0, 0, W, H);
+      sheen.addColorStop(0, 'rgba(255,255,255,0.08)');
+      sheen.addColorStop(0.5, 'rgba(255,255,255,0.02)');
+      sheen.addColorStop(1, 'rgba(255,255,255,0.08)');
+      ctx.fillStyle = sheen;
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      // Fallback frosted-glass streak if mirrorshatter.jpg hasn't loaded (or is missing)
+      const streak = ctx.createLinearGradient(0, 0, W, H);
+      streak.addColorStop(0, 'rgba(255,255,255,0.1)');
+      streak.addColorStop(0.45, 'rgba(255,255,255,0)');
+      streak.addColorStop(0.5, 'rgba(255,255,255,0.4)');
+      streak.addColorStop(0.55, 'rgba(255,255,255,0)');
+      streak.addColorStop(1, 'rgba(255,255,255,0.1)');
+      ctx.fillStyle = streak;
+      ctx.fillRect(0, 0, W, H);
+    }
   }
 
   let IX, IY;
