@@ -196,6 +196,18 @@
   }
 
   #verdict-bottom { gap: 0.5rem; max-width: 400px; margin: 0.5rem auto 0; }
+
+  #verdict-links { display: flex; gap: 0.6rem; margin: 0 auto 0.4rem; flex-shrink: 0; }
+  .verdict-link-btn {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: rgba(194,168,130,0.1); border: 1px solid var(--accent);
+    color: var(--accent); font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.5rem 0.85rem; border-radius: 20px; text-decoration: none;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .verdict-link-btn:hover { background: rgba(194,168,130,0.2); }
+  .verdict-link-btn svg { width: 14px; height: 14px; stroke: currentColor; flex-shrink: 0; }
   
   #verdict-close {
     font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent); color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5; box-shadow: 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
@@ -262,6 +274,17 @@
   
   <div id="verdict-outfit-preview"></div>
   
+  <div id="verdict-links">
+    <a id="verdict-song-link" class="verdict-link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 15c2.5-1.2 5.5-1.2 8 0M7.5 11.5c3-1.5 6-1.5 9 0M9 8c2-1 4-1 6 0"></path></svg>
+      <span id="verdict-song-label">Listen</span>
+    </a>
+    <a id="verdict-scene-link" class="verdict-link-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      <span id="verdict-scene-label">Watch the scene</span>
+    </a>
+  </div>
+  
   <div id="verdict-bottom">
     <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended)</button>
     <button id="verdict-join" onclick="shareToTelegram()">Join Vogue Committee</button>
@@ -286,7 +309,10 @@ const categories = [
       { name: 'Carrie’s nameplate necklace', color: '#d4a017', vibe: 'couldnt help but wonder', w: 75, h: 40 },
       { name: 'Brat green mini dress', color: '#8bce00', vibe: 'bumpin that', w: 100, h: 140 },
       { name: 'Cerulean blue sweater', color: '#2a52be', vibe: 'cerulean', w: 110, h: 115 },
-      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 }
+      { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
+      { name: '"A little bit dramatic" shirt', color: '#f0b8c0', vibe: 'a little bit dramatic', w: 105, h: 105 },
+      { name: '"A little bit needy" shirt', color: '#f0ede8', vibe: 'thank u, next', w: 105, h: 105 },
+      { name: "Jennifer's pink heart top", color: '#f4a3c0', vibe: 'i go both ways', w: 100, h: 95 }
     ]
   },
   {
@@ -496,7 +522,6 @@ const categories = [
   {
     id: 'neck', label: 'Neckwear',
     items: [
-      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
       { name: 'Black ribbon', color: '#111', vibe: 'dark romantic', w: 45, h: 130 },
       { name: 'Red ribbon', color: '#8b1a1a', vibe: 'dangerous romantic', w: 45, h: 130 },
       { name: 'White ribbon', color: '#f0ede8', vibe: 'soft romantic', w: 45, h: 130 },
@@ -557,6 +582,15 @@ const categories = [
     ]
   },
   {
+    id: 'gloves', label: 'Gloves',
+    items: [
+      { name: 'Opera gloves black', color: '#111', vibe: 'old Hollywood', w: 55, h: 175 },
+      { name: 'Opera gloves ivory', color: '#f5efdf', vibe: 'old Hollywood glam', w: 55, h: 175 },
+      { name: 'Leather driving gloves black', color: '#111', vibe: 'quietly powerful', w: 50, h: 90 },
+      { name: 'Fingerless lace gloves', color: '#111', vibe: 'dark romantic', w: 48, h: 85 },
+    ]
+  },
+  {
     id: 'jewellery', label: 'Jewellery',
     items: [
       { name: 'Hoop earrings gold small', color: '#d4a017', vibe: 'classic chic', w: 45, h: 45 },
@@ -596,7 +630,7 @@ const supercategories = [
   { name: "Dresses & Jumpsuits", cats: ["dresses"] },
   { name: "Outerwear", cats: ["jackets"] },
   { name: "Shoes", cats: ["shoes-flat", "shoes-heels"] },
-  { name: "Accessories", cats: ["bags", "belts", "neck", "scarves", "jewellery", "glasses", "hats"] }
+  { name: "Accessories", cats: ["bags", "belts", "neck", "scarves", "jewellery", "glasses", "hats", "gloves"] }
 ];
 
 const verdicts = {
@@ -606,7 +640,10 @@ const verdicts = {
   'taste maker': { line: "Heartbreak is the motif.", sub: "Platform boots high enough to look down on your ex's new era. Short n' sweet, but completely lethal." },
   'sweetener': { line: "God is a woman, and she's wearing pastels.", sub: "Oversized silhouette, high ponytail energy, and zero tolerance for anyone else's drama." },
   'as if': { line: "A totally important designer.", sub: "You don't rely on mirrors, you rely on Polaroids. Flawlessly curated." },
-  'queen bee': { line: "Dictator of taste.", sub: "Tights are not pants, and this step-and-repeat is not a democracy. Bow down." },
+  'queen bee': { line: "You can go now.", sub: "Dictator of taste. Tights are not pants, and this cafeteria is not a democracy. Bow down." },
+  'a little bit dramatic': { line: "She doesn't even go here.", sub: "You wore the tee. You get to say the line. That's the whole deal." },
+  'thank u, next': { line: "One taught me love, one taught me patience, and this fit taught me closure.", sub: "Grateful, unbothered, dressed for the plot twist." },
+  'i go both ways': { line: "I go both ways.", sub: "Sweet on the surface, something feral underneath. You knew exactly what this top does." },
   'it-girl immunity': { line: "I have to go.", sub: "You completely ignored the dress code, missed curfew, and somehow still made the front page." },
   'couldnt help but wonder': { line: "Looking for love and vintage labels.", sub: "Your shoes cost more than your rent, you think in monologues, and you're entirely fine with that." },
   'bumpin that': { line: "360 party girl.", sub: "Smudged eyeliner, a dead phone battery, and an absolutely unapologetic attitude. Very that." },
@@ -763,7 +800,10 @@ const verdictsUK = {
   'taste maker': { line: "Мотив образу — розбите серце.", sub: "Чоботи на платформі достатньо високі, щоб дивитися згори вниз на твого колишнього. Коротко, солодко, смертельно." },
   'sweetener': { line: "God is a woman, і вона носить пастель.", sub: "Оверсайз силует, енергія високого хвоста і нуль толерантності до чужої драми." },
   'as if': { line: "Дуже важливий дизайнер.", sub: "Ти не довіряєш дзеркалам, ти довіряєш полароїдам. Бездоганно підібрано." },
-  'queen bee': { line: "Диктаторка смаку.", sub: "Колготки — це не штани, а цей зал — не демократія. Схиліть голови." },
+  'queen bee': { line: "Тепер можеш іти.", sub: "Диктаторка смаку. Колготки — це не штани, а ця їдальня — не демократія. Схиліть голови." },
+  'a little bit dramatic': { line: "Вона взагалі тут не вчиться.", sub: "Ти вдягнула футболку. Тепер маєш право сказати цю фразу. Ось і вся угода." },
+  'thank u, next': { line: "Один навчив мене любові, інший — терпінню, а цей образ навчив мене відпускати.", sub: "Вдячна, незворушна, вдягнена для несподіваного повороту сюжету." },
+  'i go both ways': { line: "Я і туди, і сюди.", sub: "Солодка на вигляд, дещо хижа всередині. Ти точно знала, що робить цей топ." },
   'it-girl immunity': { line: "Мені треба йти.", sub: "Ти повністю проігнорувала дрес-код, пропустила дедлайн і все одно опинилася на головній сторінці." },
   'couldnt help but wonder': { line: "У пошуках кохання та вінтажних брендів.", sub: "Твої туфлі коштують дорожче за оренду, ти мислиш монологами, і тебе це влаштовує." },
   'bumpin that': { line: "Енергія 360 party girl.", sub: "Розмазана підводка, розряджений телефон і абсолютно безкомпромісне ставлення до життя." },
@@ -920,6 +960,37 @@ let searchMode = false;
 let currentVerdict = null;
 let currentVerdictKey = '';
 
+// ── SONG / SCENE LINKS ──
+// Curated entries for the "Iconic Pieces" tier: exact scene URLs where we have them,
+// otherwise a specific search query (safer than guessing a track/video ID that might be wrong or taken down).
+const verdictLinks = {
+  'what about it?':          { song: '7 rings Ariana Grande' },
+  'thank u, next':           { song: 'thank u next Ariana Grande', scene: 'thank u next Ariana Grande official video' },
+  'sweetener':               { song: 'God is a woman Ariana Grande' },
+  'dangerous woman':         { song: 'Dangerous Woman Ariana Grande' },
+  'bumpin that':             { song: '360 Charli XCX' },
+  'queen bee':               { sceneUrl: 'https://youtu.be/e8_Z7-97mIw' },
+  'iconic villain era':      { scene: 'Mean Girls burn book scene' },
+  'a little bit dramatic':  { scene: 'Mean Girls a little bit dramatic scene' },
+  'what like its hard':      { scene: 'Legally Blonde courtroom scene' },
+  'as if':                   { scene: 'Clueless as if closet scene' },
+  'it-girl immunity':        { scene: 'Gossip Girl Serena pilot entrance' },
+  'couldnt help but wonder': { scene: 'Sex and the City opening credits' },
+  'cerulean':                { scene: "Devil Wears Prada cerulean sweater monologue" },
+  'i go both ways':          { scene: "Jennifer's Body I go both ways scene" },
+  'taste maker':             { scene: 'Sabrina Carpenter live concert' },
+};
+
+function spotifySearchUrl(q) { return 'https://open.spotify.com/search/' + encodeURIComponent(q); }
+function youtubeSearchUrl(q) { return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q); }
+
+function getVerdictLinks(key) {
+  const entry = verdictLinks[key] || {};
+  const songUrl = entry.songUrl || spotifySearchUrl(entry.song || (key + ' aesthetic playlist'));
+  const sceneUrl = entry.sceneUrl || youtubeSearchUrl(entry.scene || (key + ' aesthetic edit'));
+  return { songUrl, sceneUrl };
+}
+
 // Translation Configuration
 let currentLang = 'en';
 const translations = {
@@ -927,6 +998,8 @@ const translations = {
     eyebrow: "Your style, decoded",
     back: "Go back to the closet (no pun intended)",
     join: "Join Vogue Committee",
+    listen: "Listen",
+    watch: "Watch the scene",
     aestheticPrefix: "",
     aestheticSuffix: ""
   },
@@ -934,6 +1007,8 @@ const translations = {
     eyebrow: "Ваш стиль, розшифровано",
     back: "Повернутися до шафи (без каламбурів)",
     join: "Приєднатися до Vogue Committee",
+    listen: "Слухати",
+    watch: "Дивитись сцену",
     aestheticPrefix: "Естетика ",
     aestheticSuffix: ""
   }
@@ -986,7 +1061,9 @@ function renderGrid(catId, items) {
     const uid = (item._catId || catId) + '_' + item.name.replace(/\s+/g, '_');
     const card = document.createElement('div');
     card.className = 'grid-item' + (onCanvas[uid] ? ' on-board' : ''); card.id = 'gi-' + uid;
-    card.innerHTML = `<div class="gi-visual"><img alt="${item.name}" title="Vibe: ${item.vibe}"></div><div class="gi-name">${item.name}</div><div class="gi-vibe">${item.vibe}</div>`;
+    const isSashaBow = item.name === "Sasha's bow";
+    const vibeCaption = isSashaBow ? "what about it? · yes, and?" : '';
+    card.innerHTML = `<div class="gi-visual"><img alt="${item.name}" title="Vibe: ${item.vibe}"></div><div class="gi-name">${item.name}</div>${vibeCaption ? `<div class="gi-vibe">${vibeCaption}</div>` : ''}`;
     setupImgFallback(card.querySelector('img'), item.name);
     if (item.color) { const dot = document.createElement('div'); dot.className = 'gi-color-dot'; dot.style.background = item.color; card.appendChild(dot); }
     card.onclick = () => toggleItem(uid, item, item._catId || catId);
@@ -1162,6 +1239,8 @@ function applyTranslations() {
   document.getElementById('verdict-eyebrow').textContent = t.eyebrow;
   document.getElementById('verdict-close').textContent = t.back;
   document.getElementById('verdict-join').textContent = t.join;
+  document.getElementById('verdict-song-label').textContent = t.listen;
+  document.getElementById('verdict-scene-label').textContent = t.watch;
   
   if (currentVerdict) {
     let sourceDict = currentLang === 'uk' ? verdictsUK : verdicts;
@@ -1175,6 +1254,10 @@ function applyTranslations() {
     document.getElementById('verdict-aesthetic').textContent = `${t.aestheticPrefix}${vAesthetic}${t.aestheticSuffix}`;
     document.getElementById('verdict-text').textContent = vLine;
     document.getElementById('verdict-sub').textContent = vSub;
+
+    const links = getVerdictLinks(currentVerdictKey);
+    document.getElementById('verdict-song-link').href = links.songUrl;
+    document.getElementById('verdict-scene-link').href = links.sceneUrl;
   }
 }
 
@@ -1354,40 +1437,4 @@ window.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(offscreen, 0, 0);
       
       // Give the falling shards a shiny glass tint
-      ctx.fillStyle = 'rgba(255,255,255,0.15)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      ctx.restore();
-    });
-
-    if (allGone) { 
-      canvas.style.display = 'none'; 
-      return; 
-    }
-    requestAnimationFrame(animateShatter);
-  }
-
-  drawMirror();
-  IX = W * 0.48 + (Math.random()-0.5)*80;
-  IY = H * 0.42 + (Math.random()-0.5)*60;
-
-  const tapOverlay = document.getElementById('tap-overlay');
-  const crackAudio = new Audio('crack.mp3');
-  crackAudio.volume = 0.4;
-
-  tapOverlay.addEventListener('click', () => {
-    crackAudio.play().catch(() => {});
-    drawCracks();
-    tapOverlay.style.opacity = '0';
-    setTimeout(() => tapOverlay.style.display = 'none', 400);
-    setTimeout(startShatter, 600);
-  }, { once: true });
-});
-</script>
-</body>
-</html>
-
-
+      ctx.fillStyle = 'rgba(255,255,255,0.15)'
