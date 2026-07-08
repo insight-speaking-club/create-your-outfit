@@ -466,24 +466,11 @@
 
 <script>
 // ── SOUND FX ──
-// Drop these audio files next to index.html (same folder as crack.mp3) to enable them.
-//   item-select.mp3      → the "gossip beat" track. Doesn't play in full — notifications
-//                           (and the beat) only ever start when the user taps "See latest
-//                           gossip on Sasha". Each time a notification pops up (the first
-//                           one from the click, and each one after in that same run), it
-//                           plays a ~2s snippet then pauses, picking up from wherever it
-//                           left off last time, so it sounds like the beat is "checking
-//                           back in" with each notification instead of restarting.
-//   true-item-select.mp3 → plays when an item is added to canvas, but only on add #1, #4, #7...
-//   NOTE: we can't ship copyrighted song audio (e.g. "7 rings") for you — supply your
-//   own longer clip/loop here and it'll be sampled in short bursts automatically.
 const GOSSIP_BEAT_SRC = 'item-select.mp3';
 const TRUE_ITEM_SELECT_SRC = 'true-item-select.mp3';
 const SHUTTER_SRC = 'shutter.mp3';
-let itemAddCount = 0; // used to throttle playTrueItemSelectSound to every 3rd add
+let itemAddCount = 0; 
 
-// Preload once so we can warn in the console if a file is missing/unreadable —
-// open devtools > Console to check for "[sound fx]" warnings if you don't hear anything.
 function preloadSoundCheck(src, label) {
   const probe = new Audio(src);
   probe.addEventListener('error', () => {
@@ -499,25 +486,21 @@ preloadSoundCheck(GOSSIP_BEAT_SRC, 'gossip beat track');
 preloadSoundCheck(TRUE_ITEM_SELECT_SRC, 'item-add sound');
 preloadSoundCheck(SHUTTER_SRC, 'shutter sound');
 
-// One persistent audio element (NOT a fresh clone each time) so playback position
-// carries over between notification pop-ups — this is what makes it "resume".
 const gossipBeatAudio = new Audio(GOSSIP_BEAT_SRC);
-gossipBeatAudio.volume = 0.28; // kept low/background — bump this up if you want it louder
-let gossipBeatPauseTimer = null;
+gossipBeatAudio.volume = 0.28; 
 
+// Continues playing without cutting off.
 function playGossipBeatSnippet() {
   try {
-    clearTimeout(gossipBeatPauseTimer);
-    // loop back to the start once we've played through the whole track
     if (gossipBeatAudio.duration && gossipBeatAudio.currentTime >= gossipBeatAudio.duration - 0.1) {
       gossipBeatAudio.currentTime = 0;
     }
-    const p = gossipBeatAudio.play();
-    if (p && p.catch) {
-      p.catch(err => console.warn('[sound fx] gossip-beat playback blocked/failed:', err.message));
+    if (gossipBeatAudio.paused) {
+      const p = gossipBeatAudio.play();
+      if (p && p.catch) {
+        p.catch(err => console.warn('[sound fx] gossip-beat playback blocked/failed:', err.message));
+      }
     }
-    const snippetMs = 1900 + Math.random() * 200; // ~2 second window (1.9-2.1s)
-    gossipBeatPauseTimer = setTimeout(() => gossipBeatAudio.pause(), snippetMs);
   } catch (e) {
     console.warn('[sound fx] gossip-beat playback threw:', e.message);
   }
@@ -535,7 +518,6 @@ function playTrueItemSelectSound() {
     console.warn('[sound fx] item-select playback threw:', e.message);
   }
 }
-
 
 const shutterAudio = new Audio(SHUTTER_SRC);
 shutterAudio.volume = 0.6;
@@ -567,7 +549,7 @@ function spawnSparkleBurst(x, y, count = 10) {
     const angle = Math.random() * Math.PI * 2;
     const dist = 30 + Math.random() * 55;
     const dx = Math.cos(angle) * dist;
-    const dy = Math.sin(angle) * dist - 10; // slight upward bias
+    const dy = Math.sin(angle) * dist - 10;
     const size = 5 + Math.random() * 7;
     const dur = 0.45 + Math.random() * 0.35;
     const rot = (Math.random() > 0.5 ? 1 : -1) * (90 + Math.random() * 180);
@@ -1363,11 +1345,6 @@ const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
 
 function slugify(name) { return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function imgPathCandidates(name) { const slug = slugify(name); return IMG_EXTENSIONS.map(ext => IMG_DIR + slug + '.' + ext); }
-// eager=true is used for images the user is looking at RIGHT NOW (an item they just placed
-// on the canvas, or the final outfit reveal) so those pop in immediately. Everything else
-// (the closet grid, which can have a huge number of items) defaults to lazy + low-priority
-// so the browser only spends bandwidth/decode time on tiles that are actually on screen —
-// this only changes WHEN/HOW the browser fetches each file, never the images themselves.
 function setupImgFallback(imgEl, name, eager) {
   imgEl.loading = eager ? 'eager' : 'lazy';
   imgEl.decoding = 'async';
@@ -1388,12 +1365,12 @@ function init() {
 }
 
 const TEA_LINES = [
-  "One time, I heard Sasha was dropping out to move to Paris, so I dropped out so we could be in Paris at the same time. Turns out it was just a rumor.",
+  "One time, on Telegram, I heard Sasha was dropping out to move to Paris, so I dropped out, so we could be in Paris at the same time. Turns out it was just a rumor.",
   "Sasha told me my hair looks sexy pushed back. He's not wrong.",
-  "Sasha ghosted a guy. So I found a guy to text me and I left him on read.",
-  "I hear Sasha's gay now and dating some guy called Ricky. That's fucking sick.",
+  "Sasha ghosted a guy. So I found a guy to text me and I ghosted a guy.",
+  "I heard Sasha's gay now and dating some guy named Ricky. It's fucking sick. 💅🏿",
   "I heard that if you record him snoring and play it backwards, it sounds like Brandy.",
-  "Sasha says 'thank u, next' to homophobes, so I decided to curse out his professor in the hall. ...It was awesome."
+  "Sasha says 'thank u, next' to homophobes, so I decided to curse out his professor. ...It was awesome."
 ];
 
 function initTeaTicker() {
@@ -1420,7 +1397,7 @@ function initTeaTicker() {
     el.classList.add('visible');
     clearTimeout(dismissTimer);
     dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
-    playGossipBeatSnippet(); // resumes the beat wherever it left off, plays ~1-2s, pauses
+    playGossipBeatSnippet(); 
     return true;
   }
 
@@ -1435,13 +1412,14 @@ function initTeaTicker() {
     if (!shown) i--; // don't burn this line if we skipped it
   }
 
-  // manual trigger for the "gossip" link — restarts the FULL sequential run of every
-  // notification (same one-after-another pacing as the automatic queue), forcing the
-  // first one through even mid-outfit. The beat snippet plays via show() itself.
   function spill() {
     clearTimeout(nextTimer);
     clearTimeout(dismissTimer);
     i = 0;
+    
+    // Play the beat immediately and continuously when button is clicked
+    playGossipBeatSnippet();
+    
     next(true);
   }
   window.spillTea = spill;
@@ -1474,9 +1452,6 @@ function initTeaTicker() {
   });
 
   el.addEventListener('click', dismiss); // tap to dismiss, e.g. on desktop
-
-  // NOTE: no auto-start timer here anymore — notifications (and the beat) only
-  // begin when the user taps "See latest gossip on Sasha", via spillTea() above.
 }
 
 function renderTabs() {
