@@ -462,7 +462,7 @@
   <div id="verdict-links">
     <a id="verdict-song-link" class="verdict-link-btn" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 15c2.5-1.2 5.5-1.2 8 0M7.5 11.5c3-1.5 6-1.5 9 0M9 8c2-1 4-1 6 0"></path></svg>
-      <span id="verdict-song-label">outfit soundtrack</span>
+      <span id="verdict-song-label">Listen</span>
     </a>
     <a id="verdict-scene-link" class="verdict-link-btn" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -1303,7 +1303,7 @@ const verdictLinks = {
   'queen bee':               { sceneUrl: 'https://youtu.be/e8_Z7-97mIw' },
   'iconic villain era':      { scene: 'Mean Girls burn book scene' },
   'a little bit dramatic':   { scene: 'Mean Girls a little bit dramatic scene' },
-  'what like its hard':      { songUrl: 'https://music.youtube.com/watch?v=Iak0RqGn5B8&si=jPok5wxdAGGntFky', scene: 'Legally Blonde courtroom scene' },
+  'what like its hard':      { songUrl: 'https://music.youtube.com/watch?v=Iak0RqGn5B8&si=Pk5IEgSux1fcvnhA', scene: 'Legally Blonde courtroom scene' },
   'thirty flirty and thriving': { scene: '13 Going on 30 Thriller dance scene' },
   'spirit fingers':          { scene: 'Bring It On spirit fingers cheer routine' },
   'as if':                   { scene: 'Clueless as if closet scene' },
@@ -1339,7 +1339,7 @@ const translations = {
     eyebrow: "Your style, decoded",
     back: "Go back to the closet (no pun intended)",
     join: "Join groupchat",
-    listen: "outfit soundtrack",
+    listen: "Listen",
     watch: "Watch the scene",
     aestheticPrefix: "",
     aestheticSuffix: ""
@@ -1411,7 +1411,7 @@ function initTeaTicker() {
     void el.offsetWidth; // force reflow so the slide-in transition plays
     el.classList.add('visible');
     clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(dismiss, 13000); /* gives enough time to read before fading out */
+    dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
     return true;
   }
 
@@ -1419,7 +1419,7 @@ function initTeaTicker() {
     if (i >= TEA_LINES.length) { dismiss(); return; } // shown all 6, done for the session
     const shown = show(TEA_LINES[i], force);
     i++;
-    const delay = 14000 + Math.random() * 5000; /* Adjusted to prevent overlap */
+    const delay = 5000 + Math.random() * 5000; /* MODIFIED TO 5-10 SECONDS */
     // if it got skipped (mid-outfit), retry the same line a bit sooner
     clearTimeout(nextTimer);
     nextTimer = setTimeout(() => next(false), shown ? delay : 4000);
@@ -1472,7 +1472,7 @@ function initTeaTicker() {
       dismiss();
     } else {
       el.style.transform = '';
-      dismissTimer = setTimeout(dismiss, 13000); /* gives enough time to read before fading out */
+      dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
     }
     startY = null; currentY = 0;
   });
