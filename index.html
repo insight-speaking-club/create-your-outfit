@@ -185,6 +185,20 @@
     font-size: 0.66rem; line-height: 1.35; color: rgba(26,22,18,0.9);
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   }
+  #imessage-notification .gossip-next-btn {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(26,22,18,0.08);
+    color: rgba(26,22,18,0.65);
+    font-size: 1.1rem;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  #imessage-notification .gossip-next-btn:active { transform: scale(0.9); background: rgba(26,22,18,0.16); }
   #imessage-notification .swipe-indicator {
     width: 32px; height: 4px; border-radius: 2px; background: rgba(26,22,18,0.15);
     margin: 0.5rem auto 0;
@@ -399,6 +413,7 @@
       <span class="sender-name">Gossip Girl</span>
       <span class="message-time">now</span>
     </div>
+    <button id="gossip-next-btn" class="gossip-next-btn" aria-label="Next bit of gossip" onclick="window.skipGossip && window.skipGossip(event)">&rsaquo;</button>
   </div>
   <div class="message-body" id="imessage-text"></div>
   <div class="swipe-indicator"></div>
@@ -1397,12 +1412,11 @@ function initTeaTicker() {
     el.classList.add('visible');
     clearTimeout(dismissTimer);
     dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
-    playGossipBeatSnippet(); 
     return true;
   }
 
   function next(force) {
-    if (i >= TEA_LINES.length) return; // shown all 6, done for the session
+    if (i >= TEA_LINES.length) { dismiss(); return; } // shown all 6, done for the session
     const shown = show(TEA_LINES[i], force);
     i++;
     const delay = 5000 + Math.random() * 5000; /* MODIFIED TO 5-10 SECONDS */
@@ -1417,12 +1431,24 @@ function initTeaTicker() {
     clearTimeout(dismissTimer);
     i = 0;
     
-    // Play the beat immediately and continuously when button is clicked
+    // Play the beat once, right when the gossip starts
     playGossipBeatSnippet();
     
     next(true);
   }
   window.spillTea = spill;
+
+  // Manual "next" arrow — lets you click through gossip at your own pace
+  // instead of waiting for the auto-advance timer. No repeat sound here;
+  // the beat only plays once, when gossip is first opened via spill().
+  function skipGossip(e) {
+    if (e) e.stopPropagation();
+    clearTimeout(nextTimer);
+    clearTimeout(dismissTimer);
+    next(true);
+  }
+  window.skipGossip = skipGossip;
+
 
   // --- swipe-up-to-dismiss ---
   let startY = null, currentY = 0, dragging = false;
