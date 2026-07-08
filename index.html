@@ -195,6 +195,22 @@
   .on-canvas.active-item .rotate-stem { position: absolute; top: -28px; left: 50%; width: 1.5px; height: 20px; background: var(--muted); transform: translateX(-50%); z-index: 5; display: block; }
   .on-canvas.active-item .rotate-handle { position: absolute; top: -42px; left: 50%; width: 22px; height: 22px; transform: translateX(-50%); background: var(--bg); border: 1.5px solid var(--ink); border-radius: 50%; cursor: grab; z-index: 6; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; touch-action: none; }
 
+  /* ── SPARKLE BURST (plays when an item is added to canvas) ── */
+  .sparkle-burst { position: absolute; pointer-events: none; z-index: 9000; width: 0; height: 0; }
+  .sparkle-particle {
+    position: absolute; top: 0; left: 0;
+    width: var(--sp-size, 8px); height: var(--sp-size, 8px);
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    opacity: 1;
+    animation: sparkle-fly var(--sp-dur, 0.6s) ease-out forwards;
+  }
+  @keyframes sparkle-fly {
+    0%   { transform: translate(0, 0) scale(0.3) rotate(0deg); opacity: 1; }
+    60%  { opacity: 1; }
+    100% { transform: translate(var(--sp-x), var(--sp-y)) scale(1) rotate(var(--sp-rot)); opacity: 0; }
+  }
+
   /* Temporarily hide UI clutter during html2canvas capture */
   .capturing #canvas-empty,
   .capturing .remove-btn,
@@ -421,6 +437,60 @@
 </div>
 
 <script>
+// ── SOUND FX ──
+// Drop these audio files next to index.html (same folder as crack.mp3) to enable them.
+// itemSelectAudio: plays a snippet every time an item is added to the canvas.
+//   NOTE: we can't ship copyrighted song audio (e.g. "7 rings") for you — supply your
+//   own short clip/loop here (a few seconds is plenty) and it'll fire on every add.
+const itemSelectAudio = new Audio('item-select.mp3');
+itemSelectAudio.volume = 0.5;
+const shutterAudio = new Audio('shutter.mp3');
+shutterAudio.volume = 0.6;
+
+function playItemSelectSound() {
+  try {
+    itemSelectAudio.currentTime = 0;
+    itemSelectAudio.play().catch(() => {});
+  } catch (e) {}
+}
+
+function playShutterSound() {
+  try {
+    shutterAudio.currentTime = 0;
+    shutterAudio.play().catch(() => {});
+  } catch (e) {}
+}
+
+// ── SPARKLE BURST ──
+function spawnSparkleBurst(x, y, count = 10) {
+  const container = document.body;
+  const burst = document.createElement('div');
+  burst.className = 'sparkle-burst';
+  burst.style.left = x + 'px';
+  burst.style.top = y + 'px';
+  container.appendChild(burst);
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'sparkle-particle';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 30 + Math.random() * 55;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist - 10; // slight upward bias
+    const size = 5 + Math.random() * 7;
+    const dur = 0.45 + Math.random() * 0.35;
+    const rot = (Math.random() > 0.5 ? 1 : -1) * (90 + Math.random() * 180);
+    p.style.setProperty('--sp-x', dx + 'px');
+    p.style.setProperty('--sp-y', dy + 'px');
+    p.style.setProperty('--sp-size', size + 'px');
+    p.style.setProperty('--sp-dur', dur + 's');
+    p.style.setProperty('--sp-rot', rot + 'deg');
+    p.style.animationDelay = (Math.random() * 0.08) + 's';
+    burst.appendChild(p);
+  }
+  setTimeout(() => burst.remove(), 900);
+}
+
 // ── WARDROBE DATA ──
 const categories = [
   {
@@ -1068,7 +1138,7 @@ const verdictsUK = {
   'power androgyny': { line: "Ні те, ні інше — а отже, все.", sub: "Плечі, плинність, впевненість того, хто вибирає власні правила." },
   'power dressing': { line: "Одягнена для переговорів, які ти виграєш.", sub: "Кожна лінія тут — це бізнес." },
   'power femme': { line: "Тут жіночність — це не м'якість. Це точність.", sub: "Кожна деталь — це вибір, і ти зробила їх усі." },
-  'power jewellery': { line: "Маленькі деталі, величезний авторитет.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
+  'power jewellery': { line: "Small pieces, outsized authority.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
   'powerful': { line: "Це вбрання не просить кімнату. Воно її забирає.", sub: "Тихо, повністю, без обговорень." },
   'practical chic': { line: "Створено, щоб пережити день і все одно виглядати свідомо.", sub: "Функція на першому місці. Але стиль нікуди не зникав." },
   'practical cool': { line: "Створено для того, щоб насправді щось робити.", sub: "Виглядає легким, бо так має бути." },
@@ -1218,10 +1288,10 @@ function init() {
 }
 
 const TEA_LINES = [
-  "One time, on Telegram, I heard Sasha was dropping out to move to Paris, so I dropped out so we could be in Paris at the same time. Turns out it was just a rumor.",
+  "One time, I heard Sasha was dropping out to move to Paris, so I dropped out so we could be in Paris at the same time. Turns out it was just a rumor.",
   "Sasha told me my hair looks sexy pushed back. He's not wrong.",
   "Sasha ghosted a guy. So I found a guy to text me and I left him on read.",
-  "I heard Sasha's gay now and dating some guy called Ricky. That's fucking sick.",
+  "I hear Sasha's gay now and dating some guy called Ricky. That's fucking sick.",
   "I heard that if you record him snoring and play it backwards, it sounds like Brandy.",
   "Sasha says 'thank u, next' to homophobes, so I decided to curse out his professor in the hall. ...It was awesome."
 ];
@@ -1248,7 +1318,7 @@ function initTeaTicker() {
     void el.offsetWidth; // force reflow so the slide-in transition plays
     el.classList.add('visible');
     clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(dismiss, 5000);
+    dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
     return true;
   }
 
@@ -1256,7 +1326,7 @@ function initTeaTicker() {
     if (i >= TEA_LINES.length) return; // shown all 6, done for the session
     const shown = show(TEA_LINES[i]);
     i++;
-    const delay = 15000 + Math.random() * 15000; // 15-30s
+    const delay = 5000 + Math.random() * 5000; /* MODIFIED TO 5-10 SECONDS */
     // if it got skipped (mid-outfit), retry the same line a bit sooner
     setTimeout(next, shown ? delay : 4000);
     if (!shown) i--; // don't burn this line if we skipped it
@@ -1284,14 +1354,15 @@ function initTeaTicker() {
       dismiss();
     } else {
       el.style.transform = '';
-      dismissTimer = setTimeout(dismiss, 5000);
+      dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
     }
     startY = null; currentY = 0;
   });
 
   el.addEventListener('click', dismiss); // tap to dismiss, e.g. on desktop
 
-  setTimeout(next, 4000);
+  const firstDelay = 6000 + Math.random() * 3000; // first pop-up: 6-9s after app opens
+  setTimeout(next, firstDelay);
 }
 
 function renderTabs() {
@@ -1371,6 +1442,13 @@ function addToCanvas(uid, item, catId) {
   const resizeHandle = document.createElement('div'); resizeHandle.className = 'resize-handle'; el.appendChild(resizeHandle);
   canvas.appendChild(el); setupTransforms(el, spin, rotateHandle, resizeHandle, state, uid);
   onCanvas[uid] = { el, item, state }; updateGridCard(uid, true); setActive(uid);
+
+  // sparkle + sound on drop
+  const canvasRect = canvas.getBoundingClientRect();
+  const burstX = canvasRect.left + parseFloat(el.style.left) + item.w / 2;
+  const burstY = canvasRect.top + parseFloat(el.style.top) + item.h / 2;
+  spawnSparkleBurst(burstX, burstY);
+  playItemSelectSound();
 }
 
 function removeFromCanvas(uid) {
@@ -1492,6 +1570,7 @@ function showVerdict() {
   setActive(null); 
   document.getElementById('verdict-overlay').classList.add('show');
   requestAnimationFrame(() => requestAnimationFrame(buildOutfitPreview));
+  playShutterSound();
 }
 
 function toggleLanguage() {
