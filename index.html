@@ -343,11 +343,21 @@
   .verdict-link-btn svg { width: 14px; height: 14px; stroke: currentColor; flex-shrink: 0; }
   
   #verdict-close {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
     font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
     background: linear-gradient(160deg, #f2c9d6 0%, var(--accent) 55%, #bb7f97 100%);
-    color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5;
+    color: var(--ink); border: none; padding: 0.8rem 1.4rem 0.9rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5;
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
   }
+  #verdict-close .tun-signature {
+    font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: -0.01em;
+    font-size: 1.5rem; line-height: 1; color: #e182f7;
+    display: inline-flex; align-items: baseline;
+  }
+  #verdict-close .tun-signature .tun-thin {
+    font-family: 'DM Sans', sans-serif; font-weight: 400; text-transform: none; color: #ffffff;
+  }
+  #verdict-close .verdict-close-label { line-height: 1.4; }
 
   #verdict-join { background: none; border: none; color: #a8a09b; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.6rem; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; opacity: 0.85; }
 </style>
@@ -442,7 +452,10 @@
   </div>
   
   <div id="verdict-bottom">
-    <button id="verdict-close" onclick="closeVerdict()">Go back to the closet (no pun intended)</button>
+    <button id="verdict-close" onclick="closeVerdict()">
+      <span class="tun-signature">THANK<span class="tun-thin">U</span><span class="tun-thin">,</span>NEXT</span>
+      <span class="verdict-close-label" id="verdict-close-label">Go back to the closet (no pun intended)</span>
+    </button>
     <button id="verdict-join" onclick="shareToTelegram()">Join Vogue Committee</button>
   </div>
 </div>
@@ -1346,7 +1359,16 @@ const IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'PNG', 'JPG'];
 
 function slugify(name) { return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function imgPathCandidates(name) { const slug = slugify(name); return IMG_EXTENSIONS.map(ext => IMG_DIR + slug + '.' + ext); }
-function setupImgFallback(imgEl, name) { const candidates = imgPathCandidates(name); let i = 0; imgEl.src = candidates[i]; imgEl.onerror = function() { i++; if (i < candidates.length) { imgEl.src = candidates[i]; } else { imgEl.src = `https://placehold.co/200x200/e8e4df/9a9390.png?text=${encodeURIComponent(name)}`; imgEl.onerror = null; } }; }
+// eager=true is used for images the user is looking at RIGHT NOW (an item they just placed
+// on the canvas, or the final outfit reveal) so those pop in immediately. Everything else
+// (the closet grid, which can have a huge number of items) defaults to lazy + low-priority
+// so the browser only spends bandwidth/decode time on tiles that are actually on screen —
+// this only changes WHEN/HOW the browser fetches each file, never the images themselves.
+function setupImgFallback(imgEl, name, eager) {
+  imgEl.loading = eager ? 'eager' : 'lazy';
+  imgEl.decoding = 'async';
+  if ('fetchPriority' in imgEl) imgEl.fetchPriority = eager ? 'high' : 'low';
+  const candidates = imgPathCandidates(name); let i = 0; imgEl.src = candidates[i]; imgEl.onerror = function() { i++; if (i < candidates.length) { imgEl.src = candidates[i]; } else { imgEl.src = `https://placehold.co/200x200/e8e4df/9a9390.png?text=${encodeURIComponent(name)}`; imgEl.onerror = null; } }; }
 
 const verdictMap = {};
 categories.forEach(cat => cat.items.forEach(item => { verdictMap[cat.id + '_' + item.name.replace(/\s+/g, '_')] = item.vibe; }));
@@ -1365,7 +1387,7 @@ const TEA_LINES = [
   "One time, I heard Sasha was dropping out to move to Paris, so I dropped out so we could be in Paris at the same time. Turns out it was just a rumor.",
   "Sasha told me my hair looks sexy pushed back. He's not wrong.",
   "Sasha ghosted a guy. So I found a guy to text me and I left him on read.",
-  "I heard Sasha's gay now and dating some guy called Ricky. That's fucking sick. 💅🏿",
+  "I hear Sasha's gay now and dating some guy called Ricky. That's fucking sick.",
   "I heard that if you record him snoring and play it backwards, it sounds like Brandy.",
   "Sasha says 'thank u, next' to homophobes, so I decided to curse out his professor in the hall. ...It was awesome."
 ];
@@ -1521,7 +1543,7 @@ function addToCanvas(uid, item, catId) {
   const spin = document.createElement('div'); spin.className = 'oc-spin';
   const inner = document.createElement('div'); inner.className = 'oc-visual';
   inner.innerHTML = `<img alt="${item.name}" title="Vibe: ${item.vibe}" style="width:100%;height:100%;object-fit:contain;">`;
-  setupImgFallback(inner.querySelector('img'), item.name);
+  setupImgFallback(inner.querySelector('img'), item.name, true);
   spin.appendChild(inner); el.appendChild(spin);
   const rm = document.createElement('button'); rm.className = 'remove-btn'; rm.textContent = '✕';
   rm.onclick = (e) => { e.stopPropagation(); removeFromCanvas(uid); }; el.appendChild(rm);
@@ -1641,7 +1663,7 @@ function buildOutfitPreview() {
     const imgClone = document.createElement('img');
     imgClone.alt = entry.item.name;
     imgClone.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;';
-    setupImgFallback(imgClone, entry.item.name);
+    setupImgFallback(imgClone, entry.item.name, true);
 
     spinClone.appendChild(imgClone);
     clone.appendChild(spinClone);
@@ -1670,7 +1692,7 @@ function toggleLanguage() {
 function applyTranslations() {
   const t = translations[currentLang];
   document.getElementById('verdict-eyebrow').textContent = t.eyebrow;
-  document.getElementById('verdict-close').textContent = t.back;
+  document.getElementById('verdict-close-label').textContent = t.back;
   document.getElementById('verdict-join').textContent = t.join;
   document.getElementById('verdict-song-label').textContent = t.listen;
   document.getElementById('verdict-scene-label').textContent = t.watch;
