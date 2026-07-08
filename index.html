@@ -343,23 +343,27 @@
   .verdict-link-btn svg { width: 14px; height: 14px; stroke: currentColor; flex-shrink: 0; }
   
   #verdict-close {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
-    background: linear-gradient(160deg, #f2c9d6 0%, var(--accent) 55%, #bb7f97 100%);
-    color: var(--ink); border: none; padding: 0.8rem 1.4rem 0.9rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5;
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.05rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.1em;
+    background: none; border: none; color: #a8a09b; padding: 0.5rem; cursor: pointer; width: 100%; line-height: 1.3;
+    opacity: 0.85; text-decoration: none;
   }
   #verdict-close .tun-signature {
     font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: -0.01em;
-    font-size: 1.5rem; line-height: 1; color: #e182f7;
+    font-size: 0.9rem; line-height: 1; color: #e182f7;
     display: inline-flex; align-items: baseline;
   }
   #verdict-close .tun-signature .tun-thin {
     font-family: 'DM Sans', sans-serif; font-weight: 400; text-transform: none; color: #ffffff;
   }
-  #verdict-close .verdict-close-label { line-height: 1.4; }
+  #verdict-close .verdict-close-label { line-height: 1.3; text-decoration: underline; text-underline-offset: 3px; }
 
-  #verdict-join { background: none; border: none; color: #a8a09b; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.6rem; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; opacity: 0.85; }
+  #verdict-join {
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+    background: linear-gradient(160deg, #f2c9d6 0%, var(--accent) 55%, #bb7f97 100%);
+    color: var(--ink); border: none; padding: 0.9rem 1.4rem; border-radius: 2px; cursor: pointer; width: 100%; line-height: 1.5;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
+  }
 </style>
 </head>
 
@@ -380,7 +384,7 @@
       <img src="kissprint.png" alt="" class="kiss-print">
     </div>
     <div style="display:flex;align-items:center;gap:0.5rem;">
-      <button id="verdict-btn" onclick="showVerdict()">Get my vibe</button>
+      <button id="verdict-btn" onclick="showVerdict()">Get my verdict</button>
     </div>
   </div>
   <div id="topbar-row2">
@@ -452,11 +456,11 @@
   </div>
   
   <div id="verdict-bottom">
+    <button id="verdict-join" onclick="shareToTelegram()">Join groupchat</button>
     <button id="verdict-close" onclick="closeVerdict()">
       <span class="tun-signature">THANK<span class="tun-thin">U</span><span class="tun-thin">,</span>NEXT</span>
       <span class="verdict-close-label" id="verdict-close-label">Go back to the closet (no pun intended)</span>
     </button>
-    <button id="verdict-join" onclick="shareToTelegram()">Join Vogue Committee</button>
   </div>
 </div>
 
@@ -1337,7 +1341,7 @@ const translations = {
   en: {
     eyebrow: "Your style, decoded",
     back: "Go back to the closet (no pun intended)",
-    join: "Join Vogue Committee",
+    join: "Join groupchat",
     listen: "Listen",
     watch: "Watch the scene",
     aestheticPrefix: "",
@@ -1346,7 +1350,7 @@ const translations = {
   uk: {
     eyebrow: "Ваш стиль, розшифровано",
     back: "Повернутися до шафи (без каламбурів)",
-    join: "Приєднатися до Vogue Committee",
+    join: "Приєднатися до групового чату",
     listen: "Слухати",
     watch: "Дивитись сцену",
     aestheticPrefix: "Естетика ",
