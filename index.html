@@ -1068,7 +1068,7 @@ const verdictsUK = {
   'power androgyny': { line: "Ні те, ні інше — а отже, все.", sub: "Плечі, плинність, впевненість того, хто вибирає власні правила." },
   'power dressing': { line: "Одягнена для переговорів, які ти виграєш.", sub: "Кожна лінія тут — це бізнес." },
   'power femme': { line: "Тут жіночність — це не м'якість. Це точність.", sub: "Кожна деталь — це вибір, і ти зробила їх усі." },
-  'power jewellery': { line: "Маленькі деталі, величезний авторитет.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
+  'power jewellery': { line: "Small pieces, outsized authority.", sub: "Метал говорить те, що не повинно говорити твоє обличчя." },
   'powerful': { line: "Це вбрання не просить кімнату. Воно її забирає.", sub: "Тихо, повністю, без обговорень." },
   'practical chic': { line: "Створено, щоб пережити день і все одно виглядати свідомо.", sub: "Функція на першому місці. Але стиль нікуди не зникав." },
   'practical cool': { line: "Створено для того, щоб насправді щось робити.", sub: "Виглядає легким, бо так має бути." },
@@ -1218,10 +1218,10 @@ function init() {
 }
 
 const TEA_LINES = [
-  "One time, on Twitter, I heard Sasha was dropping out to move to Paris, so I dropped out too so we could be in Paris at the same time. Turns out it was just a rumor.",
+  "One time, I heard Sasha was dropping out to move to Paris, so I dropped out too so we could be in Paris at the same time. Turns out it was just a rumor.",
   "Sasha told me my hair looks sexy pushed back. He's not wrong.",
   "Sasha ghosted a guy. So I found a guy to text me and I left him on read.",
-  "I hear Sasha's gay now and dating some guy called Ricky. That's fucking sick.",
+  "I hear Sasha's gay now and dating some guy named Ricky. That's fucking sick.",
   "I heard that if you record him snoring and play it backwards, it sounds like Brandy.",
   "Sasha says 'thank u, next' to homophobes, so I decided to curse out his professor in the hall. ...It was awesome."
 ];
@@ -1248,7 +1248,7 @@ function initTeaTicker() {
     void el.offsetWidth; // force reflow so the slide-in transition plays
     el.classList.add('visible');
     clearTimeout(dismissTimer);
-    dismissTimer = setTimeout(dismiss, 5000);
+    dismissTimer = setTimeout(dismiss, 8000); /* MODIFIED TO 8 SECONDS */
     return true;
   }
 
@@ -1256,7 +1256,7 @@ function initTeaTicker() {
     if (i >= TEA_LINES.length) return; // shown all 6, done for the session
     const shown = show(TEA_LINES[i]);
     i++;
-    const delay = 15000 + Math.random() * 15000; // 15-30s
+    const delay = 5000 + Math.random() * 5000; /* MODIFIED TO 5-10 SECONDS */
     // if it got skipped (mid-outfit), retry the same line a bit sooner
     setTimeout(next, shown ? delay : 4000);
     if (!shown) i--; // don't burn this line if we skipped it
@@ -1284,7 +1284,7 @@ function initTeaTicker() {
       dismiss();
     } else {
       el.style.transform = '';
-      dismissTimer = setTimeout(dismiss, 5000);
+      dismissTimer = setTimeout(dismiss, 8000); /* MODIFIED TO 8 SECONDS */
     }
     startY = null; currentY = 0;
   });
