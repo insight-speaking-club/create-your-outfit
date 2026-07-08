@@ -450,11 +450,15 @@
 <script>
 // ── SOUND FX ──
 // Drop these audio files next to index.html (same folder as crack.mp3) to enable them.
-//   item-select.mp3      → plays once, immediately, whenever the "gossip" button is tapped.
+//   item-select.mp3      → the "gossip beat" track. Doesn't play in full — every time a
+//                           gossip notification pops up (the click, and each auto pop-up
+//                           after), it plays a 1-2s snippet then pauses, picking up from
+//                           wherever it left off last time, so it sounds like the beat is
+//                           "checking back in" with each notification instead of restarting.
 //   true-item-select.mp3 → plays when an item is added to canvas, but only on add #1, #4, #7...
 //   NOTE: we can't ship copyrighted song audio (e.g. "7 rings") for you — supply your
-//   own short clip/loop here (a few seconds is plenty) and it'll fire on the relevant action.
-const GOSSIP_CLICK_SRC = 'item-select.mp3';
+//   own longer clip/loop here and it'll be sampled in short bursts automatically.
+const GOSSIP_BEAT_SRC = 'item-select.mp3';
 const TRUE_ITEM_SELECT_SRC = 'true-item-select.mp3';
 const SHUTTER_SRC = 'shutter.mp3';
 let itemAddCount = 0; // used to throttle playTrueItemSelectSound to every 3rd add
@@ -472,22 +476,31 @@ function preloadSoundCheck(src, label) {
   probe.load();
   return probe;
 }
-preloadSoundCheck(GOSSIP_CLICK_SRC, 'gossip-button click sound');
+preloadSoundCheck(GOSSIP_BEAT_SRC, 'gossip beat track');
 preloadSoundCheck(TRUE_ITEM_SELECT_SRC, 'item-add sound');
 preloadSoundCheck(SHUTTER_SRC, 'shutter sound');
 
-// Both use a fresh clone per play so rapid taps overlap instead of cutting each other off
-// (a single shared <audio> would just restart and clip).
-function playGossipClickSound() {
+// One persistent audio element (NOT a fresh clone each time) so playback position
+// carries over between notification pop-ups — this is what makes it "resume".
+const gossipBeatAudio = new Audio(GOSSIP_BEAT_SRC);
+gossipBeatAudio.volume = 0.28; // kept low/background — bump this up if you want it louder
+let gossipBeatPauseTimer = null;
+
+function playGossipBeatSnippet() {
   try {
-    const a = new Audio(GOSSIP_CLICK_SRC);
-    a.volume = 0.5;
-    const p = a.play();
-    if (p && p.catch) {
-      p.catch(err => console.warn('[sound fx] gossip-click playback blocked/failed:', err.message));
+    clearTimeout(gossipBeatPauseTimer);
+    // loop back to the start once we've played through the whole track
+    if (gossipBeatAudio.duration && gossipBeatAudio.currentTime >= gossipBeatAudio.duration - 0.1) {
+      gossipBeatAudio.currentTime = 0;
     }
+    const p = gossipBeatAudio.play();
+    if (p && p.catch) {
+      p.catch(err => console.warn('[sound fx] gossip-beat playback blocked/failed:', err.message));
+    }
+    const snippetMs = 1000 + Math.random() * 1000; // 1-2 second window
+    gossipBeatPauseTimer = setTimeout(() => gossipBeatAudio.pause(), snippetMs);
   } catch (e) {
-    console.warn('[sound fx] gossip-click playback threw:', e.message);
+    console.warn('[sound fx] gossip-beat playback threw:', e.message);
   }
 }
 
@@ -1379,6 +1392,7 @@ function initTeaTicker() {
     el.classList.add('visible');
     clearTimeout(dismissTimer);
     dismissTimer = setTimeout(dismiss, 9000); /* gives enough time to read before fading out */
+    playGossipBeatSnippet(); // resumes the beat wherever it left off, plays ~1-2s, pauses
     return true;
   }
 
@@ -1393,11 +1407,10 @@ function initTeaTicker() {
     if (!shown) i--; // don't burn this line if we skipped it
   }
 
-  // manual trigger for the "gossip" button — plays the click sound, then restarts
-  // the FULL sequential run of every notification (same one-after-another pacing
-  // as the automatic queue), forcing the first one through even mid-outfit.
+  // manual trigger for the "gossip" link — restarts the FULL sequential run of every
+  // notification (same one-after-another pacing as the automatic queue), forcing the
+  // first one through even mid-outfit. The beat snippet plays via show() itself.
   function spill() {
-    playGossipClickSound();
     clearTimeout(nextTimer);
     clearTimeout(dismissTimer);
     i = 0;
