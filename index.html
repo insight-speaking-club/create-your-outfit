@@ -63,6 +63,14 @@
   }
   #topbar-row1 { display: flex; align-items: center; justify-content: space-between; }
 
+  #topbar-row2 { margin-top: 0.4rem; }
+  #topbar-gossip-link {
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.62rem;
+    color: rgba(26,20,20,0.55); text-decoration: underline; text-underline-offset: 3px;
+    cursor: pointer; width: fit-content; letter-spacing: 0.01em;
+  }
+  #topbar-gossip-link:hover { color: rgba(26,20,20,0.8); }
+
   #topbar-title-container {
     position: relative;
     display: flex;
@@ -365,6 +373,9 @@
       <button id="verdict-btn" onclick="showVerdict()">Get my vibe</button>
     </div>
   </div>
+  <div id="topbar-row2">
+    <span id="topbar-gossip-link" onclick="spillTea()">See latest gossip on Sasha</span>
+  </div>
 </div>
 
 <div id="imessage-notification" class="hidden">
@@ -439,26 +450,74 @@
 <script>
 // ── SOUND FX ──
 // Drop these audio files next to index.html (same folder as crack.mp3) to enable them.
-// itemSelectAudio: plays a snippet every time an item is added to the canvas.
+//   item-select.mp3      → plays once, immediately, whenever the "gossip" button is tapped.
+//   true-item-select.mp3 → plays when an item is added to canvas, but only on add #1, #4, #7...
 //   NOTE: we can't ship copyrighted song audio (e.g. "7 rings") for you — supply your
-//   own short clip/loop here (a few seconds is plenty) and it'll fire on every add.
-const itemSelectAudio = new Audio('item-select.mp3');
-itemSelectAudio.volume = 0.5;
-const shutterAudio = new Audio('shutter.mp3');
-shutterAudio.volume = 0.6;
+//   own short clip/loop here (a few seconds is plenty) and it'll fire on the relevant action.
+const GOSSIP_CLICK_SRC = 'item-select.mp3';
+const TRUE_ITEM_SELECT_SRC = 'true-item-select.mp3';
+const SHUTTER_SRC = 'shutter.mp3';
+let itemAddCount = 0; // used to throttle playTrueItemSelectSound to every 3rd add
 
-function playItemSelectSound() {
+// Preload once so we can warn in the console if a file is missing/unreadable —
+// open devtools > Console to check for "[sound fx]" warnings if you don't hear anything.
+function preloadSoundCheck(src, label) {
+  const probe = new Audio(src);
+  probe.addEventListener('error', () => {
+    console.warn(`[sound fx] "${src}" for ${label} failed to load — check the file exists next to index.html and is a valid mp3.`);
+  });
+  probe.addEventListener('canplaythrough', () => {
+    console.log(`[sound fx] "${src}" for ${label} loaded OK.`);
+  }, { once: true });
+  probe.load();
+  return probe;
+}
+preloadSoundCheck(GOSSIP_CLICK_SRC, 'gossip-button click sound');
+preloadSoundCheck(TRUE_ITEM_SELECT_SRC, 'item-add sound');
+preloadSoundCheck(SHUTTER_SRC, 'shutter sound');
+
+// Both use a fresh clone per play so rapid taps overlap instead of cutting each other off
+// (a single shared <audio> would just restart and clip).
+function playGossipClickSound() {
   try {
-    itemSelectAudio.currentTime = 0;
-    itemSelectAudio.play().catch(() => {});
-  } catch (e) {}
+    const a = new Audio(GOSSIP_CLICK_SRC);
+    a.volume = 0.5;
+    const p = a.play();
+    if (p && p.catch) {
+      p.catch(err => console.warn('[sound fx] gossip-click playback blocked/failed:', err.message));
+    }
+  } catch (e) {
+    console.warn('[sound fx] gossip-click playback threw:', e.message);
+  }
 }
 
+function playTrueItemSelectSound() {
+  try {
+    const a = new Audio(TRUE_ITEM_SELECT_SRC);
+    a.volume = 0.5;
+    const p = a.play();
+    if (p && p.catch) {
+      p.catch(err => console.warn('[sound fx] item-select playback blocked/failed:', err.message));
+    }
+  } catch (e) {
+    console.warn('[sound fx] item-select playback threw:', e.message);
+  }
+}
+
+
+const shutterAudio = new Audio(SHUTTER_SRC);
+shutterAudio.volume = 0.6;
 function playShutterSound() {
   try {
+    shutterAudio.pause();
     shutterAudio.currentTime = 0;
-    shutterAudio.play().catch(() => {});
-  } catch (e) {}
+    const p = shutterAudio.play();
+    if (p && p.catch) {
+      p.catch(err => console.warn('[sound fx] shutter playback blocked/failed:', err.message));
+    }
+  } catch (e) {
+    console.warn('[sound fx] shutter playback threw:', e.message);
+  }
 }
 
 // ── SPARKLE BURST ──
@@ -1302,6 +1361,7 @@ function initTeaTicker() {
   if (!el || !textEl) return;
 
   let dismissTimer = null;
+  let nextTimer = null;
   let i = 0;
 
   function dismiss() {
@@ -1310,8 +1370,8 @@ function initTeaTicker() {
     setTimeout(() => el.classList.add('hidden'), 450);
   }
 
-  function show(line) {
-    if (Object.keys(onCanvas).length > 0) return false; // don't interrupt someone mid-outfit
+  function show(line, force) {
+    if (!force && Object.keys(onCanvas).length > 0) return false; // don't interrupt someone mid-outfit
     textEl.textContent = line;
     el.classList.remove('hidden');
     el.style.transform = '';
@@ -1322,15 +1382,28 @@ function initTeaTicker() {
     return true;
   }
 
-  function next() {
+  function next(force) {
     if (i >= TEA_LINES.length) return; // shown all 6, done for the session
-    const shown = show(TEA_LINES[i]);
+    const shown = show(TEA_LINES[i], force);
     i++;
     const delay = 5000 + Math.random() * 5000; /* MODIFIED TO 5-10 SECONDS */
     // if it got skipped (mid-outfit), retry the same line a bit sooner
-    setTimeout(next, shown ? delay : 4000);
+    clearTimeout(nextTimer);
+    nextTimer = setTimeout(() => next(false), shown ? delay : 4000);
     if (!shown) i--; // don't burn this line if we skipped it
   }
+
+  // manual trigger for the "gossip" button — plays the click sound, then restarts
+  // the FULL sequential run of every notification (same one-after-another pacing
+  // as the automatic queue), forcing the first one through even mid-outfit.
+  function spill() {
+    playGossipClickSound();
+    clearTimeout(nextTimer);
+    clearTimeout(dismissTimer);
+    i = 0;
+    next(true);
+  }
+  window.spillTea = spill;
 
   // --- swipe-up-to-dismiss ---
   let startY = null, currentY = 0, dragging = false;
@@ -1362,7 +1435,7 @@ function initTeaTicker() {
   el.addEventListener('click', dismiss); // tap to dismiss, e.g. on desktop
 
   const firstDelay = 6000 + Math.random() * 3000; // first pop-up: 6-9s after app opens
-  setTimeout(next, firstDelay);
+  nextTimer = setTimeout(() => next(false), firstDelay);
 }
 
 function renderTabs() {
@@ -1448,7 +1521,8 @@ function addToCanvas(uid, item, catId) {
   const burstX = canvasRect.left + parseFloat(el.style.left) + item.w / 2;
   const burstY = canvasRect.top + parseFloat(el.style.top) + item.h / 2;
   spawnSparkleBurst(burstX, burstY);
-  playItemSelectSound();
+  itemAddCount++;
+  if (itemAddCount % 3 === 1) playTrueItemSelectSound(); // plays on add #1, #4, #7, ...
 }
 
 function removeFromCanvas(uid) {
