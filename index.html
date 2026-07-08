@@ -336,11 +336,26 @@
     background: #ffffff; padding: 10px 10px 34px;
     box-shadow: 0 10px 26px rgba(0,0,0,0.55);
     transform: rotate(-1.5deg); flex-shrink: 0;
+    position: relative;
   }
   #verdict-outfit-preview {
     position: relative; width: 100%;
     background: #ffffff; border-radius: 2px; overflow: hidden;
   }
+
+  #download-outfit-btn {
+    position: absolute; bottom: 6px; right: 6px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(26, 22, 18, 0.55);
+    border: none; color: #f7f4f0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; opacity: 0.7; transition: opacity 0.15s, background 0.15s;
+    z-index: 5;
+  }
+  #download-outfit-btn:hover, #download-outfit-btn:active { opacity: 1; background: rgba(26, 22, 18, 0.8); }
+  #download-outfit-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+  #download-outfit-btn.saved svg { display: none; }
+  #download-outfit-btn.saved::after { content: '✓'; font-size: 0.7rem; line-height: 1; }
 
   #verdict-bottom { gap: 0.5rem; max-width: 400px; margin: 0.5rem auto 0; }
 
@@ -379,6 +394,7 @@
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.4); text-decoration: none;
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -457,7 +473,16 @@
     <div id="verdict-sub"></div>
   </div>
   
-  <div id="verdict-photo-frame"><div id="verdict-outfit-preview"></div></div>
+  <div id="verdict-photo-frame">
+    <div id="verdict-outfit-preview"></div>
+    <button id="download-outfit-btn" onclick="downloadOutfitImage()" aria-label="Download">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"></path>
+        <path d="M7 10l5 5 5-5"></path>
+        <path d="M5 21h14"></path>
+      </svg>
+    </button>
+  </div>
   
   <div id="verdict-links">
     <a id="verdict-song-link" class="verdict-link-btn" target="_blank" rel="noopener">
@@ -1018,7 +1043,7 @@ const verdicts = {
   'fashion insider': { line: "You knew before the campaign even dropped.", sub: "Logo recognized only by people who'd know." },
   'fashion literate': { line: "You read fashion the way some people read novels.", sub: "Footnotes included, references intentional." },
   'fashion-forward': { line: "Six months ahead and not waiting for company.", sub: "Everyone else will catch up eventually." },
-  'femin danger': { line: "Pretty is doing a lot of the threatening here.", sub: "Sheer, soft, and not to be underestimated." },
+  'feminine danger': { line: "Pretty is doing a lot of the threatening here.", sub: "Sheer, soft, and not to be underestimated." },
   'feminine touch': { line: "One small detail, doing all the talking.", sub: "Restraint as its own kind of statement." },
   'femme': { line: "Femme as a weapon, a language, a stance.", sub: "You know exactly what youre doing with it." },
   'femme confident': { line: "No performance. Just presence.", sub: "This look doesn't need an audience to work." },
@@ -1272,16 +1297,16 @@ const verdictsUK = {
   'tomboy': { line: "Позичила кепку, залишила перевагу.", sub: "Комфортна в кожному сенсі цього слова." },
   'utilitarian chic': { line: "Функція з дуже хорошим смаком.", sub: "Кишені, якими ти дійсно користуєшся, образи, яких ти не очікувала." },
   'utility': { line: "Створено так, ніби має побувати в бруді.", sub: "Кожен ремінець і пряжка заслужили своє місце." },
-  'victorian goth': { line: "Mourning dress, modern grudge.", sub: "High collar, higher standards." },
-  'weaponised femininity': { line: "Soft on the outside. Absolute menace within.", sub: "Pretty in a way that makes people reconsider their choices." },
-  'winter intellectual': { line: "Cold weather, warmer opinions.", sub: "Looks like you read in front of a fireplace, on purpose." },
-  'witchy': { line: "Spellbound, intentionally.", sub: "Цей образ знає щось, чого не знаєш ти." },
+  'victorian goth': { line: "Траурна сукня, сучасна образа.", sub: "Високий комір, ще вищі стандарти." },
+  'weaponised femininity': { line: "М'яка ззовні. Абсолютна загроза всередині.", sub: "Гарна настільки, що змушує людей переглянути власні рішення." },
+  'winter intellectual': { line: "Холодна погода, гарячіші думки.", sub: "Виглядає так, ніби ти читаєш перед каміном навмисно." },
+  'witchy': { line: "Зачарована навмисно.", sub: "Цей образ знає щось, чого не знаєш ти." },
   'generosity era': { line: "Щедрість — це стиль життя, любий.", sub: "Ти б віддала комусь плаття зі своєї спини — але тільки після ідеальної підгонки." },
   'nature\'s touch': { line: "Вирощено, а не виготовлено.", sub: "Пелюстки, стрічки й трохи лісової магії. Легкість, що коштувала справжніх зусиль." },
   'magic winx': { line: "Believix досягнуто.", sub: "Ти не просто вдягнулась. Ти трансформувалась." },
   'tune it out': { line: "Головна героїня, навушники в вухах.", sub: "Блискуча, гостра й абсолютно незворушна шумом навколо." },
   'no tears left to cry': { line: "Впала, обтрусилась, пішла далі.", sub: "Найважче вже позаду. Тепер ти просто кружляєш." },
-  'default': { line: "Unmistakably, unrepeatably you.", sub: "This combination doesn't have a name yet. It will." },
+  'default': { line: "Безпомилково, неповторно ти.", sub: "Ця комбінація ще не має назви. Але матиме." },
 };
 
 let activeCategory = 'iconic-club';
@@ -1676,8 +1701,36 @@ function buildOutfitPreview() {
   });
 }
 
+function downloadOutfitImage() {
+  const frame = document.getElementById('verdict-photo-frame');
+  const btn = document.getElementById('download-outfit-btn');
+  if (!frame || typeof html2canvas === 'undefined') return;
+
+  // Hide the button itself so it doesn't appear in the captured image
+  btn.style.visibility = 'hidden';
+
+  html2canvas(frame, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true
+  }).then(canvas => {
+    btn.style.visibility = 'visible';
+    const link = document.createElement('a');
+    link.download = 'dream-closet-look.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    btn.classList.add('saved');
+    setTimeout(() => btn.classList.remove('saved'), 1800);
+  }).catch(err => {
+    btn.style.visibility = 'visible';
+    console.warn('[download] html2canvas capture failed:', err);
+  });
+}
+
 function showVerdict() {
   if (Object.keys(onCanvas).length === 0) { alert("The closet's full. Pick something to wear."); return; }
+  currentLang = 'en'; // always start each new verdict in English — don't carry over a previous guest's translate toggle
   currentVerdict = calculateVerdict();
   currentVerdictKey = currentVerdict.key;
   
@@ -1720,26 +1773,25 @@ function applyTranslations() {
     const songBtn = document.getElementById('verdict-song-link');
     const sceneBtn = document.getElementById('verdict-scene-link');
     
-    const isIconic = Object.keys(onCanvas).some(uid => uid.startsWith('iconic-') || (onCanvas[uid].item._catId || '').startsWith('iconic-'));
-    const isSashaBow = currentVerdictKey === "yes, and?"; 
-    const isClubKid = currentVerdictKey === "club kid";
+    // verdictLinks only contains keys for genuine, specifically-curated iconic
+    // moments (a real song or a real named scene). Anything not in that list —
+    // regular wardrobe basics, AND "club kid" (which has no real scene attached) —
+    // gets neither button at all, rather than falling back to a generic search.
+    const linkEntry = verdictLinks[currentVerdictKey];
 
-    if (isIconic) {
-      if (isSashaBow || isClubKid) {
-        // Sasha's bow and the club shirt get the "listen" link and NO scene button
-        songBtn.style.display = 'flex';
-        songBtn.href = links.songUrl;
-        sceneBtn.style.display = 'none';
-      } else {
-        // Other Iconic pieces get "Watch the scene" and NO listen button
-        songBtn.style.display = 'none';
-        sceneBtn.style.display = 'flex';
-        sceneBtn.href = links.sceneUrl;
-      }
-    } else {
-      // Non-iconic pieces get "Listen" and NO scene button
+    if (currentVerdictKey === "yes, and?") {
+      // Sasha's bow — the one verdict with a genuine curated playlist
       songBtn.style.display = 'flex';
       songBtn.href = links.songUrl;
+      sceneBtn.style.display = 'none';
+    } else if (linkEntry) {
+      // Any other iconic verdict with a real, specific scene defined
+      songBtn.style.display = 'none';
+      sceneBtn.style.display = 'flex';
+      sceneBtn.href = links.sceneUrl;
+    } else {
+      // Everything else — no buttons at all
+      songBtn.style.display = 'none';
       sceneBtn.style.display = 'none';
     }
   }
