@@ -332,19 +332,26 @@
   #verdict-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #a8a09b; line-height: 1.5; max-width: 320px; }
 
   #verdict-photo-frame {
-    width: min(80vw, 300px); margin: 1.8rem auto;
-    background: #ffffff; padding: 10px 10px 34px;
-    box-shadow: 0 10px 26px rgba(0,0,0,0.55);
-    transform: rotate(-1.5deg); flex-shrink: 0;
+    width: min(78vw, 280px); margin: 2rem auto 1.6rem;
+    background: #fdfbf7; padding: 12px 12px 32px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3);
+    transform: rotate(-2deg); flex-shrink: 0;
     position: relative;
   }
   #verdict-outfit-preview {
     position: relative; width: 100%;
-    background: #ffffff; border-radius: 2px; overflow: hidden;
+    background: #fdfbf7; border-radius: 1px; overflow: hidden;
+    filter: sepia(0.05) contrast(1.02) saturate(1.05);
+  }
+  /* subtle vignette so it reads as a photo, not a flat render */
+  #verdict-outfit-preview::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(20,15,10,0.15) 100%);
+  }
   }
 
   #download-outfit-btn {
-    position: absolute; bottom: 6px; right: 6px;
+    position: absolute; bottom: 10px; right: 18px;
     width: 26px; height: 26px; border-radius: 50%;
     background: rgba(26, 22, 18, 0.55);
     border: none; color: #f7f4f0;
@@ -1702,19 +1709,15 @@ function buildOutfitPreview() {
 }
 
 function downloadOutfitImage() {
-  const frame = document.getElementById('verdict-photo-frame');
+  const preview = document.getElementById('verdict-outfit-preview');
   const btn = document.getElementById('download-outfit-btn');
-  if (!frame || typeof html2canvas === 'undefined') return;
+  if (!preview || typeof html2canvas === 'undefined') return;
 
-  // Hide the button itself so it doesn't appear in the captured image
-  btn.style.visibility = 'hidden';
-
-  html2canvas(frame, {
-    backgroundColor: null,
+  html2canvas(preview, {
+    backgroundColor: '#ffffff',
     scale: 2,
     useCORS: true
   }).then(canvas => {
-    btn.style.visibility = 'visible';
     const link = document.createElement('a');
     link.download = 'dream-closet-look.png';
     link.href = canvas.toDataURL('image/png');
@@ -1723,7 +1726,6 @@ function downloadOutfitImage() {
     btn.classList.add('saved');
     setTimeout(() => btn.classList.remove('saved'), 1800);
   }).catch(err => {
-    btn.style.visibility = 'visible';
     console.warn('[download] html2canvas capture failed:', err);
   });
 }
