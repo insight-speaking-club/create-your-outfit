@@ -1,7 +1,7 @@
 // Glass Closet service worker
 // Bump this version string any time you change index.html or any cached asset,
 // otherwise phones will keep serving the old cached copy.
-const CACHE_NAME = 'glass-closet-v3';
+const CACHE_NAME = 'glass-closet-v2';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -35,7 +35,7 @@ self.addEventListener('install', (event) => {
       );
     })
   );
-  self.skipWaiting(); // Forces the new worker to activate immediately
+  self.skipWaiting();
 });
 
 // Activate: clean up old cache versions
@@ -49,29 +49,53 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
-  self.clients.claim(); // Takes control of the page immediately
+  self.clients.claim();
 });
 
-// Fetch: NETWORK-FIRST strategy. 
-// Always checks the server for updates. If offline, falls back to cache.
+// Fetch:
+// - HTML (the app shell) uses NETWORK-FIRST so updates show immediately
+//   after a redeploy, falling back to cache only if offline.
+// - Everything else (images, audio, manifest) uses CACHE-FIRST so the
+//   app still works offline and loads fast.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        // If we get a good response from the internet, clone it and update the cache
-        if (response && response.status === 200 && response.type === 'basic') {
+  const isHTML =
+    event.request.mode === 'navigate' ||
+    event.request.url.endsWith('.html') ||
+    event.request.url.endsWith('/');
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
           });
-        }
-        return response;
-      })
-      .catch(() => {
-        // If the internet is down (or GitHub Pages is glitching), use the cache
-        return caches.match(event.request);
-      })
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+
+      return fetch(event.request)
+        .then((response) => {
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => cached);
+    })
   );
 });
