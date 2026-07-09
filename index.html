@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Dream Closet</title>
+<title>Glass Closet</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#d49bb1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dream Closet">
+<meta name="apple-mobile-web-app-title" content="Glass Closet">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=Caveat:wght@500;600&display=swap');
@@ -513,7 +513,7 @@
 <div id="topbar">
   <div id="topbar-row1">
     <div id="topbar-title-container">
-      <img src="glasscloset.png" alt="Dream Closet" style="max-height: 25px; width: auto;" onerror="this.style.display='none'">
+      <img src="glasscloset.png" alt="Glass Closet" style="max-height: 25px; width: auto;" onerror="this.style.display='none'">
       <img src="kissprint.png" alt="" class="kiss-print">
     </div>
     <button id="verdict-btn" onclick="showVerdict()">Get my verdict</button>
@@ -2058,7 +2058,7 @@ function downloadOutfitImage() {
     useCORS: true
   }).then(canvas => {
     const link = document.createElement('a');
-    link.download = 'dream-closet-look.png';
+    link.download = 'glass-closet-look.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
 

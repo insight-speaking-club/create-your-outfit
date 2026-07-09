@@ -1,13 +1,13 @@
-// Dream Closet service worker
+// Glass Closet service worker
 // Bump this version string any time you change index.html or any cached asset,
 // otherwise phones will keep serving the old cached copy.
-const CACHE_NAME = 'dream-closet-v1';
+const CACHE_NAME = 'glass-closet-v1';
 
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './dream-closet-look.png',
+  './glass-closet-look.png',
   './mirrorshatter.jpg',
   './glasscloset.png',
   './kissprint.png',

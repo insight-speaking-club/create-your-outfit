@@ -1,6 +1,6 @@
 {
-  "name": "Dream Closet",
-  "short_name": "Dream Closet",
+  "name": "Glass Closet",
+  "short_name": "Glass Closet",
   "description": "Build your dream closet and get the verdict.",
   "start_url": "./index.html",
   "scope": "./",
