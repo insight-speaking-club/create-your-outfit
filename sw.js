@@ -1,7 +1,7 @@
 // Glass Closet service worker
 // Bump this version string any time you change index.html or any cached asset,
 // otherwise phones will keep serving the old cached copy.
-const CACHE_NAME = 'glass-closet-v2';
+const CACHE_NAME = 'glass-closet-v3';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -35,7 +35,7 @@ self.addEventListener('install', (event) => {
       );
     })
   );
-  self.skipWaiting();
+  self.skipWaiting(); // Forces the new worker to activate immediately
 });
 
 // Activate: clean up old cache versions
@@ -49,30 +49,29 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
-  self.clients.claim();
+  self.clients.claim(); // Takes control of the page immediately
 });
 
-// Fetch: cache-first for app assets, fall back to network, and cache new
-// responses as they come in so the app keeps working offline.
+// Fetch: NETWORK-FIRST strategy. 
+// Always checks the server for updates. If offline, falls back to cache.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
+    fetch(event.request)
+      .then((response) => {
+        // If we get a good response from the internet, clone it and update the cache
+        if (response && response.status === 200 && response.type === 'basic') {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
           });
-          return response;
-        })
-        .catch(() => cached);
-    })
+        }
+        return response;
+      })
+      .catch(() => {
+        // If the internet is down (or GitHub Pages is glitching), use the cache
+        return caches.match(event.request);
+      })
   );
 });
