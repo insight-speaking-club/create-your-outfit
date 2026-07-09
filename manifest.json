@@ -1,12 +1,12 @@
 {
   "name": "Glass Closet",
   "short_name": "Glass Closet",
-  "description": "Build your dream closet and get the verdict.",
+  "description": "Build your glass closet and get the verdict.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f7f4f0",
+  "background_color": "#C48A93",
   "theme_color": "#d49bb1",
   "icons": [
     {
