@@ -886,7 +886,7 @@ const categories = [
     items: [
       { name: "Sasha's bow", color: '#111', vibe: 'yes, and?', w: 80, h: 70 },
       { name: 'I ❤ Insight shirt', color: '#1a1a1a', vibe: 'club kid', w: 105, h: 105 },
-      { name: 'Mystery Drop', color: '#e8e4df', vibe: 'coming soon', w: 100, h: 100, releaseDate: '2026-07-16' }
+      { name: 'Mystery Drop', color: '#e8e4df', vibe: 'coming soon', w: 100, h: 100, releaseDate: '2026-07-16', unlockAtOutfits: 3 }
     ]
   },
   {
@@ -912,8 +912,8 @@ const categories = [
       { name: 'Cerulean blue sweater', color: '#2a52be', vibe: 'cerulean', w: 110, h: 115 },
       { name: '"A little bit dramatic" shirt', color: '#f0b8c0', vibe: 'a little bit dramatic', w: 105, h: 105 },
       { name: "Jennifer's pink heart top", color: '#f4a3c0', vibe: 'i go both ways', w: 100, h: 95 },
-      { name: "Regina George's pink Wednesday top", color: '#ff8fc4', vibe: 'on Wednesdays we wear pink', w: 105, h: 100, releaseDate: '2026-08-06' },
-      { name: "Elle Woods' graduation dress", color: '#ffb6d9', vibe: "what, like it's hard?", w: 110, h: 140, releaseDate: '2026-08-06' },
+      { name: "Regina George's pink Wednesday top", color: '#ff8fc4', vibe: 'on Wednesdays we wear pink', w: 105, h: 100, releaseDate: '2026-08-06', unlockAtOutfits: 5 },
+      { name: "Elle Woods' graduation dress", color: '#ffb6d9', vibe: "what, like it's hard?", w: 110, h: 140, releaseDate: '2026-08-06', unlockAtOutfits: 8 },
       { name: "Andy's Chanel boots", color: '#1a1a1a', vibe: "that's all", w: 95, h: 130, releaseDate: '2026-08-06' },
       { name: "Effie Trinket's reaping coat", color: '#e8b923', vibe: 'may the odds', w: 115, h: 150, releaseDate: '2026-08-13' },
       { name: "Rachel Green's \"The Rachel\" blazer", color: '#c9a876', vibe: 'could I BE any more iconic', w: 115, h: 120, releaseDate: '2026-08-13' }
@@ -928,7 +928,7 @@ const categories = [
       { name: 'Brat green mini dress', color: '#8bce00', vibe: 'bumpin that', w: 100, h: 140 },
       { name: 'Ariana’s thigh-high boots', color: '#111', vibe: 'dangerous woman', w: 105, h: 155 },
       { name: 'Ariana’s no tears left to cry dress', color: '#1a1a1a', vibe: 'no tears left to cry', w: 105, h: 150 },
-      { name: "Britney's schoolgirl outfit", color: '#d63a4a', vibe: 'hit me one more time', w: 100, h: 120, releaseDate: '2026-08-13' },
+      { name: "Britney's schoolgirl outfit", color: '#d63a4a', vibe: 'hit me one more time', w: 100, h: 120, releaseDate: '2026-08-13', unlockAtOutfits: 12 },
       { name: "Rihanna's umbrella-era trench", color: '#2a2a2a', vibe: 'ella ella', w: 115, h: 150, releaseDate: '2026-08-20' },
       { name: "Beyoncé's Single Ladies leotard", color: '#111111', vibe: 'put a ring on it', w: 100, h: 105, releaseDate: '2026-08-20' },
       { name: "Doja Cat's Say So disco set", color: '#c9a2e8', vibe: 'start off slow', w: 105, h: 120, releaseDate: '2026-08-20' },
@@ -2001,24 +2001,79 @@ function formatReleaseLabel(dateStr) {
   return `Thursday, the ${ordinal(d.getDate())}`;
 }
 
-function isLocked(item) {
-  if (!item.releaseDate) return false;
-  const releaseAt = new Date(item.releaseDate + 'T00:00:00').getTime();
-  return Date.now() < releaseAt;
+const OUTFIT_COUNT_KEY = 'dreamCloset_outfitCount';
+
+function getOutfitCount() {
+  const n = parseInt(localStorage.getItem(OUTFIT_COUNT_KEY) || '0', 10);
+  return isNaN(n) ? 0 : n;
 }
 
-function showLockedToast(label) {
+function incrementOutfitCount() {
+  const n = getOutfitCount() + 1;
+  try { localStorage.setItem(OUTFIT_COUNT_KEY, String(n)); } catch (e) {}
+  return n;
+}
+
+function isLocked(item) {
+  const hasDate = !!item.releaseDate;
+  const hasMilestone = typeof item.unlockAtOutfits === 'number';
+  if (!hasDate && !hasMilestone) return false;
+
+  const dateUnlocked = hasDate && Date.now() >= new Date(item.releaseDate + 'T00:00:00').getTime();
+  const milestoneUnlocked = hasMilestone && getOutfitCount() >= item.unlockAtOutfits;
+
+  // if an item has both conditions, either one unlocks it — whichever comes first
+  if (hasDate && hasMilestone) return !(dateUnlocked || milestoneUnlocked);
+  return hasDate ? !dateUnlocked : !milestoneUnlocked;
+}
+
+function gridLockCaption(item) {
+  if (typeof item.unlockAtOutfits === 'number') {
+    const remaining = Math.max(0, item.unlockAtOutfits - getOutfitCount());
+    if (remaining <= 0) return 'Unlocking...';
+    return `${remaining} outfit${remaining === 1 ? '' : 's'} to go`;
+  }
+  return `Releases ${formatReleaseLabel(item.releaseDate)}`;
+}
+
+function lockedToastMessage(item) {
+  const hasDate = !!item.releaseDate;
+  const hasMilestone = typeof item.unlockAtOutfits === 'number';
+  if (hasMilestone) {
+    const have = getOutfitCount();
+    const remaining = Math.max(0, item.unlockAtOutfits - have);
+    if (remaining > 0) {
+      let msg = `Build ${remaining} more outfit${remaining === 1 ? '' : 's'} to unlock this — you're at ${have}/${item.unlockAtOutfits}.`;
+      if (hasDate) msg += ` Or just wait for ${formatReleaseLabel(item.releaseDate)}.`;
+      return msg;
+    }
+  }
+  if (hasDate) return `This piece isn't in stores yet. Drops ${formatReleaseLabel(item.releaseDate)} — patience, icon.`;
+  return `This piece isn't unlocked yet.`;
+}
+
+function showLockedToast(message) {
   const toast = document.getElementById('origin-toast');
   const textEl = document.getElementById('origin-line-text');
   const nameEl = document.getElementById('origin-sender-name');
   const avatarEl = document.getElementById('origin-avatar');
   if (!toast || !textEl) return;
-  textEl.textContent = `This piece isn't in stores yet. Drops ${label} — patience, icon.`;
+  textEl.textContent = message;
   if (nameEl) nameEl.textContent = 'Glass Closet';
   if (avatarEl) { avatarEl.textContent = 'GC'; avatarEl.style.background = '#3a3530'; }
   clearTimeout(originToastTimer);
   toast.classList.add('visible');
   originToastTimer = setTimeout(() => toast.classList.remove('visible'), 4500);
+}
+
+function checkForNewlyUnlockedItems(newCount) {
+  const unlocked = [];
+  categories.forEach(cat => cat.items.forEach(item => {
+    if (typeof item.unlockAtOutfits === 'number' && item.unlockAtOutfits === newCount) unlocked.push(item);
+  }));
+  if (unlocked.length === 0) return;
+  const names = unlocked.map(i => i.name).join(', ');
+  showLockedToast(`🔓 You just unlocked: ${names}! Go check the closet.`);
 }
 
 function renderGrid(catId, items) {
@@ -2031,10 +2086,9 @@ function renderGrid(catId, items) {
     card.id = 'gi-' + uid;
 
     if (isLocked(item)) {
-      const label = formatReleaseLabel(item.releaseDate);
       card.className = 'grid-item locked-item';
-      card.innerHTML = `<div class="gi-visual gi-locked"><span class="lock-mark">?</span></div><div class="gi-name">${item.name}</div><div class="gi-release">Releases ${label}</div>`;
-      card.onclick = () => showLockedToast(label);
+      card.innerHTML = `<div class="gi-visual gi-locked"><span class="lock-mark">?</span></div><div class="gi-name">${item.name}</div><div class="gi-release">${gridLockCaption(item)}</div>`;
+      card.onclick = () => showLockedToast(lockedToastMessage(item));
       grid.appendChild(card);
       return;
     }
@@ -2390,6 +2444,12 @@ function saveOutfitToHistory() {
       history = history.slice(0, Math.floor(history.length / 2));
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (e2) { console.warn('[history] storage full'); }
     }
+
+    // count this outfit toward milestone-locked items, then refresh the
+    // grid + check if anything just unlocked
+    const newCount = incrementOutfitCount();
+    renderGrid(activeCategory);
+    checkForNewlyUnlockedItems(newCount);
   }).catch(err => console.warn('[history] capture failed:', err));
 }
 
