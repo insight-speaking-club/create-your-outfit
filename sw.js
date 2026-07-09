@@ -1,7 +1,7 @@
 // Glass Closet service worker
 // Bump this version string any time you change index.html or any cached asset,
 // otherwise phones will keep serving the old cached copy.
-const CACHE_NAME = 'glass-closet-v1';
+const CACHE_NAME = 'glass-closet-v2';
 
 const ASSETS_TO_CACHE = [
   './',
